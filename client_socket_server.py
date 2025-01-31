@@ -1,9 +1,9 @@
 import socket               
 
 s = socket.socket()        
-host = ''# ip of raspberry pi
+host = '100.120.18.53'# ip of raspberry pi
 #TODO: Match the ip in the server script once changed
-port = 12345               
+port = 8085               
 s.connect((host, port))
 print(s.recv(1024))
 s.close()
