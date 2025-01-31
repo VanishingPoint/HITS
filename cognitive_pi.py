@@ -24,6 +24,7 @@ image_paths = [
     fr"/home/hits/Desktop/Images to Output/page_{num}.png"
     for num in image_numbers
 ]
+#TODO: Change path to match new repo location
 
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
@@ -33,6 +34,8 @@ start_time = time.time()  # Start timing
 print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
 print("Press 'esc' to exit the program.")
+
+#TODO: The above should actually be printed on the client. Maybe just send a message to client saying they should do this.
 
 # Function to open and display an image
 def show_image(image_path):
@@ -47,11 +50,15 @@ def show_image(image_path):
 page_0_path = r"/home/hits/Desktop/Images to Output/page_0.png"
 show_image(page_0_path)
 
+#TODO: page 0 was missing from the drive and is currently just a duplicate of image 1 to test stuff
+
 # Wait for the user to press 's' to start the program
 while not keyboard.is_pressed("s"):
     pass
 keyboard.wait("s")  # Wait for the key release
 print("Starting the randomized image sequence...")
+
+#TODO: Remove the keyboard stuff and replace it with waiting for client code
 
 # Function to handle key presses
 def process_keypress(key):
@@ -63,12 +70,16 @@ def process_keypress(key):
     data.append([current_index + 1, f"page_{page_number}", attribute1, attribute2, key, elapsed_time])
     print(f"'{key}' pressed for image {current_index + 1}. Time: {elapsed_time:.2f} seconds. Attributes: {attribute1}.")
 
+#TODO: Again modify the above to remove keypress stuff replace with wait for client
+
     current_index += 1
     if current_index < len(image_paths):
         show_image(image_paths[current_index])
     else:
         print("No more images to display. Exiting program.")
         return False
+
+#TODO: print should actually be sent to client
 
     start_time = time.time()  # Reset the start time for the next image
     return True
@@ -91,6 +102,8 @@ try:
             print("Exiting program.")
             break
 
+#TODO: The keyboard is pressed needs to be changed to if message from client is x
+
 except Exception as e:
     print(f"An error occurred: {e}")
 finally:
@@ -105,3 +118,5 @@ finally:
         writer.writerows(data)
     print(f"Key press data saved to {output_file}.")
     print("Program finished.")
+
+#TODO: Call scoring function, generate score and store it to be sent to client at end

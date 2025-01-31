@@ -59,6 +59,9 @@ def process_keypress(key):
     start_time = time.time()  # Reset the start time for the next image
     return True
 
+#TODO: I assume the above should be removed and timing should take place on server side only
+
+
 # Start showing images
 try:
     show_image(image_paths[current_index])
@@ -80,14 +83,4 @@ try:
 except Exception as e:
     print(f"An error occurred: {e}")
 finally:
-    # Clean up
-    if opened_image:
-        opened_image.close()
-    # Save data to a CSV file
-    output_file = "keypress_data_with_attributes.csv"
-    with open(output_file, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Image Index", "Image Opened", "Colour", "Word", "Key Pressed", "Elapsed Time (seconds)"])
-        writer.writerows(data)
-    print(f"Key press data saved to {output_file}.")
     print("Program finished.")
