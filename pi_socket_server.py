@@ -1,6 +1,6 @@
 import socket
 
-HOST = "100.120.18.53"  # Standard loopback interface address (localhost)
+HOST = "100.120.18.53"  # Talescale IP for RPI TODO: Change to rpi IP on created wifi
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
