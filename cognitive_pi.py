@@ -26,7 +26,7 @@ image_word = {
 
 # List of image paths based on shuffled numbers
 image_paths = [
-    fr"/home/hits/Documents/GitHub/HITS/Images to Output/page_{num}.png"
+    fr"/home/hits/Documents/GitHub/HITS/Cognitive Participant Images/page_{num}.png"
     for num in image_numbers
 ]
 
@@ -59,7 +59,7 @@ def handle_client(conn):
                 continue
             end_time = time.time()
             time_taken = end_time - start_time
-            if key == "s":
+            if key == "s": #TODO: Display an image with instructions to the participant until s pressed, allow for proctor to exit ("page 0")
                 response = str(image_numbers[current_index])
                 show_image(image_paths[current_index])
                 start_time = time.time()  # Reset start time for the next image
