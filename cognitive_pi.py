@@ -32,6 +32,7 @@ current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
 data = []  # To store keypress data
 start_time = time.time()  # Start timing
+session_ended = False  # Flag to indicate if the session has ended
 
 # Function to open and display an image
 def show_image(image_path):
@@ -42,7 +43,7 @@ def show_image(image_path):
     opened_image.show()
 
 def handle_client(conn):
-    global current_index, start_time
+    global current_index, start_time, session_ended
     with conn:
         print(f"Connected by {addr}")
         while True:
@@ -50,6 +51,8 @@ def handle_client(conn):
             if not data:
                 break
             key = data.decode('utf-8')
+            if session_ended:
+                continue
             end_time = time.time()
             time_taken = end_time - start_time
             if key == "s":
@@ -65,6 +68,7 @@ def handle_client(conn):
                     current_index += 1
                 else:
                     response = "end"
+                    session_ended = True
             # Log the data
             image_num = image_numbers[current_index - 1]
             colour = image_colour[image_num]
