@@ -8,6 +8,8 @@ import socket
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 
+#TODO: Replace this when switching to local wifi
+
 # List of image numbers (shuffled for randomness)
 image_numbers = list(range(1, 31))  # Assuming 30 images
 random.shuffle(image_numbers)
@@ -42,6 +44,8 @@ def show_image(image_path):
     opened_image = Image.open(image_path)
     opened_image.show()
 
+#TODO: Make the images fullscreen, make the images actually close when the next image is shown
+
 def handle_client(conn):
     global current_index, start_time, session_ended
     with conn:
@@ -75,7 +79,7 @@ def handle_client(conn):
             word = image_word[image_num]
             log_data = [image_num, colour, word, key, time_taken]
             print(f"Logging data: {log_data}")
-            with open("log.csv", "a", newline="") as csvfile:
+            with open("cognitive_results.csv", "a", newline="") as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(log_data)
             conn.sendall(response.encode('utf-8'))
@@ -87,3 +91,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         conn, addr = s.accept()
         handle_client(conn)
+
+        #TODO: Score the data

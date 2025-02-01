@@ -34,6 +34,8 @@ image_word = {
     1: "red", 2: "green", 3: "blue", 4: "yellow", 5: "blue", 6: "red", 7: "blue", 8: "red", 9: "yellow", 10: "red", 
     11: "green", 12: "yellow", 13: "yellow", 14: "green", 15: "red", 16: "blue", 17: "yellow", 18: "green", 19: "blue", 20: "yellow", 
     21: "green", 22: "green", 23: "red", 24: "blue", 25: "green", 26: "blue", 27: "blue", 28: "yellow", 29: "blue", 30: "red"}
+#TODO: Remove these attributes and just bring up the "answer" image that corresponds to the image number
+
 
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
