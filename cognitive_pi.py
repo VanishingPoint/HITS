@@ -42,7 +42,7 @@ def show_image(image_path):
     opened_image.show()
 
 def handle_client(conn):
-    global current_index
+    global current_index, start_time
     with conn:
         print(f"Connected by {addr}")
         while True:
@@ -50,17 +50,30 @@ def handle_client(conn):
             if not data:
                 break
             key = data.decode('utf-8')
+            end_time = time.time()
+            time_taken = end_time - start_time
             if key == "s":
                 response = str(image_numbers[current_index])
                 show_image(image_paths[current_index])
+                start_time = time.time()  # Reset start time for the next image
                 current_index += 1
             elif key in ["y", "n"]:
                 if current_index < len(image_numbers):
                     response = str(image_numbers[current_index])
                     show_image(image_paths[current_index])
+                    start_time = time.time()  # Reset start time for the next image
                     current_index += 1
                 else:
                     response = "end"
+            # Log the data
+            image_num = image_numbers[current_index - 1]
+            colour = image_colour[image_num]
+            word = image_word[image_num]
+            log_data = [image_num, colour, word, key, time_taken]
+            print(f"Logging data: {log_data}")
+            with open("log.csv", "a", newline="") as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(log_data)
             conn.sendall(response.encode('utf-8'))
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
