@@ -1,10 +1,10 @@
 from PIL import Image
-import keyboard
 import os
 import random
 import time
 import csv
 import socket
+from pynput import keyboard
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
@@ -18,6 +18,7 @@ def send_keystroke(key):
 
 # List of image numbers (shuffled for randomness)
 image_numbers = list(range(1, 31))  # Assuming 30 images
+random.shuffle(image_numbers)
 
 # Defining attributes for each image
 image_colour = {
@@ -38,25 +39,28 @@ print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
 print("Press 'esc' to exit the program.")
 
-# Wait for the user to press 's' to start the program
-while not keyboard.is_pressed("s"):
-    pass
-keyboard.wait("s")  # Wait for the key release
+# Flag to indicate if the sequence has started
+started = False
 
-# Send 's' keystroke to the server to start the process
-response = send_keystroke("s")
-print(f"Received image number: {response}")
+def on_press(key):
+    global started
+    try:
+        if key.char == 's' and not started:
+            started = True
+            response = send_keystroke('s')
+            print(f"Received image number: {response}")
+        elif key.char == 'y' and started:
+            response = send_keystroke('y')
+            print(f"Received image number: {response}")
+        elif key.char == 'n' and started:
+            response = send_keystroke('n')
+            print(f"Received image number: {response}")
+        elif key.char == 'esc':
+            print("Exiting program.")
+            return False
+    except AttributeError:
+        pass
 
-# Main loop to handle keystrokes
-while response != "end":
-    if keyboard.is_pressed("y"):
-        keyboard.wait("y")
-        response = send_keystroke("y")
-        print(f"Received image number: {response}")
-    elif keyboard.is_pressed("n"):
-        keyboard.wait("n")
-        response = send_keystroke("n")
-        print(f"Received image number: {response}")
-    elif keyboard.is_pressed("esc"):
-        print("Exiting program.")
-        break
+# Collect events until released
+with keyboard.Listener(on_press=on_press) as listener:
+    listener.join()
