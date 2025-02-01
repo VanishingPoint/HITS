@@ -8,7 +8,8 @@ import socket
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
-#TODO: Change this
+
+started = False
 
 # List of image numbers (shuffled for randomness)
 image_numbers = list(range(1, 31))  # Assuming 30 images
@@ -24,24 +25,24 @@ image_word = {
     11: "green", 12: "yellow", 13: "yellow", 14: "green", 15: "red", 16: "blue", 17: "yellow", 18: "green", 19: "blue", 20: "yellow", 
     21: "green", 22: "green", 23: "red", 24: "blue", 25: "green", 26: "blue", 27: "blue", 28: "yellow", 29: "blue", 30: "red"}
 
-#TODO: Determine if this list is needed on both the pi and the client or if we can scrap it on the pi
+#TODO: Determine if this list is needed on both the pi and the client or if we can scrap it on the pi -> We need both for now, unless we send the correct ans as a string to the client
 
 # List of image paths based on shuffled numbers
 image_paths = [
-    fr"/home/hits/Desktop/Images to Output/page_{num}.png"
+    fr"/home/hits/Documents/GitHub/HITS/Images to Output/page_{num}.png"
     for num in image_numbers
 ]
-#TODO: Change path to match new repo location
 
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
-data = []  # To store keypress data
+#data = []  # To store keypress data
 start_time = time.time()  # Start timing
 
+'''
 print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
 print("Press 'esc' to exit the program.")
-
+'''
 #TODO: The above should actually be printed on the client. Maybe just send a message to client saying they should do this.
 
 # Function to open and display an image
@@ -54,17 +55,19 @@ def show_image(image_path):
     opened_image.show()
 
 # Show page_0 first
-page_0_path = r"/home/hits/Desktop/Images to Output/page_0.png"
+page_0_path = r"/home/hits/Documents/GitHub/HITS/Images to Output/page_0.png"
 show_image(page_0_path)
 
 #TODO: page 0 was missing from the drive and is currently just a duplicate of image 1 to test stuff
 
+'''
 # Wait for the user to press 's' to start the program
 while not keyboard.is_pressed("s"):
     pass
 keyboard.wait("s")  # Wait for the key release
 print("Starting the randomized image sequence...")
-
+'''
+#Functionality is now part of the main loop for sockets
 #TODO: Remove the keyboard stuff and replace it with waiting for client code
 
 # Function to handle key presses
@@ -77,20 +80,22 @@ def process_keypress(key):
     data.append([current_index + 1, f"page_{page_number}", attribute1, attribute2, key, elapsed_time])
     print(f"'{key}' pressed for image {current_index + 1}. Time: {elapsed_time:.2f} seconds. Attributes: {attribute1}.")
 
-#TODO: Again modify the above to remove keypress stuff replace with wait for client
-
+    #TODO: Again modify the above to remove keypress stuff replace with wait for client
+    '''
     current_index += 1
     if current_index < len(image_paths):
         show_image(image_paths[current_index])
     else:
         print("No more images to display. Exiting program.")
         return False
-
-#TODO: print should actually be sent to client
+    '''
+        #This functionality is now part of the main loop for sockets
+    
 
     start_time = time.time()  # Reset the start time for the next image
     return True
 
+'''
 # Start showing images
 try:
     show_image(image_paths[current_index])
@@ -108,26 +113,12 @@ try:
         elif keyboard.is_pressed("esc"):  # Exit the program if 'esc' is pressed
             print("Exiting program.")
             break
-
+'''
 #TODO: The keyboard is pressed needs to be changed to if message from client is x
-
+'''
 except Exception as e:
     print(f"An error occurred: {e}")
-finally:
-    # Clean up
-    if opened_image:
-        opened_image.close()
-    # Save data to a CSV file
-    output_file = "keypress_data_with_attributes.csv"
-    with open(output_file, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Image Index", "Image Opened", "Colour", "Word", "Key Pressed", "Elapsed Time (seconds)"])
-        writer.writerows(data)
-    print(f"Key press data saved to {output_file}.")
-    print("Program finished.")
-
-#TODO: Call scoring function, generate score and store it to be sent to client at end
-
+'''
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -136,20 +127,41 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     conn, addr = s.accept()
     with conn:
         print(f"Connected by {addr}")
+
         while True:
             data = conn.recv(1024)
             if not data:
                 break
             key = data.decode('utf-8')
-            if key == "s":
+
+            if key == "s" and started == False:
                 response = str(image_numbers[current_index])
                 show_image(image_paths[current_index])
                 current_index += 1
-            elif key in ["y", "n"]:
+            elif key in ["y", "n"] and started == True:
                 if current_index < len(image_numbers):
                     response = str(image_numbers[current_index])
                     show_image(image_paths[current_index])
                     current_index += 1
+                    process_keypress(key)
                 else:
                     response = "end"
+                     # Clean up
+                    if opened_image:
+                        opened_image.close()
+                        # Save data to a CSV file
+                        output_file = "keypress_data_with_attributes.csv"
+                        with open(output_file, mode="w", newline="") as file:
+                            writer = csv.writer(file)
+                            writer.writerow(["Image Index", "Image Opened", "Colour", "Word", "Key Pressed", "Elapsed Time (seconds)"])
+                            writer.writerows(data)
+                            print(f"Key press data saved to {output_file}.")
+                            print("Program finished.")
+
+#TODO: Call scoring function, generate score and store it to be sent to client at end
+
+            else:
+                response = "Invalid key press."
             conn.sendall(response.encode('utf-8'))
+
+            #TODO: Add a way to manually exit, add a response for invalid keypresses (maybe do the invalid keys on the client side)
