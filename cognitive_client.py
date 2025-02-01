@@ -10,11 +10,16 @@ HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 
 def send_keystroke(key):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        s.sendall(key.encode('utf-8'))
-        data = s.recv(1024)
-    return data.decode('utf-8')
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((HOST, PORT))
+            s.sendall(key.encode('utf-8'))
+            data = s.recv(1024)
+        return data.decode('utf-8')
+    except ConnectionRefusedError:
+        print("Connection refused. Retrying...")
+        time.sleep(1)
+        return send_keystroke(key)
 
 # List of image numbers (shuffled for randomness)
 image_numbers = list(range(1, 31))  # Assuming 30 images
