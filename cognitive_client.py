@@ -4,10 +4,20 @@ import os
 import random
 import time
 import csv
+import socket
+
+HOST = "100.120.18.53"  # The server's hostname or IP address
+PORT = 65432  # The port used by the server
+
+def send_keystroke(key):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
+        s.sendall(key.encode('utf-8'))
+        data = s.recv(1024)
+    return data.decode('utf-8')
 
 # List of image numbers (shuffled for randomness)
 image_numbers = list(range(1, 31))  # Assuming 30 images
-random.shuffle(image_numbers)
 
 # Defining attributes for each image
 image_colour = {
@@ -33,54 +43,20 @@ while not keyboard.is_pressed("s"):
     pass
 keyboard.wait("s")  # Wait for the key release
 
-#TODO: Send keypress to server then wait for response
+# Send 's' keystroke to the server to start the process
+response = send_keystroke("s")
+print(f"Received image number: {response}")
 
-print("Starting the randomized image sequence...")
-
-# Function to handle key presses
-def process_keypress(key):
-    global current_index, start_time
-    elapsed_time = time.time() - start_time
-    page_number = image_numbers[current_index]  # Get the current page number
-    attribute1 = image_colour.get(page_number, "unknown")  # Get attributes or default to 'unknown'
-    attribute2 = image_word.get(page_number, "unknown")  # Get attributes or default to 'unknown'
-    data.append([current_index + 1, f"page_{page_number}", attribute1, attribute2, key, elapsed_time])
-    print(f"'{key}' pressed for image {current_index + 1}. Time: {elapsed_time:.2f} seconds. Attributes: {attribute1}.")
-
-#TODO: Modify the above to send the keypress to the server and get a response
-
-    current_index += 1
-    if current_index < len(image_paths):
-        show_image(image_paths[current_index])
-    else:
-        print("No more images to display. Exiting program.")
-        return False
-
-    start_time = time.time()  # Reset the start time for the next image
-    return True
-
-#TODO: I assume the above should be removed and timing should take place on server side only
-
-
-# Start showing images
-try:
-    show_image(image_paths[current_index])
-    while current_index < len(image_paths):
-        if keyboard.is_pressed("y"):  # If 'y' is pressed
-            keyboard.wait("y")  # Wait for the key release
-            if not process_keypress("y"):
-                break
-
-        elif keyboard.is_pressed("n"):  # If 'n' is pressed
-            keyboard.wait("n")  # Wait for the key release
-            if not process_keypress("n"):
-                break
-
-        elif keyboard.is_pressed("esc"):  # Exit the program if 'esc' is pressed
-            print("Exiting program.")
-            break
-
-except Exception as e:
-    print(f"An error occurred: {e}")
-finally:
-    print("Program finished.")
+# Main loop to handle keystrokes
+while response != "end":
+    if keyboard.is_pressed("y"):
+        keyboard.wait("y")
+        response = send_keystroke("y")
+        print(f"Received image number: {response}")
+    elif keyboard.is_pressed("n"):
+        keyboard.wait("n")
+        response = send_keystroke("n")
+        print(f"Received image number: {response}")
+    elif keyboard.is_pressed("esc"):
+        print("Exiting program.")
+        break

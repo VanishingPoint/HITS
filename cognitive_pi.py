@@ -4,6 +4,11 @@ import os
 import random
 import time
 import csv
+import socket
+
+HOST = "100.120.18.53"  # The server's hostname or IP address
+PORT = 65432  # The port used by the server
+#TODO: Change this
 
 # List of image numbers (shuffled for randomness)
 image_numbers = list(range(1, 31))  # Assuming 30 images
@@ -18,6 +23,8 @@ image_word = {
     1: "red", 2: "green", 3: "blue", 4: "yellow", 5: "blue", 6: "red", 7: "blue", 8: "red", 9: "yellow", 10: "red", 
     11: "green", 12: "yellow", 13: "yellow", 14: "green", 15: "red", 16: "blue", 17: "yellow", 18: "green", 19: "blue", 20: "yellow", 
     21: "green", 22: "green", 23: "red", 24: "blue", 25: "green", 26: "blue", 27: "blue", 28: "yellow", 29: "blue", 30: "red"}
+
+#TODO: Determine if this list is needed on both the pi and the client or if we can scrap it on the pi
 
 # List of image paths based on shuffled numbers
 image_paths = [
@@ -120,3 +127,29 @@ finally:
     print("Program finished.")
 
 #TODO: Call scoring function, generate score and store it to be sent to client at end
+
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((HOST, PORT))
+    s.listen()
+    print(f"Server listening on {HOST}:{PORT}")
+    conn, addr = s.accept()
+    with conn:
+        print(f"Connected by {addr}")
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            key = data.decode('utf-8')
+            if key == "s":
+                response = str(image_numbers[current_index])
+                show_image(image_paths[current_index])
+                current_index += 1
+            elif key in ["y", "n"]:
+                if current_index < len(image_numbers):
+                    response = str(image_numbers[current_index])
+                    show_image(image_paths[current_index])
+                    current_index += 1
+                else:
+                    response = "end"
+            conn.sendall(response.encode('utf-8'))
