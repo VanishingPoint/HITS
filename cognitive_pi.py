@@ -32,7 +32,7 @@ image_paths = [
 
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
-data = []  # To store keypress data
+#data = []  # To store keypress data
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
