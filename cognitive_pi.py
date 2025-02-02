@@ -32,7 +32,6 @@ image_paths = [
 
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
-#data = []  # To store keypress data
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
@@ -92,4 +91,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         conn, addr = s.accept()
         handle_client(conn)
 
-        #TODO: Score the data
+#TODO: Score the data

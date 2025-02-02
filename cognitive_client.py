@@ -21,7 +21,6 @@ def send_keystroke(key):
 
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
-#data = []  # To store keypress data
 
 print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
@@ -45,6 +44,8 @@ def show_image(image_path):
         opened_image.close()
     opened_image = Image.open(image_path)
     opened_image.show()
+
+#TODO:Make the images close (it doesnt work rn)
 
 show_image(image_paths[0]) #show the explination image
  #TODO: The current explination image says press c to continue, should be s to start, esc to exit
