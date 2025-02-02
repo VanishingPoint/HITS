@@ -1,7 +1,7 @@
 from PIL import Image
 import os
-import time
 import socket
+import time
 from pynput import keyboard
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
@@ -22,7 +22,6 @@ def send_keystroke(key):
 current_index = 0  # Tracks the current image index
 opened_image = None  # Keeps reference to the currently open PIL Image object
 #data = []  # To store keypress data
-start_time = time.time()  # Start timing
 
 print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
@@ -47,28 +46,34 @@ def show_image(image_path):
     opened_image = Image.open(image_path)
     opened_image.show()
 
+show_image(image_paths[0]) #show the explination image
+ #TODO: The current explination image says press c to continue, should be s to start, esc to exit
+
 # Flag to indicate if the sequence has started
 started = False
 
 def on_press(key):
     global started
     try:
-        current_index = response #TODO: Make sure this works and does not send something to pi
-        show_image(image_paths[current_index]) #brings up the explination image on first run, then will bring up the correct "answer key" image
-        #TODO: The current explination image says press c to continue, should be s to start, esc to exit
         if key.char == 's' and not started:
             started = True
             response = send_keystroke('s')
             print(f"Received image number: {response}")
+            show_image(image_paths[int(response) - 1])
         elif key.char == 'y' and started:
             response = send_keystroke('y')
             print(f"Received image number: {response}")
+            if response != "end":
+                show_image(image_paths[int(response) - 1])
         elif key.char == 'n' and started:
             response = send_keystroke('n')
             print(f"Received image number: {response}")
+            if response != "end":
+                show_image(image_paths[int(response) - 1])
         elif key.char == 'esc':
             print("Exiting program.")
             return False
+
     except AttributeError:
         pass
 
