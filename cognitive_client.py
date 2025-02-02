@@ -29,11 +29,11 @@ print("Press 'esc' to exit the program.")
 
 #TODO: Maybe remove these prints if we are displaying an image that contains the same info
 
-image_numbers = list(range(1, 31)) #image 0 is explination, others are answers corresponding to the participant images
+image_numbers = list(range(0, 31)) #image 0 is explination, others are answers corresponding to the participant images
 
 # List of image paths based on shuffled numbers
 image_paths = [
-    fr"/Users/test/Documents/HITS/Cognitive Proctor Images/page_{num}.png"
+    fr"/Users/test/Documents/HITS/Cognitive Proctor Images/cognitive_page_{num}.png"
     for num in image_numbers
 ]
 #NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
@@ -59,17 +59,17 @@ def on_press(key):
             started = True
             response = send_keystroke('s')
             print(f"Received image number: {response}")
-            show_image(image_paths[int(response) - 1])
+            show_image(image_paths[int(response)])
         elif key.char == 'y' and started:
             response = send_keystroke('y')
             print(f"Received image number: {response}")
             if response != "end":
-                show_image(image_paths[int(response) - 1])
+                show_image(image_paths[int(response)])
         elif key.char == 'n' and started:
             response = send_keystroke('n')
             print(f"Received image number: {response}")
             if response != "end":
-                show_image(image_paths[int(response) - 1])
+                show_image(image_paths[int(response)])
         elif key.char == 'esc':
             print("Exiting program.")
             return False
