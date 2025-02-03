@@ -7,7 +7,6 @@ from pdf2image import convert_from_path
 # Eye Tracking Proctor Images = eyetrackingproctor_page_#.png
 # Eye Tracking Participant Images = eyetracking_page#.png
 # Main Menu Proctor Images = menu_#.png
-# Main menu Images TO DO
 
 # Specify the path to your PDF and Poppler's bin folder
 
