@@ -28,7 +28,7 @@ print("Press 'esc' to exit the program.")
 
 #TODO: Maybe remove these prints if we are displaying an image that contains the same info
 
-image_numbers = list(range(0, 31)) #image 0 is explination, others are answers corresponding to the participant images
+image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
 # List of image paths based on shuffled numbers
 image_paths = [
@@ -36,7 +36,7 @@ image_paths = [
     for num in image_numbers
 ]
 #NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
-
+#TODO should always display cognitive_page_0 first as it displays the instructions
 
 def show_image(image_path):
     global opened_image
@@ -48,7 +48,6 @@ def show_image(image_path):
 #TODO:Make the images close (it doesnt work rn)
 
 show_image(image_paths[0]) #show the explination image
- #TODO: The current explination image says press c to continue, should be s to start, esc to exit
 
 # Flag to indicate if the sequence has started
 started = False
