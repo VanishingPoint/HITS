@@ -42,6 +42,8 @@ def show_image(image_path):
     opened_image.show()
 
 #TODO: Make the images fullscreen, make the images actually close when the next image is shown
+#TODO: We have an instructions page for the proctor, maybe display an instruction page to the participant as well
+#TODO: It is possible to have a single extraneous entry in the log file, this is because the scipt logs a single keypress after the last image is shown
 
 def handle_client(conn):
     global current_index, start_time, session_ended
