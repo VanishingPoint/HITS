@@ -1,0 +1,16 @@
+import serial
+
+if __name__ == '__main__':
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1) #NOTE: The serial device depends on USB port, the baiudrate must match the arduino
+    ser.reset_input_buffer()
+
+    while True: #NOTE: Right now this will loop forever, unless 'end' is sent from the arduino
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').rstrip()
+            print(line) #TODO: Store the 2 numbers somewhere to send it to the final scoring algo, write smth that has a delim cahr detection to seperate the numbers
+            if line == 'end':
+                break
+
+#NOTE: you will get 2 numbers, one for eyes closed, one for eyes open. 
+
+#TODO: Communicate with the client to start each test, must store the results for each seperately
