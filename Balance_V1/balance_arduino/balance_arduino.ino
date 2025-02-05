@@ -26,7 +26,6 @@ void setup() {
   Wire.endTransmission();
   delay(10);
 
-  startMillis = millis();
 }
 
 void loop() {
@@ -34,7 +33,7 @@ void loop() {
     while (Serial.available() == 0 || Serial.read() != 'start') {
         // Do nothing, just wait for 'start' to be received
     }
-    float distance == getDistance();
+    float distance = getDistance();
     Serial.println(String(distance));
 }
 
@@ -54,7 +53,9 @@ float getDistance() {
     //Duration can be modified here, it is in milliseconds
     unsigned long duration = 120000, startMillis, previousMillis = 0, timestep = 0;
 
-    while true {
+
+    startMillis = millis();
+    while (true) {
 
         unsigned long now = millis();
 
