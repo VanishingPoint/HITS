@@ -30,10 +30,12 @@ void setup() {
 }
 
 void loop() {
-    //TODO: Wait for a start character from the Pi
+    // Wait for a start character from the Pi
+    while (Serial.available() == 0 || Serial.read() != 'start') {
+        // Do nothing, just wait for 'start' to be received
+    }
     float distance == getDistance();
     Serial.println(String(distance));
-    //TODO: Send an end character to the Pi
 }
 
 float getDistance() {
