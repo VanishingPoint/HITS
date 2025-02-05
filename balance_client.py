@@ -1,45 +1,44 @@
-import tkinter as tk
+import socket
+import time
+import sys
+import select
 
-class TimerApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Timer App")
+def wait_for_keypress():
+    print("Press 's' to start the task.")
+    while True:
+        if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+            key = sys.stdin.read(1)
+            if key == 's':
+                return
 
-        # Initialize timer variables
-        self.seconds = 5
-        self.timer_running = False
+def send_start_signal(sock):
+    sock.sendall(b'start')
 
-        # Create a label to display the timer
-        self.timer_label = tk.Label(root, text="00:00", font=("Helvetica", 48))
-        self.timer_label.pack(pady=20)
+def start_timer():
+    for remaining in range(120, 0, -1):
+        sys.stdout.write("\r")
+        sys.stdout.write("Time remaining: {:2d} seconds.".format(remaining))
+        sys.stdout.flush()
+        time.sleep(1)
+    sys.stdout.write("\rTime is up! Waiting for response from the Pi...\n")
 
-        # Create Start and Stop buttons
-        self.start_button = tk.Button(root, text="Start", command=self.start_timer)
-        self.stop_button = tk.Button(root, text="Stop", command=self.stop_timer)
-        self.start_button.pack(side=tk.LEFT, padx=10)
-        self.stop_button.pack(side=tk.LEFT, padx=10)
+def wait_for_response(sock):
+    response = sock.recv(1024)
+    print(f"Received response from Pi: {response.decode()}")
 
-        # Update the timer display
-        self.update_timer()
+def main():
+    # Set up the socket connection to the Pi
+    pi_address = ('100.120.18.53', 65433)  #TODO: Replace IP address when we switch to local wifi
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(pi_address)
 
-    def start_timer(self):
-        if not self.timer_running:
-            self.timer_running = True
-            self.update_timer()
-
-    def stop_timer(self):
-        self.timer_running = False
-
-    def update_timer(self):
-        if self.timer_running:
-            self.seconds += 1
-            minutes = self.seconds // 60
-            seconds = self.seconds % 60
-            time_str = f"{minutes:02}:{seconds:02}"
-            self.timer_label.config(text=time_str)
-            self.root.after(1000, self.update_timer)  # Update every 1 second
+    try:
+        wait_for_keypress()
+        send_start_signal(sock)
+        start_timer()
+        wait_for_response(sock)
+    finally:
+        sock.close()
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = TimerApp(root)
-    root.mainloop()
+    main()

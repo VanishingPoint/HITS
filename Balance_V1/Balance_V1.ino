@@ -6,6 +6,7 @@
 
 #include <Wire.h>
 
+
 int ADXL345 = 0x53;  // ADXL345 I2C address
 int MPU6050 = 0x68;  // Default MPU6050 I2C address
 
