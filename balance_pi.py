@@ -6,7 +6,7 @@ PORT = 65433      # Port to listen on
 
 def main():
     # Set up the serial connection to the Arduino
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)  # Adjust as necessary
+    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Adjust as necessary
     ser.reset_input_buffer()
 
     # Set up the socket server
