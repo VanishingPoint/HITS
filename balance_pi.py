@@ -23,7 +23,7 @@ def main():
                     break
                 if data.decode('utf-8') == 'start':
                     # Send start signal to Arduino
-                    ser.write(b'start\n')
+                    ser.write(b's\n')
                     print("Sent 'start' to Arduino")
 
                     # Wait for response from Arduino

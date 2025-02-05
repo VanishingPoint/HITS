@@ -26,12 +26,14 @@ void setup() {
   Wire.endTransmission();
   delay(10);
 
+  Serial.println("Serial Connection Init.");
+
 }
 
 void loop() {
     // Wait for a start character from the Pi
-    while (Serial.available() == 0 || Serial.read() != 'start') {
-        // Do nothing, just wait for 'start' to be received
+    while (Serial.available() == 0 || Serial.read() != 's') {
+        // Do nothing, just wait for 's' to be received
     }
     float distance = getDistance();
     Serial.println(String(distance));
@@ -53,6 +55,7 @@ float getDistance() {
     //Duration can be modified here, it is in milliseconds
     unsigned long duration = 120000, startMillis, previousMillis = 0, timestep = 0;
 
+    Serial.println("Starting Distance Measurement");
 
     startMillis = millis();
     while (true) {
