@@ -16,6 +16,8 @@ float X_MPU, Y_MPU, Z_MPU;
 // Averaged values
 float X_avg, Y_avg, Z_avg;
 float Acceleration, OldVelocity = 0, Distance = 0;
+float Filt_ADX_X = 0, Filt_ADX_Y = 0, Filt_ADX_Z = 0;
+float Filt_MPU_X = 0, Filt_MPU_Y = 0, Filt_MPU_Z = 0;
 float timestep_sec = 0, NormalizedAcc = 0;
 float threshold = 0.0;
 const float dt = 0.1;
@@ -66,6 +68,11 @@ void loop() {
   Y_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
   Z_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
 
+
+  Filt_ADX_X = X_ADX-(-0.9);
+  Filt_ADX_Y = Y_ADX;
+  Filt_ADX_Z = Z_ADX-(-0.09);
+
   // Read MPU6050 Data
   Wire.beginTransmission(MPU6050);
   Wire.write(0x3B);
@@ -76,10 +83,15 @@ void loop() {
   Y_MPU = (Wire.read() << 8 | Wire.read()) / 16384.0;
   Z_MPU = (Wire.read() << 8 | Wire.read())/ 16384.0;
 
+  Filt_MPU_X = X_MPU-(-0.93);
+  Filt_MPU_Y = Y_MPU-(-0.10);
+  Filt_MPU_Z = Z_MPU-(0.08);
+
+
   // Compute Averaged Values
-  X_avg = (X_ADX + X_MPU) / 2.0;
-  Y_avg = (Y_ADX + Y_MPU) / 2.0;
-  Z_avg = (Z_ADX + Z_MPU) / 2.0;
+  X_avg = (Filt_ADX_X + Filt_MPU_X) / 2.0;
+  Y_avg = (Filt_ADX_Y + Filt_MPU_Y) / 2.0;
+  Z_avg = (Filt_ADX_Z + Filt_MPU_Z) / 2.0;
 
   // Compute Acceleration Magnitude
   Acceleration = sqrt((X_avg * X_avg) + (Y_avg * Y_avg) + (Z_avg * Z_avg));
@@ -102,11 +114,17 @@ void loop() {
   Serial.print("x_MPU: "); Serial.print(X_MPU);
   Serial.print("y_MPU: "); Serial.print(Y_MPU);
   Serial.print("z_MPU: "); Serial.print(Z_MPU); 
+  //Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
+  //Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
+  //Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
+  //Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
+  //Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
+  //Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
   Serial.print("X_avg: "); Serial.print(X_avg);
   Serial.print(" Y_avg: "); Serial.print(Y_avg);
   Serial.print(" Z_avg: "); Serial.print(Z_avg);
   Serial.print(" A: "); Serial.print(Acceleration);
-  Serial.print(" NA: "); Serial.print(NormalizedAcc);
+  //Serial.print(" NA: "); Serial.print(NormalizedAcc);
   Serial.print(" D [m]: "); Serial.print(Distance);
   Serial.print(" V [m/s]: "); Serial.println(OldVelocity);
 
