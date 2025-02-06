@@ -18,8 +18,9 @@ float X_avg, Y_avg, Z_avg;
 float Acceleration, OldVelocity = 0, Distance = 0;
 float Filt_ADX_X = 0, Filt_ADX_Y = 0, Filt_ADX_Z = 0;
 float Filt_MPU_X = 0, Filt_MPU_Y = 0, Filt_MPU_Z = 0;
+float Adj_MPU_X = 0, Adj_MPU_Y = 0, Adj_MPU_Z = 0;
 float timestep_sec = 0, NormalizedAcc = 0;
-float threshold = 0.2;
+float threshold = 0;
 const float dt = 0.1;
 unsigned long duration = 120000, startMillis, previousMillis = 0, timestep = 0;
 
@@ -69,9 +70,9 @@ void loop() {
   Z_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
 
 
-  Filt_ADX_X = X_ADX-(-0.9);
-  Filt_ADX_Y = Y_ADX-0.03;
-  Filt_ADX_Z = Z_ADX-(-0.08);
+  Filt_ADX_X = X_ADX-(-0.91);
+  Filt_ADX_Y = Y_ADX-0.01;
+  Filt_ADX_Z = Z_ADX-(-0.04);
 
   // Read MPU6050 Data
   Wire.beginTransmission(MPU6050);
@@ -84,22 +85,27 @@ void loop() {
   Z_MPU = (Wire.read() << 8 | Wire.read())/ 16384.0;
 
   Filt_MPU_X = X_MPU-(0.93);
-  Filt_MPU_Y = Y_MPU-(-0.04);
+  Filt_MPU_Y = Y_MPU-(-0.11);
   Filt_MPU_Z = Z_MPU-(0.04);
+
+  Adj_MPU_X = Filt_MPU_X*-1;
+  Adj_MPU_Y = Filt_MPU_Y*-1;
+  Adj_MPU_Z = Filt_MPU_Z*-1;
 
 
   // Compute Averaged Values
-  X_avg = (Filt_ADX_X + Filt_MPU_X) / 2.0;
-  Y_avg = (Filt_ADX_Y + Filt_MPU_Y) / 2.0;
-  Z_avg = (Filt_ADX_Z + Filt_MPU_Z) / 2.0;
+  X_avg = (Filt_ADX_X + Adj_MPU_X) / 2.0;
+  Y_avg = (Filt_ADX_Y + Adj_MPU_Y) / 2.0;
+  Z_avg = (Filt_ADX_Z + Adj_MPU_Z) / 2.0;
 
   // Compute Acceleration Magnitude
+  // I am not sure if we need to include the x acceleration here - talk to triss about it 
   Acceleration = sqrt((X_avg * X_avg) + (Y_avg * Y_avg) + (Z_avg * Z_avg));
 
   // Time Calculation
   timestep_sec = timestep / 1000.0;
   //NormalizedAcc = abs(Acceleration - 1); // in g
-  NormalizedAcc = abs(Acceleration);
+  NormalizedAcc = abs(Acceleration)-0.02;
 
   if (NormalizedAcc > threshold) {
     Distance += OldVelocity * timestep_sec + 0.5 * NormalizedAcc * timestep_sec * timestep_sec;
@@ -109,24 +115,25 @@ void loop() {
   }
 
   // Print Data
-  //Serial.print("x_ADX: "); Serial.print(X_ADX);
-  //Serial.print("y_ADX: "); Serial.print(Y_ADX);
-  //Serial.print("z_ADX: "); Serial.print(Z_ADX);
- // Serial.print("x_MPU: "); Serial.print(X_MPU);
-  //Serial.print("y_MPU: "); Serial.print(Y_MPU);
-  //Serial.print("z_MPU: "); Serial.print(Z_MPU); 
-  Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
-  Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
-  Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
-  Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
-  Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
-  Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
+  Serial.print("x_ADX: "); Serial.print(X_ADX);
+  Serial.print("y_ADX: "); Serial.print(Y_ADX);
+  Serial.print("z_ADX: "); Serial.print(Z_ADX);
+  Serial.print("x_MPU: "); Serial.print(X_MPU);
+  Serial.print("y_MPU: "); Serial.print(Y_MPU);
+  Serial.print("z_MPU: "); Serial.print(Z_MPU); 
+  //Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
+  //Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
+  //Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
+  //Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
+ //Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
+ //Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
   Serial.print("X_avg: "); Serial.print(X_avg);
   Serial.print(" Y_avg: "); Serial.print(Y_avg);
   Serial.print(" Z_avg: "); Serial.print(Z_avg);
   Serial.print(" A: "); Serial.print(Acceleration);
   Serial.print(" NA: "); Serial.print(NormalizedAcc);
-  Serial.print(" D [m]: "); Serial.print(Distance);
+  // Randomly off by a factor of 10 but pretty close to acurate otherwise I think
+  Serial.print(" D [cm]: "); Serial.print(((Distance/10))*100);
   Serial.print(" V [m/s]: "); Serial.println(OldVelocity);
 
   timestep = millis() - now;
