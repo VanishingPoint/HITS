@@ -1,6 +1,6 @@
 // IGEN 430 Balance Testing with ADX345 and GY-521 (MPU6050)
 
-//TODO: Replace the filtering code when Stephanie updates it
+//TODO: Replace the filtering code when Stephanie updates it (UPDATED Feb 6)
 
 #include <Wire.h>
 
@@ -48,8 +48,11 @@ float getDistance() {
     // Averaged values
     float X_avg, Y_avg, Z_avg;
     float Acceleration, OldVelocity = 0, Distance = 0;
+    float Filt_ADX_X = 0, Filt_ADX_Y = 0, Filt_ADX_Z = 0;
+    float Filt_MPU_X = 0, Filt_MPU_Y = 0, Filt_MPU_Z = 0;
+    float Adj_MPU_X = 0, Adj_MPU_Y = 0, Adj_MPU_Z = 0;
     float timestep_sec = 0, NormalizedAcc = 0;
-    float threshold = 0.0;
+    float threshold = 0;
     const float dt = 0.1;
 
     //Duration can be modified here, it is in milliseconds
@@ -86,6 +89,14 @@ float getDistance() {
         Y_MPU = (Wire.read() << 8 | Wire.read()) / 16384.0;
         Z_MPU = (Wire.read() << 8 | Wire.read())/ 16384.0;
 
+        Filt_MPU_X = X_MPU-(0.93);
+        Filt_MPU_Y = Y_MPU-(-0.11);
+        Filt_MPU_Z = Z_MPU-(0.04);
+
+        Adj_MPU_X = Filt_MPU_X*-1;
+        Adj_MPU_Y = Filt_MPU_Y*-1;
+        Adj_MPU_Z = Filt_MPU_Z*-1;
+
         // Compute Averaged Values
         X_avg = (X_ADX + X_MPU) / 2.0;
         Y_avg = (Y_ADX + Y_MPU) / 2.0;
@@ -96,7 +107,7 @@ float getDistance() {
 
         // Time Calculation
         timestep_sec = timestep / 1000.0;
-        NormalizedAcc = abs(Acceleration - 1); // in g
+        NormalizedAcc = abs(Acceleration - 1)-0.02; // in g
 
         if (NormalizedAcc > threshold) {
             Distance += OldVelocity * timestep_sec + 0.5 * NormalizedAcc * timestep_sec * timestep_sec;
