@@ -66,6 +66,7 @@ float getDistance() {
         unsigned long now = millis();
 
         if (now - startMillis >= duration) {
+            Distance = Distance * 10;
             return Distance;
         }
 
