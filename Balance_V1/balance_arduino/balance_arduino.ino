@@ -95,7 +95,7 @@ float getDistance() {
 
         Adj_MPU_X = Filt_MPU_X*-1;
         Adj_MPU_Y = Filt_MPU_Y*-1;
-        Adj_MPU_Z = Filt_MPU_Z*-1;
+        Adj_MPU_Z = Filt_MPU_Z*1;
 
         // Compute Averaged Values
         X_avg = (X_ADX + X_MPU) / 2.0;
@@ -107,7 +107,7 @@ float getDistance() {
 
         // Time Calculation
         timestep_sec = timestep / 1000.0;
-        NormalizedAcc = abs(Acceleration - 1)-0.02; // in g
+        NormalizedAcc = abs(Acceleration)-0.02; // in g
 
         if (NormalizedAcc > threshold) {
             Distance += OldVelocity * timestep_sec + 0.5 * NormalizedAcc * timestep_sec * timestep_sec;

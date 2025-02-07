@@ -90,7 +90,7 @@ void loop() {
 
   Adj_MPU_X = Filt_MPU_X*-1;
   Adj_MPU_Y = Filt_MPU_Y*-1;
-  Adj_MPU_Z = Filt_MPU_Z*-1;
+  Adj_MPU_Z = Filt_MPU_Z*1;
 
 
   // Compute Averaged Values
