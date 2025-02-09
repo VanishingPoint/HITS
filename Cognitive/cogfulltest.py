@@ -5,6 +5,7 @@ import time
 import csv
 import socket
 import tkinter as tk
+import threading
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
@@ -55,7 +56,7 @@ def showPIL(pilImage):
     image = ImageTk.PhotoImage(pilImage)
     imagesprite = canvas.create_image(w/2, h/2, image=image)
     root.after(5000, close_image_window)  # Schedule the window to close after 5000ms (5 seconds)
-    root.mainloop()
+    threading.Thread(target=root.mainloop).start()  # Run the Tkinter main loop in a separate thread
 
 def close_image_window():
     global root
