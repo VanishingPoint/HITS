@@ -1,7 +1,6 @@
 import sys
 import tkinter
 from PIL import Image, ImageTk
-import time
 
 # Global variable to store the root window reference
 root = None
