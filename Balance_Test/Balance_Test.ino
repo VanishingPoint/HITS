@@ -115,18 +115,18 @@ void loop() {
   }
 
   // Print Data
-  Serial.print("x_ADX: "); Serial.print(X_ADX);
-  Serial.print("y_ADX: "); Serial.print(Y_ADX);
-  Serial.print("z_ADX: "); Serial.print(Z_ADX);
-  Serial.print("x_MPU: "); Serial.print(X_MPU);
-  Serial.print("y_MPU: "); Serial.print(Y_MPU);
-  Serial.print("z_MPU: "); Serial.print(Z_MPU); 
-  //Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
-  //Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
-  //Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
-  //Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
- //Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
- //Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
+ // Serial.print("x_ADX: "); Serial.print(X_ADX);
+  //Serial.print("y_ADX: "); Serial.print(Y_ADX);
+  //Serial.print("z_ADX: "); Serial.print(Z_ADX);
+ // Serial.print("x_MPU: "); Serial.print(X_MPU);
+ // Serial.print("y_MPU: "); Serial.print(Y_MPU);
+  ///Serial.print("z_MPU: "); Serial.print(Z_MPU); 
+  Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
+  Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
+  Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
+  Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
+ Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
+ Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
   Serial.print("X_avg: "); Serial.print(X_avg);
   Serial.print(" Y_avg: "); Serial.print(Y_avg);
   Serial.print(" Z_avg: "); Serial.print(Z_avg);
