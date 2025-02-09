@@ -24,7 +24,7 @@ image_word = {
 
 # List of image paths based on shuffled numbers
 image_paths = [
-    fr"/home/hits/Documents/GitHub/HITS/Cognitive Participant Images/page_{num}.png"
+    fr"/home/hits/Documents/GitHub/HITS/Cognitive/Cognitive Participant Images/page_{num}.png"
     for num in image_numbers
 ]
 
