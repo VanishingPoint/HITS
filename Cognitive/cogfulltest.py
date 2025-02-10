@@ -1,17 +1,18 @@
-from PIL import Image, ImageTk
+from PIL import Image
 import os
 import random
 import time
 import csv
 import socket
-import tkinter as tk
 import threading
+import tkinter
+from PIL import Image, ImageTk
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 
 # List of image numbers (shuffled for randomness)
-image_numbers = list(range(1, 17))  # Assuming 16 images
+image_numbers = list(range(1, 17))  # Assuming 15 images
 random.shuffle(image_numbers)
 
 # Defining attributes for each image
@@ -29,21 +30,22 @@ image_paths = [
 ]
 
 current_index = 0  # Tracks the current image index
-root = None  # Global variable to store the root window reference
+opened_image = None  # Keeps reference to the currently open PIL Image object
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
+# Global variable to store the root window reference
+root = None
+
 def showPIL(pilImage):
     global root
-    if root:
-        root.destroy()
-    root = tk.Tk()
+    root = tkinter.Tk()
     w, h = root.winfo_screenwidth(), root.winfo_screenheight()
     root.overrideredirect(1)
     root.geometry("%dx%d+0+0" % (w, h))
     root.focus_set()    
     root.bind("<Escape>", lambda e: (e.widget.withdraw(), e.widget.quit()))
-    canvas = tk.Canvas(root, width=w, height=h)
+    canvas = tkinter.Canvas(root, width=w, height=h)
     canvas.pack()
     canvas.configure(background='black')
     imgWidth, imgHeight = pilImage.size
@@ -63,6 +65,14 @@ def close_image_window():
         root.destroy()
         root = None
 
+# Function to open and display an image
+def show_image(image_path):
+    global opened_image
+    if opened_image:
+        opened_image.close()
+    opened_image = Image.open(image_path)
+    threading.Thread(target=showPIL, args=(opened_image,)).start()
+
 def handle_client(conn):
     global current_index, start_time, session_ended
     with conn:
@@ -76,17 +86,15 @@ def handle_client(conn):
                 continue
             end_time = time.time()
             time_taken = end_time - start_time
-            if key == "s":
+            if key == "s": #TODO: Display an image with instructions to the participant until s pressed, allow for proctor to exit ("page 0")
                 response = str(image_numbers[current_index])
-                pilImage = Image.open(image_paths[current_index])
-                threading.Thread(target=showPIL, args=(pilImage,)).start()
+                show_image(image_paths[current_index])
                 start_time = time.time()  # Reset start time for the next image
                 current_index += 1
             elif key in ["y", "n"]:
                 if current_index < len(image_numbers):
                     response = str(image_numbers[current_index])
-                    pilImage = Image.open(image_paths[current_index])
-                    threading.Thread(target=showPIL, args=(pilImage,)).start()
+                    show_image(image_paths[current_index])
                     start_time = time.time()  # Reset start time for the next image
                     current_index += 1
                 else:
@@ -103,21 +111,12 @@ def handle_client(conn):
                 writer.writerow(log_data)
             conn.sendall(response.encode('utf-8'))
 
-def start_server():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
-        s.listen()
-        print(f"Server listening on {HOST}:{PORT}")
-        while True:
-            conn, addr = s.accept()
-            threading.Thread(target=handle_client, args=(conn,)).start()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((HOST, PORT))
+    s.listen()
+    print(f"Server listening on {HOST}:{PORT}")
+    while True:
+        conn, addr = s.accept()
+        handle_client(conn)
 
-if __name__ == "__main__":
-    # Start the server in a separate thread
-    server_thread = threading.Thread(target=start_server)
-    server_thread.start()
-
-    # Run the Tkinter main loop in the main thread
-    root = tk.Tk()
-    root.withdraw()  # Hide the root window
-    root.mainloop()
+#TODO: Score the data
