@@ -33,7 +33,6 @@ root = None  # Global variable to store the root window reference
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
-# Function to open and display an image in fullscreen
 def showPIL(pilImage):
     global root
     if root:
@@ -56,7 +55,7 @@ def showPIL(pilImage):
     image = ImageTk.PhotoImage(pilImage)
     imagesprite = canvas.create_image(w/2, h/2, image=image)
     root.after(5000, close_image_window)  # Schedule the window to close after 5000ms (5 seconds)
-    threading.Thread(target=root.mainloop).start()  # Run the Tkinter main loop in a separate thread
+    root.mainloop()
 
 def close_image_window():
     global root
@@ -80,14 +79,14 @@ def handle_client(conn):
             if key == "s":
                 response = str(image_numbers[current_index])
                 pilImage = Image.open(image_paths[current_index])
-                showPIL(pilImage)
+                threading.Thread(target=showPIL, args=(pilImage,)).start()
                 start_time = time.time()  # Reset start time for the next image
                 current_index += 1
             elif key in ["y", "n"]:
                 if current_index < len(image_numbers):
                     response = str(image_numbers[current_index])
                     pilImage = Image.open(image_paths[current_index])
-                    showPIL(pilImage)
+                    threading.Thread(target=showPIL, args=(pilImage,)).start()
                     start_time = time.time()  # Reset start time for the next image
                     current_index += 1
                 else:
@@ -104,10 +103,21 @@ def handle_client(conn):
                 writer.writerow(log_data)
             conn.sendall(response.encode('utf-8'))
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    print(f"Server listening on {HOST}:{PORT}")
-    while True:
-        conn, addr = s.accept()
-        handle_client(conn)
+def start_server():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        print(f"Server listening on {HOST}:{PORT}")
+        while True:
+            conn, addr = s.accept()
+            threading.Thread(target=handle_client, args=(conn,)).start()
+
+if __name__ == "__main__":
+    # Start the server in a separate thread
+    server_thread = threading.Thread(target=start_server)
+    server_thread.start()
+
+    # Run the Tkinter main loop in the main thread
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+    root.mainloop()
