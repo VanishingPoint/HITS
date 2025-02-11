@@ -72,8 +72,8 @@ void loop() {
 
 
   Filt_ADX_X = X_ADX-(-0.91);
-  Filt_ADX_Y = Y_ADX-(-0.01);
-  Filt_ADX_Z = Z_ADX-(-0.03);
+  Filt_ADX_Y = Y_ADX-(-0.02);
+  Filt_ADX_Z = Z_ADX-(-0.09);
 
   // Read MPU6050 Data
   Wire.beginTransmission(MPU6050);
@@ -86,8 +86,8 @@ void loop() {
   Z_MPU = (Wire.read() << 8 | Wire.read())/ 16384.0;
 
   Filt_MPU_X = X_MPU-(0.93);
-  Filt_MPU_Y = Y_MPU-(-0.10);
-  Filt_MPU_Z = Z_MPU-(0.02);
+  Filt_MPU_Y = Y_MPU-(-0.03);
+  Filt_MPU_Z = Z_MPU-(0.03);
 
   Adj_MPU_X = Filt_MPU_X*-1;
   Adj_MPU_Y = Filt_MPU_Y*-1;
@@ -127,21 +127,21 @@ void loop() {
   }
   // Print Data
   //Serial.print("x_ADX: "); Serial.print(X_ADX);
-  //Serial.print("y_ADX: "); Serial.print(Y_ADX);
- //Serial.print("z_ADX: "); Serial.print(Z_ADX);
+  Serial.print("y_ADX: "); Serial.print(Y_ADX);
+  Serial.print("z_ADX: "); Serial.print(Z_ADX);
  //Serial.print("x_MPU: "); Serial.print(X_MPU);
-  //Serial.print("y_MPU: "); Serial.print(Y_MPU);
-  //Serial.print("z_MPU: "); Serial.print(Z_MPU); 
- Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
-  Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
-  Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
-  Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
-  Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
-  Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
-  Serial.print("X_avg: "); Serial.print(X_avg);
-  Serial.print(" Y_avg: "); Serial.print(Y_avg);
-  Serial.print(" Z_avg: "); Serial.print(Z_avg);
-  Serial.print(" A: "); Serial.print(Acceleration);
+  Serial.print("y_MPU: "); Serial.print(Y_MPU);
+  Serial.print("z_MPU: "); Serial.print(Z_MPU); 
+  //Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
+  //Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
+  //Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
+ // Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
+  //Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
+  //Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
+  //Serial.print("X_avg: "); Serial.print(X_avg);
+  //Serial.print(" Y_avg: "); Serial.print(Y_avg);
+ // Serial.print(" Z_avg: "); Serial.print(Z_avg);
+  //Serial.print(" A: "); Serial.print(Acceleration);
   Serial.print(" NA: "); Serial.print(NormalizedAcc);
   // Randomly off by a factor of 10 but pretty close to acurate otherwise I think
   Serial.print(" D [cm]: "); Serial.print(Distance*100);
