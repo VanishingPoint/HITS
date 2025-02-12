@@ -52,7 +52,8 @@ float getDistance() {
     float Filt_MPU_X = 0, Filt_MPU_Y = 0, Filt_MPU_Z = 0;
     float Adj_MPU_X = 0, Adj_MPU_Y = 0, Adj_MPU_Z = 0;
     float timestep_sec = 0, NormalizedAcc = 0;
-    float threshold = 0;
+    float fixGravAccel = 0;
+    float threshold = 0.01;
     const float dt = 0.1;
 
     //Duration can be modified here, it is in milliseconds
@@ -80,6 +81,10 @@ float getDistance() {
         Y_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
         Z_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
 
+        Filt_ADX_X = X_ADX-(-0.91);
+        Filt_ADX_Y = Y_ADX-(-0.02);
+        Filt_ADX_Z = Z_ADX-(-0.09);
+
         // Read MPU6050 Data
         Wire.beginTransmission(MPU6050);
         Wire.write(0x3B);
@@ -91,31 +96,30 @@ float getDistance() {
         Z_MPU = (Wire.read() << 8 | Wire.read())/ 16384.0;
 
         Filt_MPU_X = X_MPU-(0.93);
-        Filt_MPU_Y = Y_MPU-(-0.11);
-        Filt_MPU_Z = Z_MPU-(0.04);
+        Filt_MPU_Y = Y_MPU-(-0.03);
+        Filt_MPU_Z = Z_MPU-(0.03);
 
         Adj_MPU_X = Filt_MPU_X*-1;
         Adj_MPU_Y = Filt_MPU_Y*-1;
-        Adj_MPU_Z = Filt_MPU_Z*1;
+        Adj_MPU_Z = Filt_MPU_Z*-1;
 
         // Compute Averaged Values
-        X_avg = (X_ADX + X_MPU) / 2.0;
-        Y_avg = (Y_ADX + Y_MPU) / 2.0;
-        Z_avg = (Z_ADX + Z_MPU) / 2.0;
+        X_avg = (Filt_ADX_X + Adj_MPU_X) / 2.0;
+        Y_avg = (Filt_ADX_Y + Adj_MPU_Y) / 2.0;
+        Z_avg = (Filt_ADX_Z + Adj_MPU_Z) / 2.0;
 
         // Compute Acceleration Magnitude
-        Acceleration = sqrt((X_avg * X_avg) + (Y_avg * Y_avg) + (Z_avg * Z_avg));
+        Acceleration = sqrt((Y_avg * Y_avg) + (Z_avg * Z_avg));
 
         // Time Calculation
         timestep_sec = timestep / 1000.0;
-        NormalizedAcc = abs(Acceleration)-0.02; // in g
-
+        NormalizedAcc = abs(Acceleration); // in g
         if (NormalizedAcc > threshold) {
-            Distance += OldVelocity * timestep_sec + 0.5 * NormalizedAcc * timestep_sec * timestep_sec;
-            OldVelocity = NormalizedAcc * timestep_sec;
-        } 
-        else {
-            OldVelocity = 0;
+          fixGravAccel = NormalizedAcc*9.81;
+          Distance += OldVelocity * timestep_sec + 0.5 * fixGravAccel * timestep_sec * timestep_sec;
+          OldVelocity = fixGravAccel * timestep_sec;
+        } else {
+          OldVelocity = 0;
         }
 
         timestep = millis() - now;
