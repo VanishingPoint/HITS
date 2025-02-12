@@ -20,7 +20,7 @@ float Filt_ADX_X = 0, Filt_ADX_Y = 0, Filt_ADX_Z = 0;
 float Filt_MPU_X = 0, Filt_MPU_Y = 0, Filt_MPU_Z = 0;
 float Adj_MPU_X = 0, Adj_MPU_Y = 0, Adj_MPU_Z = 0;
 float timestep_sec = 0, NormalizedAcc = 0;
-float threshold = 0.01;
+float threshold = 0.011;
 float fixGravAccel = 0;
 const float dt = 0.1;
 unsigned long duration = 120000, startMillis, previousMillis = 0, timestep = 0;
@@ -55,7 +55,7 @@ void loop() {
   if (now - startMillis >= duration) {
     Serial.println("==================================");
     Serial.println("Time limit reached. Stopping execution.");
-    Serial.println("Total Distance Traveled: " + String(Distance*10) + " centimeters");
+    Serial.println("Total Distance Traveled: " + String(Distance)+ " meters");
     Serial.println("==================================");
     while (true);
   }
@@ -125,26 +125,26 @@ void loop() {
   } else {
     OldVelocity = 0;
   }
-  // Print Data
+  // Print Data 
   //Serial.print("x_ADX: "); Serial.print(X_ADX);
-  Serial.print("y_ADX: "); Serial.print(Y_ADX);
-  Serial.print("z_ADX: "); Serial.print(Z_ADX);
+  //Serial.print("y_ADX: "); Serial.print(Y_ADX);
+  //Serial.print("z_ADX: "); Serial.print(Z_ADX);
  //Serial.print("x_MPU: "); Serial.print(X_MPU);
-  Serial.print("y_MPU: "); Serial.print(Y_MPU);
-  Serial.print("z_MPU: "); Serial.print(Z_MPU); 
+  //Serial.print("y_MPU: "); Serial.print(Y_MPU);
+  //Serial.print("z_MPU: "); Serial.print(Z_MPU); 
   //Serial.print("x_ADX: "); Serial.print(Filt_ADX_X);
   //Serial.print("y_ADX: "); Serial.print(Filt_ADX_Y);
   //Serial.print("z_ADX: "); Serial.print(Filt_ADX_Z);
  // Serial.print("x_MPU: "); Serial.print(Filt_MPU_X);
   //Serial.print("y_MPU: "); Serial.print(Filt_MPU_Y);
   //Serial.print("z_MPU: "); Serial.print(Filt_MPU_Z); 
-  //Serial.print("X_avg: "); Serial.print(X_avg);
-  //Serial.print(" Y_avg: "); Serial.print(Y_avg);
- // Serial.print(" Z_avg: "); Serial.print(Z_avg);
+  Serial.print("X_avg: "); Serial.print(X_avg);
+  Serial.print(" Y_avg: "); Serial.print(Y_avg);
+  Serial.print(" Z_avg: "); Serial.print(Z_avg);
   //Serial.print(" A: "); Serial.print(Acceleration);
   Serial.print(" NA: "); Serial.print(NormalizedAcc);
   // Randomly off by a factor of 10 but pretty close to acurate otherwise I think
-  Serial.print(" D [cm]: "); Serial.print(Distance*100);
+  Serial.print(" D [m]: "); Serial.print(Distance);
   Serial.print(" V [m/s]: "); Serial.println(OldVelocity);
 
   timestep = millis() - now;
