@@ -40,46 +40,48 @@ root = None # Global variable to store the root window reference
 #TODO: It is possible to have a single extraneous entry in the log file, this is because the scipt logs a single keypress after the last image is shown
 #TODO: Score the data
 
-def checkConnection(conn):
+def checkConnection(conn): # this function listens for key presses from the participant and reacts accordingly
     with conn:
         while True:
-            data = conn.recv(1024)
+            data = conn.recv(1024) # Receive data from client, where does this come from?
+           
             if not data:
                 break
-            key = data.decode('utf-8')
-            if session_ended:
+            key = data.decode('utf-8') # Decode the key press
+
+            if session_ended: # Ignore the input if the session has ended
                 continue
+
             if (key == "s" and session_started == False):
                 current_index += 1
                 response = str(image_numbers[current_index])
                 start_time = time.time()  # Start timing
-                nextImg()
+                nextImg() # Show the first image
 
-            elif key in ["y", "n"]:
+            elif key in ["y", "n"]: # If the participant responds
                 if current_index < len(image_numbers):
                     end_time = time.time()
-                    time_taken = end_time - start_time
-                    logData(key, time_taken)
+                    time_taken = end_time - start_time # Compute response time
+                    logData(key, time_taken) # Save response
                     current_index += 1
                     response = str(image_numbers[current_index])
                     start_time = time.time()  # Reset start time for the next image
-                    nextImg()
+                    nextImg() # Displays next image
                 else:
                     response = "end"
                     session_ended = True
                     end_time = time.time()
                     time_taken = end_time - start_time
                     logData(key, time_taken)
-                    close_image_window()
+                    close_image_window() # Ends test
                     
             elif key == "x":
-                close_image_window()
+                close_image_window() # Exits the test
             
-            conn.sendall(response.encode('utf-8'))
+            conn.sendall(response.encode('utf-8')) # Sends the response to the client
 
 
-def logData(key, time_taken):
-# Log the data
+def logData(key, time_taken): # Log the data
     image_num = image_numbers[current_index]
     colour = image_colour[image_num]
     word = image_word[image_num]
@@ -89,42 +91,52 @@ def logData(key, time_taken):
         writer = csv.writer(csvfile)
         writer.writerow(log_data)
 
-def nextImg():
+def nextImg(): # This function displays the image
     global root, current_index
-    pilImage = Image.open(image_paths[current_index])
+    pilImage = Image.open(image_paths[current_index]) # Opens the image
     root = tkinter.Tk()
     w, h = root.winfo_screenwidth(), root.winfo_screenheight()
-    root.overrideredirect(1)
+    root.overrideredirect(1) # Fullscreen mode? 
     root.geometry("%dx%d+0+0" % (w, h))
     root.focus_set()    
     root.bind("<Escape>", lambda e: (e.widget.withdraw(), e.widget.quit()))
+
+    # Display the image on a black background of a specific size
     canvas = tkinter.Canvas(root, width=w, height=h)
     canvas.pack()
     canvas.configure(background='black')
+
+    # Resize image if it is too big
     imgWidth, imgHeight = pilImage.size
     if imgWidth > w or imgHeight > h:
         ratio = min(w/imgWidth, h/imgHeight)
         imgWidth = int(imgWidth*ratio)
         imgHeight = int(imgHeight*ratio)
         pilImage = pilImage.resize((imgWidth, imgHeight), Image.LANCZOS)
+
+    # Display the image
     image = ImageTk.PhotoImage(pilImage)
     imagesprite = canvas.create_image(w/2, h/2, image=image)
+
+    # Wait for key press in checkConnection function
     root.after(5, checkConnection) 
     root.mainloop()
 
+# This function closes the image
 def close_image_window():
     global root
     if root:
         root.destroy()
         root = None
 
+# Starts the server and waits for the participant to connect
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
+    s.bind((HOST, PORT)) # Bind to the IP and port
+    s.listen() # Wait for client
     print(f"Server listening on {HOST}:{PORT}")
     while True:
-        conn, addr = s.accept()
+        conn, addr = s.accept() # Accept incoming connection
         print(f"Connected by {addr}")
         if not session_ended:
-            nextImg()
+            nextImg() # Start test
 
