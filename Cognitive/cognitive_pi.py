@@ -5,6 +5,10 @@ import time
 import csv
 import socket
 
+# This is the one that actually works, need the pi plugged in and remote into the pi
+# Software: tiger vnc viewer, need pi and computer to be on the same network
+# pi to monitor - need that cable I bought - locker 
+
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 
@@ -53,7 +57,11 @@ def handle_client(conn):
             data = conn.recv(1024)
             if not data:
                 break
-            key = data.decode('utf-8')
+            key = data.decode('utf-8') # sending data from pi to computer using sockets - really basic protocol - only sends binary data, 
+            # This automatically turns the text into binary so you can send it
+            # The scoring and timing happens on the pi
+            # Client sends the start to the pi, then pi only sends the image index to the client
+            # Do as much as possible on the pi
             if session_ended:
                 continue
             end_time = time.time()

@@ -6,6 +6,8 @@ import socket
 import tkinter
 from PIL import Image, ImageTk
 
+# This is where Triss is trying to get the fullscreen to work
+
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 
