@@ -5,6 +5,7 @@
 # TODO: Chnge UI image for that 'b' is used for back since 'esc' doesn't work
 # TODO: Make csv files one per each person per test to put results in csv so Richard can train model
 # TODO: Check if you can run a video for the participant
+# TODO: Make exit for all test images
 
 # Import Librairies
 import time

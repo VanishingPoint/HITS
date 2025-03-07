@@ -2,9 +2,8 @@
 # It is for use by the test proctor on a laptop
 # Written by Chanel 
 # TODO: Change UI image so that 'c' is used since 's' makes it think I want to save the image
-# TODO: Chnge UI image for that 'b' is used for back since 'esc' doesn't work
+# TODO: Change UI image for that 'b' is used for back since 'esc' doesn't work
 # Eyemovementtest_screen to display image to pi screen
-
 
 # Import Librairies
 import time
