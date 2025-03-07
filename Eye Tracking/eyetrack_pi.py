@@ -3,6 +3,7 @@ from picamera2 import Picamera2
 
 #TODO:Display instructions, display calibration, display two dots, trigger this from client
 #Feed videos into interpreter, get gaze data, score, send score
+# 2 dots on screen then call this to make videos, get paths in HITS_eyetracking to process videos
 
 # Initialize the cameras
 left_camera = Picamera2(0)

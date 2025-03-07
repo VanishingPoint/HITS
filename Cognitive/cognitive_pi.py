@@ -8,6 +8,7 @@ import socket
 # This is the one that actually works, need the pi plugged in and remote into the pi
 # Software: tiger vnc viewer, need pi and computer to be on the same network
 # pi to monitor - need that cable I bought - locker 
+# run the one on the pi first
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server

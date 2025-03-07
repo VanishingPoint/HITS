@@ -3,17 +3,21 @@
 # Written by Chanel 
 # TODO: Change UI image so that 'c' is used since 's' makes it think I want to save the image
 # TODO: Chnge UI image for that 'b' is used for back since 'esc' doesn't work
-# TODO: Make csv files one per each person per test to put results in csv so Richard can train model
-# TODO: Check if you can run a video for the participant
+# Eyemovementtest_screen to display image to pi screen
+
 
 # Import Librairies
 import time
+import socket
+import os
 from pynput import keyboard
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 # Define the base path for the images
 base_path = r"C:\Users\chane\Desktop\HITS\HITS\Main Menu Proctor Images\menu_"
+
+# 
 
 # List of image numbers (0 to 5 for 6 images)
 image_numbers = list(range(0, 6)) 
@@ -36,28 +40,97 @@ def update_image():  # Function to display the current image
     img_display.set_data(mpimg.imread(image_paths[current_index]))  # Update the image data
     plt.draw()  # Ensure the plot updates after changing the image
 
-# Test functions
-def run_test_1():  # Test 1 function
+def run_test_1():  # Test 1 function: COGNITIVE
     print("Running Test 1...")
-    time.sleep(0)  # Simulate running the test (e.g., processing time)
+    HOST = "100.120.18.53"  # The server's hostname or IP address
+    PORT = 65432  # The port used by the server
+    class CognitiveProctor:
+        def __init__(self, image_dir):
+            self.image_paths = self.load_images(image_dir)
+            self.current_index = 0
+            self.started = False
+            self.fig, self.ax = plt.subplots()
+            self.ax.axis("off")
+            self.img_display = self.ax.imshow(mpimg.imread(self.image_paths[0]))  # Show the explanation image first
+            plt.show(block=False)
+
+        def load_images(self, image_dir):
+            image_numbers = list(range(0, 17))  # Image 0 is explanation, others are participant images
+            return [os.path.join(image_dir, f"cognitive_page_{num}.png") for num in image_numbers]
+            # return [f"{image_dir}/cognitive_page_{num}.png" for num in image_numbers]
+
+        def send_keystroke(self, key):
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((HOST, PORT))
+                    s.sendall(key.encode('utf-8'))
+                    data = s.recv(1024)
+                return data.decode('utf-8')
+            except ConnectionRefusedError:
+                print("Connection refused. Retrying...")
+                time.sleep(1)
+                return self.send_keystroke(key)
+
+        def update_image(self, index):
+            if 0 <= index < len(self.image_paths) and os.path.exists(self.image_paths[index]):
+                self.img_display.set_data(mpimg.imread(self.image_paths[index]))
+                plt.pause(0.01)  # Allow GUI to update properly
+            else:
+                print(f"Invalid image index: {index}")
+
+        def handle_keypress(self, key):
+            try:
+                if key.char == 's' and not self.started:
+                    self.started = True
+                    response = self.send_keystroke('s')
+                    print(f"Received image number: {response}")
+                    self.update_image(int(response))
+                elif key.char in {'y', 'n'} and self.started:
+                    response = self.send_keystroke(key.char)
+                    print(f"Received image number: {response}")
+                    if response != "end":
+                        self.update_image(int(response))
+                elif key.char == 'b' and self.started:  # Allow going back to previous image
+                    if self.current_index > 0:
+                        self.current_index -= 1
+                        self.update_image(self.current_index)
+                elif key.char == 'e':
+                    print("Exiting program.")
+                    plt.close(self.fig)
+                    return False
+            except AttributeError:
+                pass
+
+        def run(self):
+            print("Press 's' to start the randomized image sequence.")
+            print("Press 'y' or 'n' to open the next image after starting.")
+            print("Press 'e' to exit the program.")
+            
+            listener = keyboard.Listener(on_press=self.handle_keypress)
+            listener.start()
+            plt.show()
+
+    image_directory = r"C:\Users\chane\Desktop\HITS\HITS\Cognitive\Cognitive Proctor Images"
+    cognitive_proctor = CognitiveProctor(image_directory)
+    cognitive_proctor.run()
     print("Test 1 complete.")
     increment_and_show_next_image()
 
 def run_test_2():  # Test 2 function
     print("Running Test 2...")
-    time.sleep(0)  # Simulate running the test (e.g., processing time)
+    time.sleep(2)  # Simulate running the test (e.g., processing time)
     print("Test 2 complete.")
     increment_and_show_next_image()
 
 def run_test_3():  # Test 3 function
     print("Running Test 3...")
-    time.sleep(0)  # Simulate running the test (e.g., processing time)
+    time.sleep(2)  # Simulate running the test (e.g., processing time)
     print("Test 3 complete.")
     increment_and_show_next_image()
 
 def run_test_4():  # Test 4 function
     print("Running Test 4...")
-    time.sleep(0)  # Simulate running the test (e.g., processing time)
+    time.sleep(2)  # Simulate running the test (e.g., processing time)
     print("Test 4 complete.")
     increment_and_show_next_image()
 
