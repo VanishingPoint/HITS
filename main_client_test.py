@@ -10,13 +10,12 @@ import time
 import socket
 import os
 from pynput import keyboard
+from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 # Define the base path for the images
 base_path = r"C:\Users\chane\Desktop\HITS\HITS\Main Menu Proctor Images\menu_"
-
-# 
 
 # List of image numbers (0 to 5 for 6 images)
 image_numbers = list(range(0, 6)) 
@@ -40,80 +39,89 @@ def update_image():  # Function to display the current image
     plt.draw()  # Ensure the plot updates after changing the image
 
 def run_test_1():  # Test 1 function: COGNITIVE
-    print("Running Test 1...")
+    
     HOST = "100.120.18.53"  # The server's hostname or IP address
     PORT = 65432  # The port used by the server
-    class CognitiveProctor:
-        def __init__(self, image_dir):
-            self.image_paths = self.load_images(image_dir)
-            self.current_index = 0
-            self.started = False
-            self.fig, self.ax = plt.subplots()
-            self.ax.axis("off")
-            self.img_display = self.ax.imshow(mpimg.imread(self.image_paths[0]))  # Show the explanation image first
-            plt.show(block=False)
 
-        def load_images(self, image_dir):
-            image_numbers = list(range(0, 17))  # Image 0 is explanation, others are participant images
-            return [os.path.join(image_dir, f"cognitive_page_{num}.png") for num in image_numbers]
-            # return [f"{image_dir}/cognitive_page_{num}.png" for num in image_numbers]
+    def send_keystroke(key):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((HOST, PORT))
+                s.sendall(key.encode('utf-8'))
+                data = s.recv(1024)
+            return data.decode('utf-8')
+        except ConnectionRefusedError:
+            print("Connection refused. Retrying...")
+            time.sleep(1)
+            return send_keystroke(key)
 
-        def send_keystroke(self, key):
-            try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.connect((HOST, PORT))
-                    s.sendall(key.encode('utf-8'))
-                    data = s.recv(1024)
-                return data.decode('utf-8')
-            except ConnectionRefusedError:
-                print("Connection refused. Retrying...")
-                time.sleep(1)
-                return self.send_keystroke(key)
+    current_index = 0  # Tracks the current image index
+    
 
-        def update_image(self, index):
-            if 0 <= index < len(self.image_paths) and os.path.exists(self.image_paths[index]):
-                self.img_display.set_data(mpimg.imread(self.image_paths[index]))
-                plt.pause(0.01)  # Allow GUI to update properly
-            else:
-                print(f"Invalid image index: {index}")
+    print("Press 's' to start the randomized image sequence.")
+    print("Press 'y' or 'n' to open the next image after starting.")
+    print("Press 'esc' to exit the program.")
 
-        def handle_keypress(self, key):
-            try:
-                if key.char == 's' and not self.started:
-                    self.started = True
-                    response = self.send_keystroke('s')
-                    print(f"Received image number: {response}")
-                    self.update_image(int(response))
-                elif key.char in {'y', 'n'} and self.started:
-                    response = self.send_keystroke(key.char)
-                    print(f"Received image number: {response}")
-                    if response != "end":
-                        self.update_image(int(response))
-                elif key.char == 'b' and self.started:  # Allow going back to previous image
-                    if self.current_index > 0:
-                        self.current_index -= 1
-                        self.update_image(self.current_index)
-                elif key.char == 'e':
-                    print("Exiting program.")
-                    plt.close(self.fig)
-                    return False
-            except AttributeError:
-                pass
+    #TODO: Maybe remove these prints if we are displaying an image that contains the same info
 
-        def run(self):
-            print("Press 's' to start the randomized image sequence.")
-            print("Press 'y' or 'n' to open the next image after starting.")
-            print("Press 'e' to exit the program.")
-            
-            listener = keyboard.Listener(on_press=self.handle_keypress)
-            listener.start()
-            plt.show()
+    image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
-    image_directory = r"C:\Users\chane\Desktop\HITS\HITS\Cognitive\Cognitive Proctor Images"
-    cognitive_proctor = CognitiveProctor(image_directory)
-    cognitive_proctor.run()
-    print("Test 1 complete.")
-    increment_and_show_next_image()
+    # List of image paths based on shuffled numbers
+    image_paths = [
+        # Triss's Laptop Path fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+        fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+        for num in image_numbers
+    ]
+    #NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
+    #TODO should always display cognitive_page_0 first as it displays the instructions
+
+    def show_image(image_path):
+        # global opened_image
+        opened_image = None  # Keeps reference to the currently open PIL Image object
+
+        if opened_image:
+            opened_image.close()
+        opened_image = Image.open(image_path)
+        opened_image.show()
+
+    #TODO:Make the images close (it doesnt work rn)
+
+    show_image(image_paths[0]) #show the explination image
+
+    # Flag to indicate if the sequence has started
+    started = False
+
+    def on_press(key):
+        global started
+        try:
+            if key.char == 'c' and not started:
+                started = True
+                response = send_keystroke('c')
+                print(f"Received image number: {response}")
+                show_image(image_paths[int(response)])
+            elif key.char == 'y' and started:
+                response = send_keystroke('y')
+                print(f"Received image number: {response}")
+                if response != "end":
+                    show_image(image_paths[int(response)])
+            elif key.char == 'n' and started:
+                response = send_keystroke('n')
+                print(f"Received image number: {response}")
+                if response != "end":
+                    show_image(image_paths[int(response)])
+            elif key.char == 'esc':
+                print("Exiting program.")
+                return False
+
+        except AttributeError:
+            pass
+
+    # Collect events until released
+    with keyboard.Listener(on_press=on_press) as listener:
+        listener.join()
+
+        print("Test 1 complete.")
+        increment_and_show_next_image()
 
 def run_test_2():  # Test 2 function
     print("Running Test 2...")

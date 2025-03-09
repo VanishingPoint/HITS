@@ -32,7 +32,8 @@ image_numbers = list(range(0, 17)) #image 0 is explination, others are answers c
 
 # List of image paths based on shuffled numbers
 image_paths = [
-    fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+    # Triss's Laptop Path fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
     for num in image_numbers
 ]
 #NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
