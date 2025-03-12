@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-import csv
 import random
+import csv
 from pathlib import Path
 from nicegui import app, ui
 from nicegui.events import KeyEventArguments
-from PIL import Image
-import time
-import socket
-import os
 
 # Image path setup
 image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
@@ -72,7 +68,7 @@ def handle_response(response):
     if response_count >= 15:
         print("15 responses reached. Exiting.")
         ui.notify('15 responses reached. Exiting.')
-        app.stop()  # Stop the app
+        ui.app.stop()  # Stop the app
 
 # Handle keyboard events
 def handle_key(event: KeyEventArguments) -> None:
@@ -83,7 +79,7 @@ def handle_key(event: KeyEventArguments) -> None:
             handle_response('n')
         elif event.key == 'escape':
             print("Exiting program.")
-            app.stop()  # Stop the app
+            ui.app.stop()  # Stop the app
 
 # Keyboard event handling
 ui.keyboard(on_key=handle_key)
@@ -94,8 +90,8 @@ def run_test_1():  # Test 1 function: COGNITIVE
     print("Press 'y' or 'n' to open the next image after starting.")
     print("Press 'esc' to exit the program.")
     
-    # Start the NiceGUI app and show images
-    ui.run()
+    # Start the NiceGUI app
+    ui.run()  # This line will run the NiceGUI app
 
-# Now run_test_1 will initiate the process and handle the entire logic
-
+# Call run_test_1 to initialize the app
+run_test_1()
