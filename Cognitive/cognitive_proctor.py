@@ -5,9 +5,6 @@ from pathlib import Path
 from nicegui import app, ui
 from nicegui.events import KeyEventArguments
 from PIL import Image
-import time
-import socket
-import os
 
 # Image path setup
 image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
@@ -47,6 +44,32 @@ app.add_static_files('/slides', image_folder)  # Serve all files in this folder
 # Positioning the buttons
 button_y = ui.button('Yes', on_click=lambda: handle_response('y')).style('position: absolute; top: 40%; left: 20%')
 button_n = ui.button('No', on_click=lambda: handle_response('n')).style('position: absolute; top: 50%; left: 20%')
+
+# Different buttons for the first image
+def handle_first_image_response(response):
+    global state, response_count
+    image_number = state['index']
+    responses.append((response, image_number))  # Log the response
+    response_count += 1  # Increment the response counter
+    print(f"Button {response} pressed for image {image_number}")
+    
+    # Save response to CSV
+    save_responses()
+
+    # Move to next image
+    state['index'] += 1
+    if state['index'] < len(shuffled_images):
+        update_image()
+    else:
+        print("End of images.")
+        ui.notify('End of images.')
+        state['index'] = 0  # Reset index for the next round
+
+    # If 15 responses have been made, stop the app
+    if response_count >= 15:
+        print("15 responses reached. Exiting.")
+        ui.notify('15 responses reached. Exiting.')
+        app.stop()  # Stop the app
 
 # Function to handle responses and move to the next image
 def handle_response(response):
@@ -89,13 +112,4 @@ def handle_key(event: KeyEventArguments) -> None:
 ui.keyboard(on_key=handle_key)
 
 # Run the app
-def run_test_1():  # Test 1 function: COGNITIVE
-    print("Press 's' to start the randomized image sequence.")
-    print("Press 'y' or 'n' to open the next image after starting.")
-    print("Press 'esc' to exit the program.")
-    
-    # Start the NiceGUI app and show images
-    ui.run()
-
-# Now run_test_1 will initiate the process and handle the entire logic
-
+ui.run()

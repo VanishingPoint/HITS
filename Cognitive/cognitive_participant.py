@@ -29,7 +29,8 @@ image_word = {
 
 # List of image paths based on shuffled numbers
 image_paths = [
-    fr"/home/hits/Documents/GitHub/HITS/Cognitive/Cognitive Participant Images/page_{num}.png"
+    # fr"/home/hits/Documents/GitHub/HITS/Cognitive/Cognitive Participant Images/page_{num}.png" # Triss
+    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Participant Images/page_{num}.png" # Chanel
     for num in image_numbers
 ]
 
@@ -45,10 +46,6 @@ def show_image(image_path):
         opened_image.close()
     opened_image = Image.open(image_path)
     opened_image.show()
-
-#TODO: Make the images fullscreen, make the images actually close when the next image is shown
-#TODO: We have an instructions page for the proctor, maybe display an instruction page to the participant as well
-#TODO: It is possible to have a single extraneous entry in the log file, this is because the scipt logs a single keypress after the last image is shown
 
 def handle_client(conn):
     global current_index, start_time, session_ended
@@ -99,5 +96,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         conn, addr = s.accept()
         handle_client(conn)
-
-#TODO: Score the data

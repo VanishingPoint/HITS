@@ -32,15 +32,24 @@ def user_info():
     """User information entry page."""
     ui.label("Enter Your Information").classes('text-2xl font-bold')
 
-    name = ui.input("Name").classes("w-64")
-    gender = ui.radio(["Male", "Female", "Other"], value="Other").classes("w-64")
+    name = ui.input("Participant's Full Name").classes("w-64")
+    sex = ui.radio(["Male", "Female", "Other"], value="Other").classes("w-64")
+    age = ui.input("Participant's Age").classes("w-64")
+    height = ui.input("Participant's Height [cm]").classes("w-64")
+    with ui.dropdown_button('Sport', auto_close=True):
+        ui.item('Soccer', on_click=lambda: ui.notify('You selected Soccer'))
+        ui.item('Hockey', on_click=lambda: ui.notify('You selected Hockey'))
+        ui.item('Football', on_click=lambda: ui.notify('You selected Football'))
+        ui.item('Rugby', on_click=lambda: ui.notify('Rugby'))
 
     def submit():
-        save_user_info(name.value, gender.value)
+        save_user_info(name.value, sex.value, age.value, height.value)
         ui.notify("User Info Saved!", color="green")
+        load_page(test_1)  # Automatically go to the first test after saving
 
-    ui.button("Submit", on_click=submit).classes("text-lg")
+    ui.button("Save and Continue", on_click=submit).classes("text-lg bg-blue-500 text-white p-2 rounded-lg")
     ui.button("Back to Main Menu", on_click=lambda: load_page(main_menu)).classes("text-lg")
+
 
 # ====================== TEST PAGES ======================
 def test_1():
