@@ -1,0 +1,60 @@
+# Define two state variables: one for the main menu, and one for the test.
+    test_state = {'cognitive_index': 0, 'response_count': 0, 'responses': []}
+
+    # Image path setup
+    image_numbers = list(range(0, 17))  # Image 0 is explanation, others are answers
+    image_folder = Path(r"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images")
+    image_paths = [
+        image_folder / f"cognitive_page_{num}.png"
+        for num in image_numbers
+    ]
+
+    # Shuffle images excluding the first one
+    shuffled_images = random.sample(image_paths[1:], len(image_paths) - 1)
+    shuffled_images = [image_paths[0]] + shuffled_images  # Keep the first image fixed
+
+    # Function to update the image in the test UI
+    def update_test_image():
+        image_path = f"/slides/{shuffled_images[test_state['cognitive_index']].name}"  # Serve from static files
+        slide.set_source(image_path)
+
+    # Create the UI with a scaling factor for the image
+    slide = ui.image(f"/slides/{shuffled_images[test_state['cognitive_index']].name}").style('width: 70%; height: 70%')
+
+    # Serve static files
+    app.add_static_files('/slides', image_folder)  # Serve all files in this folder
+
+    # Function to handle responses and move to the next image
+    def handle_response(response):
+        nonlocal test_state  # Access the test state
+        image_number = test_state['cognitive_index']
+        test_state['responses'].append((response, image_number))  # Log the response
+        test_state['response_count'] += 1  # Increment the response counter
+        print(f"Button {response} pressed for image {image_number}")
+        
+        # Save response to CSV
+        save_responses(test_state)
+
+        # Move to next image
+        test_state['cognitive_index'] += 1
+        if test_state['cogntive_index'] < len(shuffled_images):
+            update_test_image()
+        else:
+            print("End of images.")
+            ui.notify('End of images.')
+            test_state['cognitive_index'] = 0  # Reset index for the next round
+
+        # If 15 responses have been made, stop the app
+        if test_state['response_count'] >= 15:
+            print("15 responses reached. Exiting.")
+            ui.notify('15 responses reached. Exiting.')
+            app.stop()  # Stop the app
+
+    # Show the "Yes" and "No" buttons for test responses
+    button_yes = ui.button('Yes', on_click=lambda: handle_response('y')).style('position: absolute; top: 40%; left: 20%')
+    button_yes.visible = True
+    button_no = ui.button('No', on_click=lambda: handle_response('n')).style('position: absolute; top: 50%; left: 20%')
+    button_no.visible = True
+
+    # Show the "Next" button only for the first image, then handle it for the rest of the test
+    button_next = ui.button('Next', on_click=handle_response).style('position: absolute; top: 80%; left: 70%')
