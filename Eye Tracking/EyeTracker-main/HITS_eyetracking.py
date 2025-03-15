@@ -355,6 +355,11 @@ def process_frames(thresholded_image_strict, thresholded_image_medium, threshold
         #cv2.circle(test_frame, darkest_point, 3, (255, 125, 125), -1)
         center_x, center_y = map(int, ellipse[0])
         cv2.circle(test_frame, (center_x, center_y), 3, (255, 255, 0), -1)
+
+        # Display the center coordinates on the frame
+        coord_text = f"Center: ({center_x}, {center_y})"
+        cv2.putText(test_frame, coord_text, (10,390), cv2.FONT_HERSHEY_SIMPLEX, .55, (255,90,30), 2)
+        
         cv2.putText(test_frame, "SPACE = play/pause", (10,410), cv2.FONT_HERSHEY_SIMPLEX, .55, (255,90,30), 2) #space
         cv2.putText(test_frame, "Q      = quit", (10,430), cv2.FONT_HERSHEY_SIMPLEX, .55, (255,90,30), 2) #quit
         cv2.putText(test_frame, "D      = show debug", (10,450), cv2.FONT_HERSHEY_SIMPLEX, .55, (255,90,30), 2) #debug
@@ -408,7 +413,7 @@ def process_frame(frame, timestamp, csv_writer):
     return final_rotated_rect
 
 # Loads a video and finds the pupil in each frame
-def process_video(video_path, input_method):
+def process_video(video_path, input_method, csv_dir):
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 format
     out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 60.0, (640, 480))  # Output video filename, codec, frame rate, and frame size
@@ -425,8 +430,12 @@ def process_video(video_path, input_method):
     if not cap.isOpened():
         print("Error: Could not open video.")
         return
+
+    # Ensure the directory exists
+    os.makedirs(csv_dir, exist_ok=True)
     
-    csv_filename = os.path.join(os.path.dirname(video_path), "pupil_tracking_data.csv")
+    # Define CSV filename in the specified directory
+    csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv")
     with open(csv_filename, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(["Timestamp", "Pupil_X", "Pupil_Y"])
@@ -493,21 +502,8 @@ def process_video(video_path, input_method):
     out.release()
     cv2.destroyAllWindows()
 
-#Prompts the user to select a video file if the hardcoded path is not found
-#This is just for my debugging convenience :)
-def select_video():
-    root = tk.Tk()
-    root.withdraw()  # Hide the main window
-    video_path = '/Users/nguyen/Downloads/Eye Tracking/unhealthy.mp4'
-    if not os.path.exists(video_path):
-        print("No file found at hardcoded path. Please select a video file.")
-        video_path = filedialog.askopenfilename(title="Select Video File", filetypes=[("Video Files", "*.mp4;*.avi")])
-        if not video_path:
-            print("No file selected. Exiting.")
-            return
-            
-    #second parameter is 1 for video 2 for webcam
-    process_video(video_path, 1)
-
 if __name__ == "__main__":
-    select_video()
+    video_path = '/Users/nguyen/Downloads/Eye Tracking/calibration.mp4'
+    csv_output_dir = '/Users/nguyen/Downloads/Eye Tracking'
+    #second parameter is 1 for video 2 for webcam
+    process_video(video_path, 1, csv_output_dir)
