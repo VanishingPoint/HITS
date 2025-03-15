@@ -15,10 +15,17 @@ state = {'index': 0}
 content = ui.column()
 
 def save_user_info(name, sex, age, height, activity, append=False):
+    # Set the folder where the CSV file should be saved
+    folder_path = Path(r"C:\Users\chane\Desktop\HITS\HITS\csv_files")
+    
+    # Ensure the folder exists
+    folder_path.mkdir(parents=True, exist_ok=True)
+    
     # Get the current date and time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    
     # Create a filename with the name and timestamp
-    filename = f"{name.replace(' ', '_')}_{timestamp}.csv"
+    filename = folder_path / f"{name.replace(' ', '_')}_{timestamp}.csv"
     
     # Set the mode based on whether you're appending or writing
     mode = 'a' if append else 'w'
@@ -29,6 +36,7 @@ def save_user_info(name, sex, age, height, activity, append=False):
             writer.writerow(["Name", "Sex", "Age", "Height", "Activity"])
         writer.writerow([name, sex, age, height, activity])
     print(f"User Info Saved to {filename}")
+
 
 def load_page(page_function):
     content.clear()
