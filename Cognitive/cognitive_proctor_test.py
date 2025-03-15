@@ -1,94 +1,81 @@
-#!/usr/bin/env python3
-import csv
-import random
-from pathlib import Path
-from nicegui import app, ui
 from PIL import Image
+import os
+import socket
+import time
+from pynput import keyboard
 
-def cognitive_proctor(csv_file_path: Path):
-    # Image path setup
-    image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
-    image_folder = Path(r"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images")
-    image_paths = [
-        image_folder / f"cognitive_page_{num}.png"
-        for num in image_numbers
-    ]
+HOST = "100.120.18.53"  # The server's hostname or IP address
+PORT = 65432  # The port used by the server
 
-    # Shuffle images excluding the first one
-    shuffled_images = random.sample(image_paths[1:], len(image_paths) - 1)
-    shuffled_images = [image_paths[0]] + shuffled_images  # Keep the first image fixed
+def send_keystroke(key):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((HOST, PORT))
+            s.sendall(key.encode('utf-8'))
+            data = s.recv(1024)
+        return data.decode('utf-8')
+    except ConnectionRefusedError:
+        print("Connection refused. Retrying...")
+        time.sleep(1)
+        return send_keystroke(key)
 
-    # State to track progress
-    state = {'index': 0}
-    responses = []
-    response_count = 0  # Track the number of responses
+current_index = 0  # Tracks the current image index
+opened_image = None  # Keeps reference to the currently open PIL Image object
 
-    # Function to save responses to CSV (save in columns F and G)
-    def save_responses():
-        with open(csv_file_path, mode='a', newline='') as file:  # Open in append mode to avoid overwriting
-            writer = csv.writer(file)
-            # If file is empty, write header in columns F and G
-            if file.tell() == 0:
-                writer.writerow(['response', 'image_number'])  # Header: 'response' in column F, 'image_number' in column G
-            for response in responses:
-                writer.writerow(response)  # Append each response and image number
+print("Press 's' to start the randomized image sequence.")
+print("Press 'y' or 'n' to open the next image after starting.")
+print("Press 'esc' to exit the program.")
 
-    # Function to update the image in the UI
-    def update_image():
-        image_path = f"/slides/{shuffled_images[state['index']].name}"  # Serve from static files
-        slide.set_source(image_path)
+#TODO: Maybe remove these prints if we are displaying an image that contains the same info
 
-    # Create the UI with a scaling factor for the image
-    slide = ui.image(f"/slides/{shuffled_images[state['index']].name}").style('width: 70%; height: 70%')
+image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
-    # Serve static files
-    app.add_static_files('/slides', image_folder)  # Serve all files in this folder
+# List of image paths based on shuffled numbers
+image_paths = [
+    # Triss's Laptop Path fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+    for num in image_numbers
+]
 
-    # Function to handle responses and move to the next image
-    def handle_response(response):
-        nonlocal state, response_count
-        image_number = state['index']
-        responses.append((response, image_number))  # Log the response
-        response_count += 1  # Increment the response counter
-        print(f"Button {response} pressed for image {image_number}")
-        
-        # Save response to CSV
-        save_responses()
+def show_image(image_path):
+    global opened_image
+    if opened_image:
+        opened_image.close()
+    opened_image = Image.open(image_path)
+    opened_image.show()
 
-        # Move to next image
-        state['index'] += 1
-        if state['index'] < len(shuffled_images):
-            update_image()
-        else:
-            print("End of images.")
-            ui.notify('End of images.')
-            state['index'] = 0  # Reset index for the next round
+#TODO:Make the images close (it doesnt work rn)
 
-        # If 15 responses have been made, stop the app
-        if response_count >= 15:
-            print("15 responses reached. Exiting.")
-            ui.notify('15 responses reached. Exiting.')
-            app.stop()  # Stop the app
+show_image(image_paths[0]) #show the explination image
 
-    # Function to handle the "Next" button for the first image
-    def handle_next():
-        state['index'] += 1
-        update_image()
-        button_next.visible = False  # Hide the "Next" button after it's clicked
-        button_yes.visible = True    # Show "Yes" and "No" buttons
-        button_no.visible = True
+# Flag to indicate if the sequence has started
+started = False
 
-    # Show the "Next" button only for the first image
-    button_next = ui.button('Next', on_click=handle_next).style('position: absolute; top: 80%; left: 70%')
+def on_press(key):
+    global started
+    try:
+        if key.char == 's' and not started:
+            started = True
+            response = send_keystroke('s')
+            print(f"Received image number: {response}")
+            show_image(image_paths[int(response)])
+        elif key.char == 'y' and started:
+            response = send_keystroke('y')
+            print(f"Received image number: {response}")
+            if response != "end":
+                show_image(image_paths[int(response)])
+        elif key.char == 'n' and started:
+            response = send_keystroke('n')
+            print(f"Received image number: {response}")
+            if response != "end":
+                show_image(image_paths[int(response)])
+        elif key.char == 'esc':
+            print("Exiting program.")
+            return False
 
-    # Show the "Yes" and "No" buttons only after the first image
-    button_yes = ui.button('Yes', on_click=lambda: handle_response('y')).style('position: absolute; top: 40%; left: 20%')
-    button_yes.visible = False
-    button_no = ui.button('No', on_click=lambda: handle_response('n')).style('position: absolute; top: 50%; left: 20%')
-    button_no.visible = False
+    except AttributeError:
+        pass
 
-    # Run the app
-    ui.run()
-
-# Example usage
-cognitive_proctor(Path("responses.csv"))
+# Collect events until released
+with keyboard.Listener(on_press=on_press) as listener:
+    listener.join()

@@ -36,8 +36,6 @@ image_paths = [
     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
     for num in image_numbers
 ]
-#NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
-#TODO should always display cognitive_page_0 first as it displays the instructions
 
 def show_image(image_path):
     global opened_image
