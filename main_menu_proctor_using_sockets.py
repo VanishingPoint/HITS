@@ -23,13 +23,16 @@ def send_info(participant_information):
         return send_info(participant_information)
     
 def save_user_info(sex, height, activity, number, append=False):
-    if sex.value == "Female":
+    if sex == "Female":
             participant_sex = "1"
-    elif sex.value == "Male":
+    elif sex == "Male":
             participant_sex = "0"
-    participant_height = str(height.value)  
-    participant_activity = str(activity.value) # change to binary
-    participant_number = str(number.value)
+    if activity == 'Drunk':
+        participant_activity = "1"
+    else:
+        participant_activity = "0"
+    participant_height = str(height)  
+    participant_number = str(number)
     participant_info = f"S{participant_sex}H{participant_height}A{participant_activity}N{participant_number})"
     print(f"User Info Saved as {participant_info}")
     send_info(participant_info)
@@ -38,16 +41,18 @@ def user_info():
     with ui.column():
         ui.label("Enter the Participant's Information").classes('text-2xl font-bold')
         number = ui.input("Participant's Number").classes("w-64")
-        sex = ui.radio(["Male", "Female"], value="Other").classes("w-64")
+        sex = ui.radio(["Male", "Female"]).classes("w-64")
         height = ui.input("Participant's Height in 3 digits [cm]").classes("w-64")
         ui.label("Select the activity:").classes('text-lg')
         activity = ui.select(['Drunk', 'Sober'], value=None)
     
         def submit():
+            print("Submit button clicked!")
             save_user_info(sex.value, height.value, activity.value, number.value)
             ui.notify("User Info Saved!", color="green")
 
         ui.button("Save and Continue", on_click=submit).classes("text-lg bg-blue-500 text-white p-2 rounded-lg")
 
-ui.label("Hello, NiceGUI!").classes('text-2xl font-bold')  # Test if something is rendering
+with content:
+    user_info()
 ui.run()
