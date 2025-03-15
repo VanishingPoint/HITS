@@ -10,7 +10,7 @@ import socket
 # pi to monitor - need that cable I bought - locker 
 # run the one on the pi first
 
-HOST = "127.0.0.1"  # this allows me to run both scripts on same device?  # "100.120.18.53"  # The server's hostname or IP address
+HOST = "100.120.18.53" # "127.0.0.1"  # this allows me to run both scripts on same device?  # "100.120.18.53"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
 
 #TODO: Replace this when switching to local wifi
