@@ -1,0 +1,26 @@
+Plug the usb-c cable for power
+Plug the keyboard and mouse
+Plug the hdmi to a monitor (never to a laptop)
+
+Connect to ubc visitor on the top right
+Open web browser
+Open ubc visitor page (if you cannot open it go to wifi - advanced options - connection information - delete vpn6?)
+Accept the terms
+
+Open raspberry on top left
+Click accessories
+Click GitHub desktop
+Click fetch
+An error page may show up in which case click open options
+From there click sign in 
+Right click tailscale on your laptop - network devices - vanishing point - rasberry (clicking this copies the server)
+Open tigerVNC and paste 
+Enter credentials: username = hits, password = 1234
+On TigerVNC Paste the link from github 
+A browser page will open, log in as Richard, keyring password is 1234
+Press fetch again
+
+Open files - documents - HITS
+Click the script you want to run
+Run it by clicking the paper airplane
+Avoid editing code on the pi's OS
