@@ -47,7 +47,7 @@ def user_info():
         activity = ui.select(['Drunk', 'Sober'], value=None)
     
         def submit():
-            print("Submit button clicked!")
+            print("Submit button clicked! S{sex.value} H{height.value} A{activity.value} N{number.value}")
             save_user_info(sex.value, height.value, activity.value, number.value)
             ui.notify("User Info Saved!", color="green")
 

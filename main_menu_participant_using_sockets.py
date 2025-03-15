@@ -15,7 +15,7 @@ def decode_message(message):
     sex = "Female" if message[1] == "1" else "Male"  # Sx -> 1 is female, 0 is male
     height = int(message[3:5])  # Hnnn -> height in cm
     activity = "Drunk" if message[7] == "1" else "Sober"  # Ax -> 1 is drunk, 0 is sober
-    participant_number = int(message[9:])  # b -> participant number
+    participant_number = int(message[9:len(message)])  # b -> participant number
     return sex, height, activity, participant_number
 
 
