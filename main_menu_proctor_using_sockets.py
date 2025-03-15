@@ -50,7 +50,7 @@ def user_info():
             print("Submit button clicked!")
             save_user_info(sex.value, height.value, activity.value, number.value)
             ui.notify("User Info Saved!", color="green")
-            
+
         ui.button("Save and Continue", on_click=submit).classes("text-lg bg-blue-500 text-white p-2 rounded-lg")
 
 with content:
