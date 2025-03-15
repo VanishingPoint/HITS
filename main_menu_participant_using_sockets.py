@@ -18,14 +18,6 @@ def decode_message(message):
     participant_number = int(message[9:len(message)])  # b -> participant number
     return sex, height, activity, participant_number
 
-def send_file(conn, file_path):
-    """Send a CSV file to the client."""
-    try:
-        with open(file_path, "rb") as file:
-            conn.sendall(file.read())  # Send the entire file
-        print(f"Sent file {file_path}")
-    except Exception as e:
-        print(f"Error sending file: {e}")
 
 def handle_client(conn, addr):
     global session_ended
@@ -59,7 +51,6 @@ def handle_client(conn, addr):
                 writer.writerow(log_data)
             
             # Send back the received message as the response
-            send_file(conn, file_path)
             conn.sendall(message.encode('utf-8'))  # Send the received message back to the proctor
 
 # Main server code
