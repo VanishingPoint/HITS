@@ -7,6 +7,7 @@ import socket
 
 HOST = "100.120.18.53" # "127.0.0.1"  # this allows me to run both scripts on same device?  # "100.120.18.53"  # The server's hostname or IP address
 PORT = 65433  # The port used by the server, for main menu
+session_ended = False  # Flag to indicate if the session has ended
 
 def handle_client(conn):
     global current_index, start_time, session_ended
