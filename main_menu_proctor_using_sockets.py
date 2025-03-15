@@ -10,17 +10,41 @@ HOST = "100.120.18.53"  # The server's hostname or IP address for the pi
 PORT = 65433  # The port used by the server for main menu in particular
 content = ui.column()
 
-def send_info(participant_information):
+def receive_file(sock, save_path):
+    """Receive a file from the server and save it."""
+    try:
+        with open(save_path, "wb") as file:
+            while True:
+                data = sock.recv(1024)  # Receive file in chunks
+                if not data:
+                    break
+                file.write(data)
+        print(f"File saved as {save_path}")
+    except Exception as e:
+        print(f"Error receiving file: {e}")
+
+def send_info(participant_information, save_dir="received_csvs"):
+    """Send participant information and receive the CSV file."""
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((HOST, PORT))
             s.sendall(participant_information.encode('utf-8'))
-            data = s.recv(1024)
-        return data.decode('utf-8')
+            
+            # Ensure save directory exists
+            os.makedirs(save_dir, exist_ok=True)
+
+            # Define file path for saving the received CSV
+            file_name = f"{participant_information}.csv".replace(":", "_").replace(" ", "_")
+            save_path = os.path.join(save_dir, file_name)
+
+            # Receive and save the file
+            receive_file(s, save_path)
+        
+        return save_path
     except ConnectionRefusedError:
         print("Connection refused. Retrying...")
         time.sleep(1)
-        return send_info(participant_information)
+        return send_info(participant_information, save_dir)
     
 def save_user_info(sex, height, activity, number, append=False):
     if sex == "Female":
