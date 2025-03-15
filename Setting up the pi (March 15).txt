@@ -13,10 +13,8 @@ Click GitHub desktop
 Click fetch
 An error page may show up in which case click open options
 From there click sign in 
-Right click tailscale on your laptop - network devices - vanishing point - rasberry (clicking this copies the server)
-Open tigerVNC and paste: https://github.com/VanishingPoint/HITS
+Open 'setting up the pi' and paste: https://github.com/VanishingPoint/HITS
 Enter credentials: username = hits, password = 1234
-On TigerVNC Paste the link from github 
 A browser page will open, log in as Richard, keyring password is 1234
 Press fetch again
 
@@ -24,3 +22,9 @@ Open files - documents - github - HITS
 Click the script you want to run
 Run it by clicking the paper airplane
 Avoid editing code on the pi's OS
+
+
+To use your laptop: 
+Right click tailscale on your laptop - network devices - vanishing point - rasberry (clicking this copies the server)
+Paste into tigerVNC and click connect
+
