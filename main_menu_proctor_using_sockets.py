@@ -33,7 +33,7 @@ def save_user_info(sex, height, activity, number, append=False):
         participant_activity = "0"
     participant_height = str(height)  
     participant_number = str(number)
-    participant_info = f"S{participant_sex}H{participant_height}A{participant_activity}N{participant_number})"
+    participant_info = f"S{participant_sex}H{participant_height}A{participant_activity}N{participant_number}"
     print(f"User Info Saved as {participant_info}")
     send_info(participant_info)
 
