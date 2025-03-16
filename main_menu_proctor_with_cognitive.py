@@ -2,12 +2,12 @@ from PIL import Image
 import os
 import socket
 import time
-from pynput import keyboard
 from nicegui import app, ui
-from nicegui.events import KeyEventArguments
+import random
+import threading  # To run cognitive test in a separate thread
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
-PORT = 65433  # The port used by the server for main menu in particular
+PORT = 65433  # The port used by the server for the main menu in particular
 content = ui.column()
 
 # Function to send user information
@@ -39,6 +39,9 @@ def save_user_info(sex, height, activity, number, append=False):
     print(f"User Info Saved as {participant_info}")
     send_info(participant_info)
 
+    # Run cognitive test after user info is saved and sent
+    run_cognitive_test()
+
 # Function for user input interface in NiceGUI
 def user_info():
     with ui.column():
@@ -53,8 +56,6 @@ def user_info():
             print(f"Submit button clicked! S{sex.value} H{height.value} A{activity.value} N{number.value}")
             save_user_info(sex.value, height.value, activity.value, number.value)
             ui.notify("User Info Saved!", color="green")
-            # After saving user info, run the cognitive test code
-            run_cognitive_test()
 
         ui.button("Save and Continue", on_click=submit).classes("text-lg bg-blue-500 text-white p-2 rounded-lg")
 
@@ -62,14 +63,17 @@ def user_info():
 HOST_COGNITIVE = "100.120.18.53"
 PORT_COGNITIVE = 65432
 
-image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
+image_numbers = list(range(1, 16))  # image 0 is explanation, others are answers
 image_paths = [
     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
-    for num in image_numbers
+    for num in [0] + image_numbers  # Include cognitive_page_0 for explanation
 ]
 opened_image = None
 started = False
 current_index = 0
+
+# Lock to ensure thread safety
+lock = threading.Lock()
 
 def send_keystroke(key):
     try:
@@ -92,40 +96,47 @@ def show_image(image_path):
 
 # Run cognitive test once user info is submitted
 def run_cognitive_test():
-    global started
+    global started, current_index, image_numbers
     print("Press 's' to start the randomized image sequence.")
     print("Press 'y' or 'n' to open the next image after starting.")
     print("Press 'e' to exit the program.")
 
-    show_image(image_paths[0])  # show the explanation image
+    # Show the explanation image first (cognitive_page_0)
+    show_image(image_paths[0])
 
-    def on_press(key):
-        global started
-        try:
-            if key.char == 's' and not started:
+    # Randomize the image order for 1-15
+    randomized_images = random.sample(image_numbers, len(image_numbers))
+    print("Randomized image order:", randomized_images)
+
+    # Remove the nonlocal statement and directly access global variables
+    def listen_for_keys():
+        global started, current_index  # Accessing the global variables
+        while True:
+            key = input("Press 's' to start, 'y' or 'n' to view next image, 'e' to exit: ").strip().lower()
+            if key == 's' and not started:
                 started = True
-                response = send_keystroke('s')
-                print(f"Received image number: {response}")
-                show_image(image_paths[int(response)])
-            elif key.char == 'y' and started:
-                response = send_keystroke('y')
-                print(f"Received image number: {response}")
-                if response != "end":
-                    show_image(image_paths[int(response)])
-            elif key.char == 'n' and started:
-                response = send_keystroke('n')
-                print(f"Received image number: {response}")
-                if response != "end":
-                    show_image(image_paths[int(response)])
-            elif key.char == 'e':
+                print(f"Test started. Current index {randomized_images[current_index]}")
+                # Show the first randomized image
+                show_image(image_paths[randomized_images[current_index]])
+            elif (key == 'y' or key == 'n') and started:
+                # Send the 'y' or 'n' response to the server
+                send_keystroke(key)
+                current_index += 1  # Increment index after 'y' or 'n'
+                print(f"Keystroke y or n sent, current index = {current_index}, the length is {len(randomized_images)}")
+                if current_index < len(randomized_images):
+                    print(f"Next image: {current_index}")
+                    show_image(image_paths[randomized_images[current_index]])  # Show the next randomized image
+                else:
+                    print("Test completed.")
+                    break  # End the test after all images are shown
+            elif key == 'e':
                 print("Exiting program.")
-                return False
-        except AttributeError:
-            pass
+                break
 
-    # Collect events until released
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
+
+    # Run the key listener in a separate thread so it doesn't block the UI
+    key_listener_thread = threading.Thread(target=listen_for_keys)
+    key_listener_thread.start()
 
 # Start NiceGUI app
 with content:
