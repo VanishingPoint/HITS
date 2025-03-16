@@ -97,31 +97,35 @@ def run_cognitive_test():
     print("Press 'y' or 'n' to open the next image after starting.")
     print("Press 'e' to exit the program.")
 
-    show_image(image_paths[0])  # show the explanation image
+    show_image(image_paths[0])  # Show the explanation image
 
     def on_press(key):
         global started
         try:
             if key.char == 's' and not started:
                 started = True
+                # Send 's' to start the test (or the initial image)
                 response = send_keystroke('s')
-                print(f"Received image number: {response}")
+                print(f"Starting the test, received response: {response}")
+                # Display the first random image after 's' is pressed
                 show_image(image_paths[int(response)])
             elif key.char == 'y' and started:
+                # Send 'y' and display the next image after starting
                 response = send_keystroke('y')
-                print(f"Received image number: {response}")
+                print(f"Received response for 'y': {response}")
                 if response != "end":
-                    show_image(image_paths[int(response)])
+                    show_image(image_paths[int(response)])  # Show the next image
             elif key.char == 'n' and started:
+                # Send 'n' and display the next image after starting
                 response = send_keystroke('n')
-                print(f"Received image number: {response}")
+                print(f"Received response for 'n': {response}")
                 if response != "end":
-                    show_image(image_paths[int(response)])
+                    show_image(image_paths[int(response)])  # Show the next image
             elif key.char == 'e':
                 print("Exiting program.")
-                return False
+                return False  # Stop listening for events (exit)
         except AttributeError:
-            pass
+            pass  # Handle non-character keys
 
     # Collect events until released
     with keyboard.Listener(on_press=on_press) as listener:
