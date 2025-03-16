@@ -6,7 +6,8 @@ import csv
 import socket
 
 HOST = "100.120.18.53"  # Server's hostname or IP address
-PORT = 65433  # Port used by the server
+PORT_MAIN = 65433  # Port used by the main menu server
+PORT_COGNITIVE = 65432  # Port used by the cognitive test server
 session_ended = False  # Flag to indicate if the session has ended
 csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
 
@@ -26,11 +27,11 @@ def append_cognitive_data(file_path, cognitive_data):
         writer = csv.writer(csvfile)
         writer.writerow(cognitive_data)
 
-# Function to handle client connections
-def handle_client(conn, addr):
+# Function to handle client connections for the main menu
+def handle_main_menu_client(conn, addr):
     global session_ended
     with conn:
-        print(f"Connected by {addr}")
+        print(f"Connected by {addr} (Main Menu)")
         
         while True:
             data = conn.recv(1024)
@@ -64,6 +65,24 @@ def handle_client(conn, addr):
 
             # Send back the received message as the response
             conn.sendall(message.encode('utf-8'))  # Send the received message back to the proctor
+
+# Function to handle client connections for the cognitive test
+def handle_cognitive_client(conn, addr):
+    with conn:
+        print(f"Connected by {addr} (Cognitive Test)")
+
+        # Send instructions or start logic here
+        session_ended = False
+        while not session_ended:
+            data = conn.recv(1024)
+            if not data:
+                break
+            message = data.decode('utf-8')
+
+            # Call functions related to cognitive testing logic here
+            cognitive_data = track_cognitive_data()
+            # For example, you can append the cognitive data or respond based on input
+            conn.sendall(message.encode('utf-8'))  # Respond with some message
 
 # Function to track cognitive data (image number, color, word, key, time taken)
 def track_cognitive_data():
@@ -112,10 +131,19 @@ def track_cognitive_data():
     return log_data
 
 # Main server code
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    print(f"Server listening on {HOST}:{PORT}")
-    while True:
-        conn, addr = s.accept()  # Accept the connection and get the address
-        handle_client(conn, addr)  # Pass the connection and address to handle_client
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
+    s_main.bind((HOST, PORT_MAIN))
+    s_main.listen()
+    print(f"Server listening on {HOST}:{PORT_MAIN}")
+    
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_cognitive:
+        s_cognitive.bind((HOST, PORT_COGNITIVE))
+        s_cognitive.listen()
+        print(f"Server listening on {HOST}:{PORT_COGNITIVE}")
+        
+        while True:
+            conn_main, addr_main = s_main.accept()  # Accept main menu connection
+            handle_main_menu_client(conn_main, addr_main)  # Handle main menu client
+            
+            conn_cognitive, addr_cognitive = s_cognitive.accept()  # Accept cognitive test connection
+            handle_cognitive_client(conn_cognitive, addr_cognitive)  # Handle cognitive test client
