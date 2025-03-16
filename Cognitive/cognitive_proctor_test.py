@@ -5,7 +5,7 @@ import time
 from pynput import keyboard
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
-PORT = 65432  # The port used by the server
+PORT = 65432  # The port used by the server for cognitive
 
 def send_keystroke(key):
     try:
@@ -24,7 +24,7 @@ opened_image = None  # Keeps reference to the currently open PIL Image object
 
 print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
-print("Press 'esc' to exit the program.")
+print("Press 'e' to exit the program.")
 
 #TODO: Maybe remove these prints if we are displaying an image that contains the same info
 
@@ -72,7 +72,7 @@ def on_press(key):
             print(f"Received image number: {response}")
             if response != "end":
                 show_image(image_paths[int(response)])
-        elif key.char == 'esc':
+        elif key.char == 'e':
             print("Exiting program.")
             return False
 
