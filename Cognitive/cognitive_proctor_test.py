@@ -3,14 +3,78 @@ import os
 import socket
 import time
 from pynput import keyboard
+from nicegui import app, ui
+from nicegui.events import KeyEventArguments
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
-PORT = 65432  # The port used by the server for cognitive
+PORT = 65433  # The port used by the server for main menu in particular
+content = ui.column()
+
+# Function to send user information
+def send_info(participant_information):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((HOST, PORT))
+            s.sendall(participant_information.encode('utf-8'))
+            data = s.recv(1024)
+        return data.decode('utf-8')
+    except ConnectionRefusedError:
+        print("Connection refused. Retrying...")
+        time.sleep(1)
+        return send_info(participant_information)
+
+# Function to save user information
+def save_user_info(sex, height, activity, number, append=False):
+    if sex == "Female":
+        participant_sex = "1"
+    elif sex == "Male":
+        participant_sex = "0"
+    if activity == 'Drunk':
+        participant_activity = "1"
+    else:
+        participant_activity = "0"
+    participant_height = str(height)
+    participant_number = str(number)
+    participant_info = f"S{participant_sex}H{participant_height}A{participant_activity}N{participant_number}"
+    print(f"User Info Saved as {participant_info}")
+    send_info(participant_info)
+
+# Function for user input interface in NiceGUI
+def user_info():
+    with ui.column():
+        ui.label("Enter the Participant's Information").classes('text-2xl font-bold')
+        number = ui.input("Participant's Number").classes("w-64")
+        sex = ui.radio(["Male", "Female"]).classes("w-64")
+        height = ui.input("Participant's Height in 3 digits [cm]").classes("w-64")
+        ui.label("Select the activity:").classes('text-lg')
+        activity = ui.select(['Drunk', 'Sober'], value=None)
+
+        def submit():
+            print(f"Submit button clicked! S{sex.value} H{height.value} A{activity.value} N{number.value}")
+            save_user_info(sex.value, height.value, activity.value, number.value)
+            ui.notify("User Info Saved!", color="green")
+            # After saving user info, run the cognitive test code
+            run_cognitive_test()
+
+        ui.button("Save and Continue", on_click=submit).classes("text-lg bg-blue-500 text-white p-2 rounded-lg")
+
+# Cognitive test variables and logic
+HOST_COGNITIVE = "100.120.18.53"
+PORT_COGNITIVE = 65432
+
+image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
+image_paths = [
+    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
+    for num in image_numbers
+]
+opened_image = None
+started = False
+current_index = 0
 
 def send_keystroke(key):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST, PORT))
+            s.connect((HOST_COGNITIVE, PORT_COGNITIVE))
             s.sendall(key.encode('utf-8'))
             data = s.recv(1024)
         return data.decode('utf-8')
@@ -19,27 +83,6 @@ def send_keystroke(key):
         time.sleep(1)
         return send_keystroke(key)
 
-current_index = 0  # Tracks the current image index
-opened_image = None  # Keeps reference to the currently open PIL Image object
-
-print("Press 's' to start the randomized image sequence.")
-print("Press 'y' or 'n' to open the next image after starting.")
-print("Press 'e' to exit the program.")
-
-#TODO: Maybe remove these prints if we are displaying an image that contains the same info
-
-image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
-
-# List of image paths based on shuffled numbers
-image_paths = [
-    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
-    # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
-    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
-    for num in image_numbers
-]
-#NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
-#TODO should always display cognitive_page_0 first as it displays the instructions
-
 def show_image(image_path):
     global opened_image
     if opened_image:
@@ -47,38 +90,45 @@ def show_image(image_path):
     opened_image = Image.open(image_path)
     opened_image.show()
 
-#TODO:Make the images close (it doesnt work rn)
-
-show_image(image_paths[0]) #show the explination image
-
-# Flag to indicate if the sequence has started
-started = False
-
-def on_press(key):
+# Run cognitive test once user info is submitted
+def run_cognitive_test():
     global started
-    try:
-        if key.char == 's' and not started:
-            started = True
-            response = send_keystroke('s')
-            print(f"Received image number: {response}")
-            show_image(image_paths[int(response)])
-        elif key.char == 'y' and started:
-            response = send_keystroke('y')
-            print(f"Received image number: {response}")
-            if response != "end":
-                show_image(image_paths[int(response)])
-        elif key.char == 'n' and started:
-            response = send_keystroke('n')
-            print(f"Received image number: {response}")
-            if response != "end":
-                show_image(image_paths[int(response)])
-        elif key.char == 'e':
-            print("Exiting program.")
-            return False
+    print("Press 's' to start the randomized image sequence.")
+    print("Press 'y' or 'n' to open the next image after starting.")
+    print("Press 'e' to exit the program.")
 
-    except AttributeError:
-        pass
+    show_image(image_paths[0])  # show the explanation image
 
-# Collect events until released
-with keyboard.Listener(on_press=on_press) as listener:
-    listener.join()
+    def on_press(key):
+        global started
+        try:
+            if key.char == 's' and not started:
+                started = True
+                response = send_keystroke('s')
+                print(f"Received image number: {response}")
+                show_image(image_paths[int(response)])
+            elif key.char == 'y' and started:
+                response = send_keystroke('y')
+                print(f"Received image number: {response}")
+                if response != "end":
+                    show_image(image_paths[int(response)])
+            elif key.char == 'n' and started:
+                response = send_keystroke('n')
+                print(f"Received image number: {response}")
+                if response != "end":
+                    show_image(image_paths[int(response)])
+            elif key.char == 'e':
+                print("Exiting program.")
+                return False
+        except AttributeError:
+            pass
+
+    # Collect events until released
+    with keyboard.Listener(on_press=on_press) as listener:
+        listener.join()
+
+# Start NiceGUI app
+with content:
+    user_info()
+
+ui.run()
