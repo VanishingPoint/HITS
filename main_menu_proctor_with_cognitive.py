@@ -62,16 +62,13 @@ def user_info():
 HOST_COGNITIVE = "100.120.18.53"
 PORT_COGNITIVE = 65432
 
-image_numbers = list(range(1, 16))  # image 0 is explanation, others are answers
-randomized_images = random.sample(image_numbers, len(image_numbers))
-print(f"{randomized_images}")
+image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
 image_paths = [
     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
     for num in [0] + image_numbers  # Include cognitive_page_0 for explanation
 ]
 opened_image = None
 started = False
-current_index = 0
 
 def send_keystroke(key):
     try:
@@ -93,27 +90,29 @@ def show_image(image_path):
     opened_image.show()
 
 def on_press(key):
-    global started, current_index, randomized_images
+    global started, current_index
     try:
         if key.char == 's' and not started:
             started = True
             print("Test started.")
-            # Show the first randomized image
-            current_index += 1
-            show_image(image_paths[randomized_images[current_index]])
+            # Show the first image
+            response = send_keystroke(key.char)
+            show_image(image_paths[image_numbers[response]])
         elif (key.char == 'y' or key.char == 'n') and started:
             # Send the 'y' or 'n' response to the server
-            send_keystroke(key.char)
-            current_index += 1  # Increment index after 'y' or 'n'
-            if current_index < len(randomized_images):
-                print(f"Next image: {randomized_images[current_index]}")
-                show_image(image_paths[randomized_images[current_index]])  # Show the next randomized image
+            response = send_keystroke(key.char)
+            if (response == 'end'):
+                print("Test Complete")
+                return True
             else:
-                print("Test completed.")
-                return False  # End the test after all images are shown, but the listener won't stop until this is reached
+                print(f"Next image: {image_numbers[response]}")
+                show_image(image_paths[image_numbers[response]])  # Show the next randomized image
         elif key.char == 'e':
             print("Exiting program.")
-            return False  # Allows the user to exit the test if 'e' is pressed
+            return False  # Allows the user to exit the test if 'e' is pressed, false flag indicates incomplete test
+        else:
+                print("Invalid Input")
+                
     except AttributeError:
         pass
 
