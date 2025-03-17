@@ -25,7 +25,7 @@ output2 = FfmpegOutput('testcam2.mp4')
 cam1.start_recording(encoder1, output1)
 cam2.start_recording(encoder2, output2)
 
-time.sleep(10)
+time.sleep(20)
 
 cam2.stop_recording()
 cam1.stop_recording()
