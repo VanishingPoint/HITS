@@ -71,11 +71,6 @@ def handle_main_menu_client(conn_main, addr):
                 log_data = [sex, height, activity, participant_number, time.time()]
                 writer.writerow(log_data)
 
-            # Cognitive part: Track image number, color, word, and response time
-            image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended = track_cognitive_data()
-            cognitive_data = [image_numbers[current_index], image_colour[image_numbers[current_index]], image_word[image_numbers[current_index]], "start", time.time()]
-            append_cognitive_data(file_path, cognitive_data)
-
             # Send back the received message as the response
             conn_main.sendall(message.encode('utf-8'))  # Send the received message back to the proctor
 
@@ -83,7 +78,7 @@ def handle_main_menu_client(conn_main, addr):
 
 # Function to handle client connections for the cognitive test
 def handle_cognitive_test(conn_cognitive, file_path):
-    
+
     image_numbers = list(range(1, 17))  # Assuming 16 images
     random.shuffle(image_numbers)
 
