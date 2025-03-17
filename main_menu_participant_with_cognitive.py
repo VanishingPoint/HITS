@@ -98,7 +98,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
 
     current_index = 0  # Tracks the current image index
     start_time = time.time()  # Start timing
-    session_ended = False  # Flag to indicate if the session has ende
+    session_ended = False  # Flag to indicate if the session has ended
 
     with conn_cognitive:
         print(f"Connected by {addr_cognitive}")
@@ -118,11 +118,13 @@ def handle_cognitive_test(conn_cognitive, file_path):
 
             if key == "s": 
                 # Show the current image
+                response = str(image_numbers[current_index])
                 show_image(image_paths[current_index])
                 start_time = time.time()  # Reset start time for the next image
                 current_index += 1
             elif key in ["y", "n"]:
                 if current_index < len(image_numbers):
+                    response = str(image_numbers[current_index])
                     # Show next image
                     show_image(image_paths[current_index])
                     start_time = time.time()  # Reset start time for the next image
@@ -144,6 +146,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
             # Additional data logging here (cognitive data)
             cognitive_data = [image_num, colour, word, key, time_taken]
             append_cognitive_data(file_path, cognitive_data)
+            conn_cognitive.sendall(response.encode('utf-8'))
 
 # Main server code
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
