@@ -65,9 +65,9 @@ PORT_COGNITIVE = 65432
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
 image_paths = [
-    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
+     fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
     # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
-    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
+    #fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
     for num in image_numbers
 ]
 
@@ -97,6 +97,7 @@ def show_image(image_path):
 
 def on_press(key):
     global started, ended, completed
+    print("starting cases")
     try:
         if key.char == 's' and not started:
             started = True
@@ -126,11 +127,13 @@ def on_press(key):
                 
     except AttributeError:
         pass
+    print ("exiting cases")
+    return 0
 
 
 # Run cognitive test once user info is submitted
 def run_cognitive_test():
-    global started, current_index, image_numbers, randomized_images
+    global started, image_numbers, completed
     print("Press 's' to start the randomized image sequence.")
     print("Press 'y' or 'n' to open the next image after starting.")
     print("Press 'e' to exit the program.")
@@ -140,8 +143,12 @@ def run_cognitive_test():
 
     while(completed == False):
         # Start listening for key events
+        print("waiting for keypress")
         with keyboard.Listener(on_press=on_press) as listener:
             listener.join()
+
+    print("loop exited")
+
 
 
 with content:
