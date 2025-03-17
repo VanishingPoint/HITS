@@ -73,6 +73,8 @@ image_paths = [
 
 opened_image = None
 started = False
+ended = False
+completed = False
 
 def send_keystroke(key):
     try:
@@ -94,7 +96,7 @@ def show_image(image_path):
     opened_image.show()
 
 def on_press(key):
-    global started, current_index
+    global started, ended, completed
     try:
         if key.char == 's' and not started:
             started = True
@@ -108,14 +110,17 @@ def on_press(key):
             response = send_keystroke(key.char)
             if (response == 'end'):
                 print("Test Complete")
-                return True
+                ended = True
+                completed = True
             else:
                 print(f"Received image number: {response}")
                 print(f"Next image: {image_numbers[response]}")
                 show_image(image_paths[int(response)])  # Show the next randomized image
         elif key.char == 'e':
             print("Exiting program.")
-            return False  # Allows the user to exit the test if 'e' is pressed, false flag indicates incomplete test
+            ended = True
+            completed = False
+              # Allows the user to exit the test if 'e' is pressed, false flag indicates incomplete test
         else:
                 print("Invalid Input")
                 
@@ -133,9 +138,10 @@ def run_cognitive_test():
     # Show the explanation image first (cognitive_page_0)
     show_image(image_paths[0])
 
-    # Start listening for key events
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
+    while(completed == False):
+        # Start listening for key events
+        with keyboard.Listener(on_press=on_press) as listener:
+            listener.join()
 
 
 with content:
