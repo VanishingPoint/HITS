@@ -49,9 +49,11 @@ def track_cognitive_data():
     ]
 
     current_index = 0  # Tracks the current image index
-    opened_image = None  # Keeps reference to the currently open PIL Image object
     start_time = time.time()  # Start timing
     session_ended = False  # Flag to indicate if the session has ended
+
+    # Initialize opened_image globally
+    opened_image = None  # Keeps reference to the currently open PIL Image object
 
     # Function to open and display an image
     def show_image(image_path):
@@ -61,7 +63,7 @@ def track_cognitive_data():
         opened_image = Image.open(image_path)
         opened_image.show()
 
-    return image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended, show_image
+    return image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended, show_image, opened_image
 
 # Function to handle client connections for the main menu
 def handle_main_menu_client(conn_main, addr):
@@ -96,7 +98,7 @@ def handle_main_menu_client(conn_main, addr):
                 writer.writerow(log_data)
 
             # Cognitive part: Track image number, color, word, and response time
-            image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended, show_image = track_cognitive_data()
+            image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended, show_image, opened_image = track_cognitive_data()
             cognitive_data = [image_numbers[current_index], image_colour[image_numbers[current_index]], image_word[image_numbers[current_index]], "start", time.time()]
             append_cognitive_data(file_path, cognitive_data)
 
@@ -123,7 +125,7 @@ def handle_cognitive_client(conn_cognitive, addr):
 
 # Function to handle cognitive testing logic
 def handle_cognitive_test(conn_cognitive):
-    image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended, show_image = track_cognitive_data()
+    image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended, show_image, opened_image = track_cognitive_data()
 
     with conn_cognitive:
         print(f"Connected by {addr_cognitive}")
