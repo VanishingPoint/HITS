@@ -171,4 +171,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
             
             conn_cognitive, addr_cognitive = s_cognitive.accept()  # Accept cognitive test connection
             handle_cognitive_test(conn_cognitive, file_path)  # Handle cognitive test client with file path
-            print("finished calling handle_cognitive_test")
+            print("finished calling handle_cognitive_test") # it stops here
