@@ -116,6 +116,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
             end_time = time.time()
             time_taken = end_time - start_time
 
+            print("recieved {key}")
             if key == "s": 
                 # Show the current image
                 response = str(image_numbers[current_index])
