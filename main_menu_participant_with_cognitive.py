@@ -29,31 +29,6 @@ def append_cognitive_data(file_path, cognitive_data):
         # Add the cognitive data starting from column F
         writer.writerow(cognitive_data)
 
-# Function to track cognitive data (image number, color, word, key, time taken)
-def track_cognitive_data():
-    image_numbers = list(range(1, 17))  # Assuming 16 images
-    random.shuffle(image_numbers)
-
-    # Defining attributes for each image
-    image_colour = {
-        1: "blue", 2: "green", 3: "red", 4: "yellow", 5: "blue", 6: "green", 7: "red", 8: "yellow", 9: "blue", 10: "green", 
-        11: "red", 12: "yellow", 13: "blue", 14: "green", 15: "red", 16: "yellow"}
-    image_word = {
-        1: "red", 2: "red", 3: "red", 4: "red", 5: "blue", 6: "blue", 7: "blue", 8: "blue", 9: "yellow", 10: "yellow", 
-        11: "yellow", 12: "yellow", 13: "green", 14: "green", 15: "green", 16: "green"}
-
-    # List of image paths based on shuffled numbers
-    image_paths = [
-        fr"/home/hits/Documents/GitHub/HITS/Cognitive/Cognitive Participant Images/page_{num}.png"
-        for num in image_numbers
-    ]
-
-    current_index = 0  # Tracks the current image index
-    start_time = time.time()  # Start timing
-    session_ended = False  # Flag to indicate if the session has ended
-
-    return image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended
-
 # Function to open and display an image
 opened_image = None  # Initialize the variable at the global level
 
@@ -108,7 +83,27 @@ def handle_main_menu_client(conn_main, addr):
 
 # Function to handle client connections for the cognitive test
 def handle_cognitive_test(conn_cognitive, file_path):
-    image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended = track_cognitive_data()
+    
+    image_numbers = list(range(1, 17))  # Assuming 16 images
+    random.shuffle(image_numbers)
+
+    # Defining attributes for each image
+    image_colour = {
+        1: "blue", 2: "green", 3: "red", 4: "yellow", 5: "blue", 6: "green", 7: "red", 8: "yellow", 9: "blue", 10: "green", 
+        11: "red", 12: "yellow", 13: "blue", 14: "green", 15: "red", 16: "yellow"}
+    image_word = {
+        1: "red", 2: "red", 3: "red", 4: "red", 5: "blue", 6: "blue", 7: "blue", 8: "blue", 9: "yellow", 10: "yellow", 
+        11: "yellow", 12: "yellow", 13: "green", 14: "green", 15: "green", 16: "green"}
+
+    # List of image paths based on shuffled numbers
+    image_paths = [
+        fr"/home/hits/Documents/GitHub/HITS/Cognitive/Cognitive Participant Images/page_{num}.png"
+        for num in image_numbers
+    ]
+
+    current_index = 0  # Tracks the current image index
+    start_time = time.time()  # Start timing
+    session_ended = False  # Flag to indicate if the session has ende
 
     with conn_cognitive:
         print(f"Connected by {addr_cognitive}")
