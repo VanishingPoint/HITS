@@ -36,7 +36,7 @@ def track_cognitive_data():
 
     # Defining attributes for each image
     image_colour = {
-        1: "blue", 2: "green", 3: "red", 4: "yellow", 5: "blue",  6: "green",  7: "red", 8: "yellow", 9: "blue", 10: "green", 
+        1: "blue", 2: "green", 3: "red", 4: "yellow", 5: "blue", 6: "green", 7: "red", 8: "yellow", 9: "blue", 10: "green", 
         11: "red", 12: "yellow", 13: "blue", 14: "green", 15: "red", 16: "yellow"}
     image_word = {
         1: "red", 2: "red", 3: "red", 4: "red", 5: "blue", 6: "blue", 7: "blue", 8: "blue", 9: "yellow", 10: "yellow", 
@@ -107,23 +107,6 @@ def handle_main_menu_client(conn_main, addr):
             return file_path  # Return the file path for use in the cognitive test
 
 # Function to handle client connections for the cognitive test
-def handle_cognitive_client(conn_cognitive, addr):
-    with conn_cognitive:
-        print(f"Connected by {addr} (Cognitive Test)")
-
-        # Send instructions or start logic here
-        session_ended = False
-        while not session_ended:
-            data = conn_cognitive.recv(1024)
-            if not data:
-                break
-            message = data.decode('utf-8')
-
-            # Call functions related to cognitive testing logic here
-            cognitive_data = track_cognitive_data()
-            # For example, you can append the cognitive data or respond based on input
-            conn_cognitive.sendall(message.encode('utf-8'))  # Respond with some message
-
 def handle_cognitive_test(conn_cognitive, file_path):
     image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended = track_cognitive_data()
 
@@ -169,6 +152,8 @@ def handle_cognitive_test(conn_cognitive, file_path):
             colour = image_colour[image_num]
             word = image_word[image_num]
             # Additional data logging here (cognitive data)
+            cognitive_data = [image_num, colour, word, key, time_taken]
+            append_cognitive_data(file_path, cognitive_data)
 
 # Main server code
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:

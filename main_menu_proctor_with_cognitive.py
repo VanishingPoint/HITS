@@ -63,6 +63,8 @@ HOST_COGNITIVE = "100.120.18.53"
 PORT_COGNITIVE = 65432
 
 image_numbers = list(range(1, 16))  # image 0 is explanation, others are answers
+randomized_images = random.sample(image_numbers, len(image_numbers))
+print(f"{randomized_images}")
 image_paths = [
     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
     for num in [0] + image_numbers  # Include cognitive_page_0 for explanation
@@ -97,13 +99,14 @@ def on_press(key):
             started = True
             print("Test started.")
             # Show the first randomized image
+            current_index += 1
             show_image(image_paths[randomized_images[current_index]])
         elif (key.char == 'y' or key.char == 'n') and started:
             # Send the 'y' or 'n' response to the server
             send_keystroke(key.char)
             current_index += 1  # Increment index after 'y' or 'n'
             if current_index < len(randomized_images):
-                print(f"Next image: {current_index}")
+                print(f"Next image: {randomized_images[current_index]}")
                 show_image(image_paths[randomized_images[current_index]])  # Show the next randomized image
             else:
                 print("Test completed.")
@@ -125,13 +128,10 @@ def run_cognitive_test():
     # Show the explanation image first (cognitive_page_0)
     show_image(image_paths[0])
 
-    # Randomize the image order for 1-15
-    randomized_images = random.sample(image_numbers, len(image_numbers))
-
     # Start listening for key events
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
-y
+
 
 with content:
     user_info()

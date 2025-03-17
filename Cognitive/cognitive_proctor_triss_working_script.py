@@ -26,8 +26,6 @@ print("Press 's' to start the randomized image sequence.")
 print("Press 'y' or 'n' to open the next image after starting.")
 print("Press 'esc' to exit the program.")
 
-#TODO: Maybe remove these prints if we are displaying an image that contains the same info
-
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
 # List of image paths based on shuffled numbers
@@ -37,6 +35,7 @@ image_paths = [
     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
     for num in image_numbers
 ]
+
 #NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
 #TODO should always display cognitive_page_0 first as it displays the instructions
 
