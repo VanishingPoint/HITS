@@ -58,7 +58,7 @@ def track_cognitive_data():
 opened_image = None  # Initialize the variable at the global level
 
 def show_image(image_path):
-    global opened_image  # Use the global `opened_image` variable
+    global opened_image  # Use the global opened_image variable
     if opened_image:
         opened_image.close()  # Close the previous image if it exists
     opened_image = Image.open(image_path)
@@ -104,6 +104,8 @@ def handle_main_menu_client(conn_main, addr):
             # Send back the received message as the response
             conn_main.sendall(message.encode('utf-8'))  # Send the received message back to the proctor
 
+            return file_path  # Return the file path for use in the cognitive test
+
 # Function to handle client connections for the cognitive test
 def handle_cognitive_client(conn_cognitive, addr):
     with conn_cognitive:
@@ -123,7 +125,7 @@ def handle_cognitive_client(conn_cognitive, addr):
             conn_cognitive.sendall(message.encode('utf-8'))  # Respond with some message
 
 # Function to handle cognitive testing logic
-def handle_cognitive_test(conn_cognitive):
+def handle_cognitive_test(conn_cognitive, file_path):
     image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended = track_cognitive_data()
 
     with conn_cognitive:
@@ -173,7 +175,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
         
         while True:
             conn_main, addr_main = s_main.accept()  # Accept main menu connection
-            handle_main_menu_client(conn_main, addr_main)  # Handle main menu client
+            file_path = handle_main_menu_client(conn_main, addr_main)  # Handle main menu client and get file path
             
             conn_cognitive, addr_cognitive = s_cognitive.accept()  # Accept cognitive test connection
-            handle_cognitive_test(conn_cognitive)  # Handle cognitive test client
+            handle_cognitive_test(conn_cognitive, file_path)  # Handle cognitive test client with file path
