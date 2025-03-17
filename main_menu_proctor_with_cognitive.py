@@ -62,11 +62,15 @@ def user_info():
 HOST_COGNITIVE = "100.120.18.53"
 PORT_COGNITIVE = 65432
 
-image_numbers = list(range(0, 17))  # image 0 is explanation, others are answers
+image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
+
 image_paths = [
-    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png"
-    for num in [0] + image_numbers  # Include cognitive_page_0 for explanation
+    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
+    # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
+    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
+    for num in image_numbers
 ]
+
 opened_image = None
 started = False
 
@@ -97,7 +101,8 @@ def on_press(key):
             print("Test started.")
             # Show the first image
             response = send_keystroke(key.char)
-            show_image(image_paths[image_numbers[response]])
+            print(f"Received image number: {response}")
+            show_image(image_paths[int(response)])
         elif (key.char == 'y' or key.char == 'n') and started:
             # Send the 'y' or 'n' response to the server
             response = send_keystroke(key.char)
@@ -105,8 +110,9 @@ def on_press(key):
                 print("Test Complete")
                 return True
             else:
+                print(f"Received image number: {response}")
                 print(f"Next image: {image_numbers[response]}")
-                show_image(image_paths[image_numbers[response]])  # Show the next randomized image
+                show_image(image_paths[int(response)])  # Show the next randomized image
         elif key.char == 'e':
             print("Exiting program.")
             return False  # Allows the user to exit the test if 'e' is pressed, false flag indicates incomplete test
