@@ -124,7 +124,6 @@ def handle_cognitive_client(conn_cognitive, addr):
             # For example, you can append the cognitive data or respond based on input
             conn_cognitive.sendall(message.encode('utf-8'))  # Respond with some message
 
-# Function to handle cognitive testing logic
 def handle_cognitive_test(conn_cognitive, file_path):
     image_numbers, image_colour, image_word, image_paths, current_index, start_time, session_ended = track_cognitive_data()
 
@@ -135,32 +134,41 @@ def handle_cognitive_test(conn_cognitive, file_path):
             if not data:
                 break
             key = data.decode('utf-8')
+
+            # Check if session has ended
             if session_ended:
-                continue
+                print("Session ended.")
+                break
+
             end_time = time.time()
             time_taken = end_time - start_time
+
             if key == "s": 
-                response = str(image_numbers[current_index])
+                # Show the current image
                 show_image(image_paths[current_index])
                 start_time = time.time()  # Reset start time for the next image
                 current_index += 1
             elif key in ["y", "n"]:
                 if current_index < len(image_numbers):
-                    response = str(image_numbers[current_index])
+                    # Show next image
                     show_image(image_paths[current_index])
                     start_time = time.time()  # Reset start time for the next image
                     current_index += 1
                 else:
-                    response = "end"
+                    # End the test when all images are shown
                     session_ended = True
-            # Log the data
+                    print("Test completed.")
+                    response = "end"  # Optionally send a message back
+                    conn_cognitive.sendall(response.encode('utf-8'))
+                    break  # Exit the loop after all images are shown
+            else:
+                print(f"Invalid key pressed: {key}")
+            
+            # Log the data after each keystroke and image
             image_num = image_numbers[current_index - 1]
             colour = image_colour[image_num]
             word = image_word[image_num]
-            log_data = [image_num, colour, word, key, time_taken]
-            print(f"Logging data: {log_data}")
-            append_cognitive_data(file_path, log_data)
-            conn_cognitive.sendall(response.encode('utf-8'))
+            # Additional data logging here (cognitive data)
 
 # Main server code
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:

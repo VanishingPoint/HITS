@@ -90,9 +90,34 @@ def show_image(image_path):
     opened_image = Image.open(image_path)
     opened_image.show()
 
+def on_press(key):
+    global started, current_index, randomized_images
+    try:
+        if key.char == 's' and not started:
+            started = True
+            print("Test started.")
+            # Show the first randomized image
+            show_image(image_paths[randomized_images[current_index]])
+        elif (key.char == 'y' or key.char == 'n') and started:
+            # Send the 'y' or 'n' response to the server
+            send_keystroke(key.char)
+            current_index += 1  # Increment index after 'y' or 'n'
+            if current_index < len(randomized_images):
+                print(f"Next image: {current_index}")
+                show_image(image_paths[randomized_images[current_index]])  # Show the next randomized image
+            else:
+                print("Test completed.")
+                return False  # End the test after all images are shown, but the listener won't stop until this is reached
+        elif key.char == 'e':
+            print("Exiting program.")
+            return False  # Allows the user to exit the test if 'e' is pressed
+    except AttributeError:
+        pass
+
+
 # Run cognitive test once user info is submitted
 def run_cognitive_test():
-    global started, current_index, image_numbers
+    global started, current_index, image_numbers, randomized_images
     print("Press 's' to start the randomized image sequence.")
     print("Press 'y' or 'n' to open the next image after starting.")
     print("Press 'e' to exit the program.")
@@ -102,35 +127,11 @@ def run_cognitive_test():
 
     # Randomize the image order for 1-15
     randomized_images = random.sample(image_numbers, len(image_numbers))
-    print("Randomized image order:", randomized_images)
 
-    def on_press(key):
-        global started, current_index
-        try:
-            if key.char == 's' and not started:
-                started = True
-                print("Test started.")
-                # Show the first randomized image
-                show_image(image_paths[randomized_images[current_index]])
-            elif (key.char == 'y' or key.char == 'n') and started:
-                # Send the 'y' or 'n' response to the server
-                send_keystroke(key.char)
-                current_index += 1  # Increment index after 'y' or 'n'
-                if current_index < len(randomized_images):
-                    print(f"Next image: {current_index}")
-                    show_image(image_paths[randomized_images[current_index]])  # Show the next randomized image
-                else:
-                    print("Test completed.")
-                    return False  # End the test after all images are shown
-            elif key.char == 'e':
-                print("Exiting program.")
-                return False
-        except AttributeError:
-            pass
-
-    # Collect events until released
+    # Start listening for key events
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
+y
 
 with content:
     user_info()
