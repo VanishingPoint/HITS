@@ -24,7 +24,7 @@ def decode_message(message):
 # Function to append user info with cognitive data
 def append_cognitive_data(file_path, cognitive_data):
     """Append cognitive data to the existing user CSV file."""
-    with open(file_path, "f", newline="") as csvfile:
+    with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(cognitive_data)
 
