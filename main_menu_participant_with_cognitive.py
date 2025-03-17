@@ -116,7 +116,6 @@ def handle_cognitive_test(conn_cognitive, file_path):
             end_time = time.time()
             time_taken = end_time - start_time
 
-            print("recieved {key}")
             if key == "s": 
                 # Show the current image
                 response = str(image_numbers[current_index])
@@ -136,10 +135,12 @@ def handle_cognitive_test(conn_cognitive, file_path):
                     print("Test completed.")
                     response = "end"  # Optionally send a message back
                     conn_cognitive.sendall(response.encode('utf-8'))
+                    #not Sure the above line is correct - Triss
                     break  # Exit the loop after all images are shown
             else:
                 print(f"Invalid key pressed: {key}")
             
+            print("logging data")
             # Log the data after each keystroke and image
             image_num = image_numbers[current_index - 1]
             colour = image_colour[image_num]
