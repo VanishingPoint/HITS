@@ -9,6 +9,8 @@ from picamera2 import Picamera2
 left_camera = Picamera2(0)
 right_camera = Picamera2(1)
 
+print("Cameras Init")
+
 # Configure the cameras
 left_camera.configure(left_camera.create_video_configuration())
 right_camera.configure(right_camera.create_video_configuration())
@@ -19,12 +21,16 @@ right_camera.configure(right_camera.create_video_configuration())
 left_camera.start_recording("Left.h264")
 right_camera.start_recording("Right.h264")
 
+print("recording")
+
 # Record for 120 seconds
 time.sleep(120)
 
 # Stop recording
 left_camera.stop_recording()
 right_camera.stop_recording()
+
+print("end recording")
 
 # Close the cameras
 left_camera.close()
