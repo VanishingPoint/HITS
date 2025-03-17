@@ -21,8 +21,8 @@ right_camera.start()
 print("Cameras Init")
 
 # Configure the cameras
-left_camera.configure(left_camera.create_video_configuration())
-right_camera.configure(right_camera.create_video_configuration())
+#left_camera.configure(left_camera.create_video_configuration())
+#right_camera.configure(right_camera.create_video_configuration())
 
 #TODO: Figure out the right config values for the quality and framerate that is best
 
