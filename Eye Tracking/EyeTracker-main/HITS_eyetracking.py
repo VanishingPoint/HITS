@@ -416,7 +416,7 @@ def process_frame(frame, timestamp, csv_writer):
 def process_video(video_path, input_method, csv_dir):
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 format
-    out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 60.0, (640, 480))  # Output video filename, codec, frame rate, and frame size
+    out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 30.0, (640, 480))  # Output video filename, codec, frame rate, and frame size
 
     if input_method == 1:
         cap = cv2.VideoCapture(video_path)
@@ -503,9 +503,9 @@ def process_video(video_path, input_method, csv_dir):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-   # video_path = '/Users/nguyen/Downloads/Eye Tracking/calibration.mp4'
-   # csv_output_dir = '/Users/nguyen/Downloads/Eye Tracking'
-    video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main/testcam1.mp4'
-    csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main'
-    #second parameter is 1 for video 2 for webcam
+    video_path = r'C:\Users\richy\Documents\Git\HITS\Eye Tracking\EyeTracker-main\testcam1.mp4'
+    csv_output_dir = r'C:\Users\richy\Documents\Git\HITS\Eye Tracking\EyeTracker-main'
+#video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main/testcam1.mp4'
+#csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main'
+#second parameter is 1 for video 2 for webcam
     process_video(video_path, 1, csv_output_dir)
