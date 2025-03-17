@@ -148,6 +148,9 @@ def handle_cognitive_test(conn_cognitive, file_path):
             # Additional data logging here (cognitive data)
             cognitive_data = [image_num, colour, word, key, time_taken]
             append_cognitive_data(file_path, cognitive_data)
+
+            print("finished logging")
+
             conn_cognitive.sendall(response.encode('utf-8'))
 
 # Main server code
