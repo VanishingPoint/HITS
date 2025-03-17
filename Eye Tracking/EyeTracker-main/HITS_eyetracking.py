@@ -503,7 +503,9 @@ def process_video(video_path, input_method, csv_dir):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    video_path = '/Users/nguyen/Downloads/Eye Tracking/calibration.mp4'
-    csv_output_dir = '/Users/nguyen/Downloads/Eye Tracking'
+   # video_path = '/Users/nguyen/Downloads/Eye Tracking/calibration.mp4'
+   # csv_output_dir = '/Users/nguyen/Downloads/Eye Tracking'
+    video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main/testcam1.mp4'
+    csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main'
     #second parameter is 1 for video 2 for webcam
     process_video(video_path, 1, csv_output_dir)
