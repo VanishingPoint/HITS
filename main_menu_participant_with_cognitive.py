@@ -152,6 +152,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
             print("finished logging")
 
             conn_cognitive.sendall(response.encode('utf-8'))
+            print("sent response")
 
 # Main server code
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
@@ -170,3 +171,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
             
             conn_cognitive, addr_cognitive = s_cognitive.accept()  # Accept cognitive test connection
             handle_cognitive_test(conn_cognitive, file_path)  # Handle cognitive test client with file path
+            print("finished calling handle_cognitive_test")
