@@ -116,6 +116,8 @@ def handle_cognitive_test(conn_cognitive, file_path):
             end_time = time.time()
             time_taken = end_time - start_time
 
+            print(f"Key Recieve: {key}") #Debug print
+
             if key == "s": 
                 # Show the current image
                 response = str(image_numbers[current_index])
@@ -133,7 +135,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
                     # End the test when all images are shown
                     session_ended = True
                     print("Test completed.")
-                    response = "end"  # Optionally send a message back
+                    response = "end"
                     conn_cognitive.sendall(response.encode('utf-8'))
                     #not Sure the above line is correct - Triss
                     break  # Exit the loop after all images are shown
