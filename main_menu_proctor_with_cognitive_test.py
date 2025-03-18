@@ -82,6 +82,7 @@ def send_keystroke(key):
             s.connect((HOST, PORT))
             s.sendall(key.encode('utf-8'))
             data = s.recv(1024)
+            print(f"Server response: {data.decode('utf-8')}")
         return data.decode('utf-8')
     except ConnectionRefusedError:
         print("Connection refused. Retrying...")
@@ -104,6 +105,7 @@ def on_press(key):
             print("Test started.")
             # Show the first image
             response = send_keystroke(key.char)
+            print(f"Sending key stroke: {key.char}")
             print(f"Received image number: {response}")
             show_image(image_paths[int(response)])
             print("came back from show image for instructions")
@@ -133,7 +135,6 @@ def on_press(key):
     print ("exiting cases")
     return 0
 
-
 # Run cognitive test once user info is submitted
 def run_cognitive_test():
     global started, image_numbers, completed
@@ -144,11 +145,16 @@ def run_cognitive_test():
     # Show the explanation image first (cognitive_page_0)
     show_image(image_paths[0])
 
-    while(completed == False):
+    #while(completed == False):
         # Start listening for key events
-        print("waiting for keypress")
+        #print("waiting for keypress")
+        #with keyboard.Listener(on_press=on_press) as listener:
+            #listener.join()
+
+    while not completed:
         with keyboard.Listener(on_press=on_press) as listener:
             listener.join()
+            print(f"After listener: started={started}, ended={ended}, completed={completed}")
 
     print("loop exited")
 
