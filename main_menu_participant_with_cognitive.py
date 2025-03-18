@@ -110,6 +110,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
 
             while not data_available:
                 data = conn_cognitive.recv(1024)
+                print("waiting for data")
                 if data:
                     data_available = True
                     print("data recieved")
