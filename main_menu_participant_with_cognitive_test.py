@@ -7,7 +7,7 @@ import socket
 
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT_MAIN = 65433  # Port used by the main menu server
-PORT_COGNITIVE = 65432  # Port used by the cognitive test server
+# PORT_COGNITIVE = 65432  # Port used by the cognitive test server
 session_ended = False  # Flag to indicate if the session has ended
 csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
 
@@ -77,7 +77,7 @@ def handle_main_menu_client(conn_main, addr):
             return file_path  # Return the file path for use in the cognitive test
 
 # Function to handle client connections for the cognitive test
-def handle_cognitive_test(conn_cognitive, file_path):
+def handle_cognitive_test(conn_main, file_path):
     global session_ended
     image_numbers = list(range(1, 17))  # Assuming 16 images
     random.shuffle(image_numbers)
@@ -100,8 +100,8 @@ def handle_cognitive_test(conn_cognitive, file_path):
     start_time = time.time()  # Start timing
     session_ended = False  # Flag to indicate if the session has ended
 
-    with conn_cognitive:
-        print(f"Connected by {addr_cognitive}")
+    with conn_main:
+        print(f"Connected by {addr_main}")
         while True:
             
             print("top of while true")
@@ -109,7 +109,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
             data_available = False
 
             while not data_available:
-                data = conn_cognitive.recv(1024)
+                data = conn_main.recv(1024)
                 print("waiting for data")
                 if data:
                     data_available = True
@@ -149,7 +149,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
                     session_ended = True
                     print("Test completed.")
                     response = "end"
-                    conn_cognitive.sendall(response.encode('utf-8'))
+                    conn_main.sendall(response.encode('utf-8'))
                     break  # Exit the loop after all images are shown
             else:
                 print(f"Invalid key pressed: {key}")
@@ -163,7 +163,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
             cognitive_data = [image_num, colour, word, key, time_taken]
             append_cognitive_data(file_path, cognitive_data)
             print("finished logging")
-            conn_cognitive.sendall(response.encode('utf-8')) # why is this here a second time? -Chanel
+            conn_main.sendall(response.encode('utf-8')) # why is this here a second time? -Chanel
             print("sent response")
 
 # Main server code
@@ -172,21 +172,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
     s_main.listen()
     print(f"Server listening on {HOST}:{PORT_MAIN}")
     
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_cognitive:
-        s_cognitive.bind((HOST, PORT_COGNITIVE))
-        s_cognitive.listen()
-        print(f"Server listening on {HOST}:{PORT_COGNITIVE}")
-        
-        while True:
-            conn_main, addr_main = s_main.accept()  # Accept main menu connection
-            file_path = handle_main_menu_client(conn_main, addr_main)  # Handle main menu client and get file path
-            conn_cognitive, addr_cognitive = s_cognitive.accept()  # Accept cognitive test connection
-            handle_cognitive_test(conn_cognitive, file_path)  # Handle cognitive test client with file path
-            print("finished calling handle_cognitive_test") # it stops here
-            #It should'nt be reaching the line above until the test is finished... the while true is not working???
-            #We either troubleshoot the loop or conditionally run the setup portion of the function and loop calling the function.
-            #Changing the loop condition did not work. Perhaps it is hitting a break statement?? Will try option 2
-            # Try using one port for both
+    while True:
+        conn_main, addr_main = s_main.accept()  # Accept main menu connection
+        file_path = handle_main_menu_client(conn_main, addr_main)  # Handle main menu client and get file path
+        conn_main, addr_main = s_main.accept()  # Accept cognitive test connection
+        handle_cognitive_test(conn_main, file_path)  # Handle cognitive test client with file path
+        print("finished calling handle_cognitive_test") # it stops here
+        #It should'nt be reaching the line above until the test is finished... the while true is not working???
+        #We either troubleshoot the loop or conditionally run the setup portion of the function and loop calling the function.
+        #Changing the loop condition did not work. Perhaps it is hitting a break statement?? Will try option 2
+        # Try using one port for both
 
-            # release main
-            # try using one socket, one with statement, one main part
+        # release main
+        # try using one socket, one with statement, one main part

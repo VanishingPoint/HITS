@@ -79,7 +79,7 @@ completed = False
 def send_keystroke(key):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST_COGNITIVE, PORT_COGNITIVE))
+            s.connect((HOST, PORT))
             s.sendall(key.encode('utf-8'))
             data = s.recv(1024)
         return data.decode('utf-8')
