@@ -110,6 +110,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
                 data = conn_cognitive.recv(1024)
                 if data:
                     data_available = True
+                    print("data recieved")
 
             #if not data:
                 #print("not data break trip")
