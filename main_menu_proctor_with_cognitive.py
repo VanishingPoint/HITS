@@ -65,9 +65,9 @@ PORT_COGNITIVE = 65432
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
 image_paths = [
-     fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
+    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
     # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
-    #fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
+    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
     for num in image_numbers
 ]
 
@@ -97,7 +97,7 @@ def show_image(image_path):
 
 def on_press(key):
     global started, ended, completed
-    print("starting cases")
+    print(f"starting cases started = {started}, ended = {ended}, completed = {completed}") # it stops here the second time this runs
     try:
         if key.char == 's' and not started:
             started = True
@@ -106,9 +106,11 @@ def on_press(key):
             response = send_keystroke(key.char)
             print(f"Received image number: {response}")
             show_image(image_paths[int(response)])
+            print("came back from show image for instructions")
         elif (key.char == 'y' or key.char == 'n') and started:
             # Send the 'y' or 'n' response to the server
             response = send_keystroke(key.char)
+            print(f"received key response {response}")
             if (response == 'end'):
                 print("Test Complete")
                 ended = True
@@ -148,8 +150,6 @@ def run_cognitive_test():
             listener.join()
 
     print("loop exited")
-
-
 
 with content:
     user_info()
