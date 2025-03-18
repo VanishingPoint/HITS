@@ -127,8 +127,11 @@ def handle_cognitive_test(conn_main, file_path):
 
             key = data.decode('utf-8')
 
-            # Check if session has ended
-            if session_ended == True:
+            if not key or key not in {"s", "y", "n"}:  # Ignore blank input and invalid keys
+                print(f"Invalid or blank key pressed: '{key}'")
+                continue
+
+            if session_ended:
                 print("Session ended.")
                 break
 
