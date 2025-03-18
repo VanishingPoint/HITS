@@ -108,12 +108,17 @@ def handle_cognitive_test(conn_main, file_path):
 
             data_available = False
 
+            conn_main.settimeout(5)  # Set a 5-second timeout
+
             while not data_available:
-                data = conn_main.recv(1024)
-                print("waiting for data")
-                if data:
-                    data_available = True
-                    print("data received")
+                try:
+                    data = conn_main.recv(1024)
+                    print("waiting for data")
+                    if data:
+                        data_available = True
+                        print("data received")
+                except socket.timeout:
+                    print("No data received, retrying...")
 
             #if not data: # this is the way it should be done but the new way is more informative
                 #print("not data break trip")
