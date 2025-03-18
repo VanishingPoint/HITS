@@ -104,8 +104,12 @@ def handle_cognitive_test(conn_cognitive, file_path):
         print(f"Connected by {addr_cognitive}")
         while True:
             
-            while not data:
+            data_available = False
+
+            while not data_available:
                 data = conn_cognitive.recv(1024)
+                if data:
+                    data_available = True
 
             #if not data:
                 #print("not data break trip")
