@@ -103,10 +103,15 @@ def handle_cognitive_test(conn_cognitive, file_path):
     with conn_cognitive:
         print(f"Connected by {addr_cognitive}")
         while True:
-            data = conn_cognitive.recv(1024)
-            if not data:
-                print("not data break trip")
-                break
+            
+            while not data:
+                data = conn_cognitive.recv(1024)
+
+            #if not data:
+                #print("not data break trip")
+                #break
+
+
             key = data.decode('utf-8')
 
             # Check if session has ended
