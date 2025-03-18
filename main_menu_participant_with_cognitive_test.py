@@ -115,7 +115,8 @@ def handle_cognitive_test(conn_main, file_path):
                     data = conn_main.recv(1024)
                     if not data:  # Handle empty messages
                         print("Empty data received, breaking out of loop.")
-                        break
+                        # break
+                        continue # new
                     print(f"Data received: {data}")
                     data_available = True
                 except socket.timeout:
