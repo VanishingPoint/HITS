@@ -113,10 +113,11 @@ def handle_cognitive_test(conn_main, file_path):
             while not data_available:
                 try:
                     data = conn_main.recv(1024)
-                    print("waiting for data")
-                    if data:
-                        data_available = True
-                        print("data received")
+                    if not data:  # Handle empty messages
+                        print("Empty data received, breaking out of loop.")
+                        break
+                    print(f"Data received: {data}")
+                    data_available = True
                 except socket.timeout:
                     print("No data received, retrying...")
 
