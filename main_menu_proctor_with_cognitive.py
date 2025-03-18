@@ -109,6 +109,7 @@ def on_press(key):
             print("came back from show image for instructions")
         elif (key.char == 'y' or key.char == 'n') and started:
             # Send the 'y' or 'n' response to the server
+            print("sent key:", key)
             response = send_keystroke(key.char)
             print(f"received key response {response}")
             if (response == 'end'):

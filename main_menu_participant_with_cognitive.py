@@ -104,6 +104,8 @@ def handle_cognitive_test(conn_cognitive, file_path):
         print(f"Connected by {addr_cognitive}")
         while True:
             
+            print("top of while true")
+
             data_available = False
 
             while not data_available:
