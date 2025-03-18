@@ -78,7 +78,7 @@ def handle_main_menu_client(conn_main, addr):
 
 # Function to handle client connections for the cognitive test
 def handle_cognitive_test(conn_cognitive, file_path):
-
+    global session_ended
     image_numbers = list(range(1, 17))  # Assuming 16 images
     random.shuffle(image_numbers)
 
@@ -102,14 +102,15 @@ def handle_cognitive_test(conn_cognitive, file_path):
 
     with conn_cognitive:
         print(f"Connected by {addr_cognitive}")
-        while session_ended == False:
+        while True:
             data = conn_cognitive.recv(1024)
             if not data:
+                print("not data break trip")
                 break
             key = data.decode('utf-8')
 
             # Check if session has ended
-            if session_ended:
+            if session_ended == True:
                 print("Session ended.")
                 break
 
@@ -176,3 +177,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
             print("finished calling handle_cognitive_test") # it stops here
             #It should'nt be reaching the line above until the test is finished... the while true is not working???
             #We either troubleshoot the loop or conditionally run the setup portion of the function and loop calling the function.
+            #Chaging the loop condition did not work. Perhaps it is hitting a break statement?? Will try option 2
