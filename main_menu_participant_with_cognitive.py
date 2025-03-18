@@ -102,7 +102,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
 
     with conn_cognitive:
         print(f"Connected by {addr_cognitive}")
-        while True:
+        while session_ended == False:
             data = conn_cognitive.recv(1024)
             if not data:
                 break
@@ -116,7 +116,7 @@ def handle_cognitive_test(conn_cognitive, file_path):
             end_time = time.time()
             time_taken = end_time - start_time
 
-            print(f"Key Recieve: {key}") #Debug print
+            print(f"Key Recieved: {key}") #Debug print
 
             if key == "s": 
                 # Show the current image
@@ -174,3 +174,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_main:
             conn_cognitive, addr_cognitive = s_cognitive.accept()  # Accept cognitive test connection
             handle_cognitive_test(conn_cognitive, file_path)  # Handle cognitive test client with file path
             print("finished calling handle_cognitive_test") # it stops here
+            #It should'nt be reaching the line above until the test is finished... the while true is not working???
+            #We either troubleshoot the loop or conditionally run the setup portion of the function and loop calling the function.

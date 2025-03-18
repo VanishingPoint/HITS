@@ -65,9 +65,9 @@ PORT_COGNITIVE = 65432
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
 image_paths = [
-    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
+     fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
     # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
-    fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
+    # fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
     for num in image_numbers
 ]
 
