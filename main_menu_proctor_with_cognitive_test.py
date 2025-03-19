@@ -8,7 +8,6 @@ import random
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65433  # The port used by the server for the main menu in particular
-content = ui.column()
 
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
@@ -103,4 +102,4 @@ def run_cognitive_test():
 with content:
     run_cognitive_test()
 
-ui.run()
+
