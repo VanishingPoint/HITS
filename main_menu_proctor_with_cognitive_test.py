@@ -7,7 +7,7 @@ from nicegui import app, ui
 import random
 
 HOST = "100.120.18.53"  # The server's hostname or IP address
-PORT = 65433  # The port used by the server for the main menu in particular
+PORT = 65432  # The port used by the server for the main menu in particular
 
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
@@ -67,7 +67,7 @@ def on_press(key):
                 completed = True
             else:
                 print(f"Received image number: {response}")
-                print(f"Next image: {image_numbers[response]}")
+                print(f"Next image: {image_numbers[int(response)]}")
                 show_image(image_paths[int(response)])  # Show the next randomized image
         elif key.char == 'e':
             print("Exiting program.")
@@ -99,7 +99,6 @@ def run_cognitive_test():
 
     print("loop exited")
 
-with content:
-    run_cognitive_test()
+run_cognitive_test()
 
 
