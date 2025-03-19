@@ -12,7 +12,8 @@ session_ended = False  # Flag to indicate if the session has ended
 csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
 # Function to open and display an image
 opened_image = None  # Initialize the variable at the global level
-
+file_name = "S1H999A1N9.csv"
+file_path = os.path.join(csv_directory, file_name)  # Full path to the CSV file
 def show_image(image_path):
     global opened_image  # Use the global opened_image variable
     if opened_image:
