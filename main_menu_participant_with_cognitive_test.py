@@ -38,6 +38,30 @@ opened_image = None  # Keeps reference to the currently open PIL Image object
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
+session_ended = False  # Flag to indicate if the session has ended
+csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
+
+# Function to decode the message into user info
+def decode_message(message):
+    """Decode the message SbHnnnAbNnnnnn into its components."""
+    print(message)
+    sex = "Female" if message[1] == "1" else "Male"  # Sx -> 1 is female, 0 is male
+    height = int(message[3:6])  # Hnnn -> height in cm
+    activity = "Drunk" if message[7] == "1" else "Sober"  # Ax -> 1 is drunk, 0 is sober
+    participant_number = int(message[9:len(message)])  # b -> participant number
+    return sex, height, activity, participant_number
+
+# Function to append cognitive data starting at column F
+def append_cognitive_data(file_path, cognitive_data):
+    """Append cognitive data to the existing user CSV file, starting at column F."""
+    with open(file_path, "a", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        # Add the cognitive data starting from column F
+        writer.writerow(cognitive_data)
+
+# Function to open and display an image
+opened_image = None  # Initialize the variable at the global level
+
 # Function to open and display an image
 def show_image(image_path):
     global opened_image
@@ -50,7 +74,45 @@ def show_image(image_path):
 #TODO: We have an instructions page for the proctor, maybe display an instruction page to the participant as well
 #TODO: It is possible to have a single extraneous entry in the log file, this is because the scipt logs a single keypress after the last image is shown
 
-def handle_client(conn):
+# Function to handle client connections for the main menu
+def handle_main_menu_client(conn_main, addr):
+    global session_ended
+    with conn_main:
+        print(f"Connected by {addr} (Main Menu)")
+
+        while True:
+            data = conn_main.recv(1024)
+            if not data:
+                break
+            message = data.decode('utf-8') 
+            if session_ended:
+                continue
+
+            sex, height, activity, participant_number = decode_message(message)
+            
+            # Generate the CSV filename based on the message and save it in the csv_directory
+            file_name = f"{message}.csv"
+            file_name = file_name[:255].replace(":", "_").replace(" ", "_")
+            file_path = os.path.join(csv_directory, file_name)  # Full path to the CSV file
+
+            # Ensure the directory exists
+            os.makedirs(csv_directory, exist_ok=True)
+
+            # Open file in append mode without checking size first
+            with open(file_path, "a", newline="") as csvfile:
+                writer = csv.writer(csvfile)
+                if os.path.getsize(file_path) == 0:
+                    writer.writerow(["Sex", "Height (cm)", "Activity", "Participant Number", "Timestamp", "Image Number", "Color", "Word", "Response", "Time Taken"])
+                log_data = [sex, height, activity, participant_number, time.time()]
+                writer.writerow(log_data)
+
+            # Send back the received message as the response
+            conn_main.sendall(message.encode('utf-8'))  # Send the received message back to the proctor
+
+            return file_path  # Return the file path for use in the cognitive test
+
+
+def handle_cognitive_test(conn):
     global current_index, start_time, session_ended
     with conn:
         print(f"Connected by {addr}")
@@ -97,7 +159,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen()
     print(f"Server listening on {HOST}:{PORT}")
     while True:
+        conn, addr = s.accept()  # Accept main menu connection
+        file_path = handle_main_menu_client(conn, addr)
         conn, addr = s.accept()
-        handle_client(conn)
+        handle_cognitive_test(conn)
 
 #TODO: Score the data
