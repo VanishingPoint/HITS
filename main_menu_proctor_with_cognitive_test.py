@@ -10,58 +10,6 @@ HOST = "100.120.18.53"  # The server's hostname or IP address
 PORT = 65433  # The port used by the server for the main menu in particular
 content = ui.column()
 
-# Function to send user information
-def send_info(participant_information):
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST, PORT))
-            s.sendall(participant_information.encode('utf-8'))
-            data = s.recv(1024)
-        return data.decode('utf-8')
-    except ConnectionRefusedError:
-        print("Connection refused. Retrying...")
-        time.sleep(1)
-        return send_info(participant_information)
-
-# Function to save user information
-def save_user_info(sex, height, activity, number, append=False):
-    if sex == "Female":
-        participant_sex = "1"
-    elif sex == "Male":
-        participant_sex = "0"
-    if activity == 'Drunk':
-        participant_activity = "1"
-    else:
-        participant_activity = "0"
-    participant_height = str(height)
-    participant_number = str(number)
-    participant_info = f"S{participant_sex}H{participant_height}A{participant_activity}N{participant_number}"
-    print(f"User Info Saved as {participant_info}")
-    send_info(participant_info)
-
-# Function for user input interface in NiceGUI
-def user_info():
-    with ui.column():
-        ui.label("Enter the Participant's Information").classes('text-2xl font-bold')
-        number = ui.input("Participant's Number").classes("w-64")
-        sex = ui.radio(["Male", "Female"]).classes("w-64")
-        height = ui.input("Participant's Height in 3 digits [cm]").classes("w-64")
-        ui.label("Select the activity:").classes('text-lg')
-        activity = ui.select(['Drunk', 'Sober'], value=None)
-
-        def submit():
-            print(f"Submit button clicked! S{sex.value} H{height.value} A{activity.value} N{number.value}")
-            save_user_info(sex.value, height.value, activity.value, number.value)
-            ui.notify("User Info Saved!", color="green")
-            # After saving user info, run the cognitive test code
-            run_cognitive_test()
-
-        ui.button("Save and Continue", on_click=submit).classes("text-lg bg-blue-500 text-white p-2 rounded-lg")
-
-# Cognitive test variables and logic
-HOST_COGNITIVE = "100.120.18.53"
-PORT_COGNITIVE = 65432
-
 image_numbers = list(range(0, 17)) #image 0 is explination, others are answers corresponding to the participant images
 
 image_paths = [
@@ -98,7 +46,7 @@ def show_image(image_path):
 
 def on_press(key):
     global started, ended, completed
-    print(f"starting cases started = {started}, ended = {ended}, completed = {completed}") # it stops here the second time this runs
+    print(f"starting cases: started = {started}, ended = {ended}, completed = {completed}") # it stops here the second time this runs
     try:
         if key.char == 's' and not started:
             started = True
@@ -145,12 +93,6 @@ def run_cognitive_test():
     # Show the explanation image first (cognitive_page_0)
     show_image(image_paths[0])
 
-    #while(completed == False):
-        # Start listening for key events
-        #print("waiting for keypress")
-        #with keyboard.Listener(on_press=on_press) as listener:
-            #listener.join()
-
     while not completed:
         with keyboard.Listener(on_press=on_press) as listener:
             listener.join()
@@ -159,6 +101,6 @@ def run_cognitive_test():
     print("loop exited")
 
 with content:
-    user_info()
+    run_cognitive_test()
 
 ui.run()
