@@ -12,7 +12,7 @@ flie_path = None
 
 def handle_data(data):
     if user_data_recieved == False:
-        response = record_user_data()
+        response = record_user_data(data)
     elif user_data_recieved == True and cognitive_test_complete == False:
         response = cognitive_test(data)
     else:
@@ -36,7 +36,6 @@ def show_image(image_path):
     opened_image = Image.open(image_path)
     opened_image.show()
 
-# Function to handle client connections for the main menu
 def record_user_data(data):
     global file_path, user_data_recieved
     sequence, age, sex, height, drunk = data.split()

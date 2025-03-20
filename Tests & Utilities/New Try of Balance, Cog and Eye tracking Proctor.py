@@ -56,7 +56,7 @@ def cognitive_test(response):
     return passthrough
 
 def on_press(key):
-    global passthrough #figure out how to do this without this
+    global passthrough, cog_started, cog_completed #figure out how to do this without this
     keyboard.Listener.stop
 
     try:
@@ -74,6 +74,7 @@ def on_press(key):
 
         elif key.char == 'e':
             print("Exiting program...")
+            cog_completed = True
             #return("Exit")
             passthrough = "Exit"
 
