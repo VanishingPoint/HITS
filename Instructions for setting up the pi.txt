@@ -1,4 +1,4 @@
-Plug the usb-c cable for power
+Plug the usb-c cable into the pi for power
 Plug the keyboard and mouse
 Plug the hdmi to a monitor (never to a laptop)
 
@@ -22,7 +22,6 @@ Open files - documents - github - HITS
 Click the script you want to run
 Run it by clicking the paper airplane
 Avoid editing code on the pi's OS
-
 
 To use your laptop: 
 Right click tailscale on your laptop - network devices - vanishing point - rasberry (clicking this copies the server)
