@@ -134,7 +134,7 @@ def cognitive_test(key):
         colour = image_colour[image_num]
         word = image_word[image_num]
         # Additional data logging here (cognitive data)
-        cognitive_data = [image_num, colour, word, key, time_taken]
+        cognitive_data = [0, 0, 0, 0, 0, 0, image_num, colour, word, key, time_taken]
         append_cognitive_data(cognitive_data)
 
         print("Finished logging")
