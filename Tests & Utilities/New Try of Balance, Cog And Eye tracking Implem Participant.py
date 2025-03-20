@@ -107,6 +107,9 @@ def cognitive_test(conn, file_path):
                 session_ended = True
                 print("Test completed.")
                 response = "end"
+        elif key == "Exit":
+            conn.sendall("Terminating".encode('utf-8'))
+            break
         else:
             print(f"Invalid key pressed: {key}")
         

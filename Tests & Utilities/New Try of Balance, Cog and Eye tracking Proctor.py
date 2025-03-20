@@ -24,6 +24,7 @@ def initialize_socket(): #Function to set up initial socket connection
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((HOST, PORT))
+            return s
     except ConnectionRefusedError:
         print("Connection refused. Retrying...")
         time.sleep(1)
@@ -31,10 +32,13 @@ def initialize_socket(): #Function to set up initial socket connection
     
 
 def send_message(message):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with s:
         s.sendall(message.encode('utf-8'))
+
+def get_data():
+    with s:
         data = s.recv(1024)
-    return data.decode('utf-8')
+        return data.decode('utf-8')
 
 
 def show_image(image_path):
@@ -51,13 +55,15 @@ def on_press(key):
             cog_started = True
             print("Test started.")
             # Show the first image
-            response = send_message(key.char)
+            send_message(key.char)
+            response = get_data
             print(f"Received image number: {response}")
             show_image(image_paths[int(response)])
         elif (key.char == 'y' or key.char == 'n') and cog_started:
             # Send the 'y' or 'n' response to the server
             print("sent key:", key)
-            response = send_message(key.char)
+            send_message(key.char)
+            response = get_data
             if (response == 'end'):
                 print("Test Complete")
                 cog_completed = True
@@ -66,7 +72,8 @@ def on_press(key):
                 show_image(image_paths[int(response)])  # Show the next randomized image
         elif key.char == 'e':
             print("Exiting program...")
-            response = send_message("Exit")
+            send_message("Exit")
+            response = get_data
             print(response)
             # Allows the user to exit the test if 'e' is pressed
             #TODO: make this return in a way that indicates the test did not complete
@@ -101,7 +108,7 @@ def collect_user_info():
         height = input("Please enter the participant's height in cm:") #I will assume this is always 3 digits, stuff will probably break if it isn't
         #line below is for data collection, to be changed in final version
         drunk = input("Please indicate if the participant is drunk or sober (d or s):")
-        print("You entered the following data: \n Sequence:", sequence, "\n Age:", age, " years, \n Sex:", sex, "Height:", height, " cm \n Drunk/Sober:", drunk,)
+        print("You entered the following data: \n Sequence:", sequence, "\n Age:", age, " years, \n Sex:", sex, "\n Height:", height, " cm \n Drunk/Sober:", drunk,)
         if input("\n Is this correct? Enter y if yes, or any other key if no.") == 'y':
             data_ready = True
     
@@ -115,7 +122,7 @@ def collect_user_info():
 cog_started = False
 cog_completed = False
     
-initialize_socket()
+s = initialize_socket()
 
 collect_user_info()
 
