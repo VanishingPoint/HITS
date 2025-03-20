@@ -17,12 +17,12 @@ file_path = None
 def handle_data(data):
     if user_data_received == False:
         response = record_user_data(data)
-    elif user_data_received == True and cognitive_test_complete == False:
+    elif user_data_received == True and cognitive_test_completed == False:
         response = cognitive_test(data)
-    elif cognitive_test_complete == True and balance_test_complete == False:
-        response = balance_test() #TODO: Call the balance test function
-    elif cognitive_test_complete == True and balance_test_complete == True and eye_track_completed == False:
-        response = eye_tracking_test() #TODO: Call the eye track function
+    elif cognitive_test_completed == True and balance_test_completed == False:
+        response = balance_test() 
+    elif cognitive_test_completed == True and balance_test_completed == True and eye_tracking_completed == False:
+        response = eye_tracking_test() 
     else:
         print("All Tests Complete or Error")
     return response
@@ -73,7 +73,7 @@ def record_user_data(data):
 
 # Function to handle client connections for the cognitive test
 def cognitive_test(key):
-    global cognitive_test_complete, cognitive_test_started, image_numbers, current_index, start_time
+    global cognitive_test_completed, cognitive_test_started, image_numbers, current_index, start_time
 
     if cognitive_test_started == False:
         image_numbers = list(range(1, 17))  # Assuming 16 images
@@ -117,11 +117,11 @@ def cognitive_test(key):
             current_index += 1
         else:
             # End the test when all images are shown
-            cognitive_test_complete = True
+            cognitive_test_completed = True
             print("Test completed.")
             response = "end"
     elif key == "Exit":
-        cognitive_test_complete = True
+        cognitive_test_completed = True
         return("Exited")
     else:
         print(f"Invalid key pressed: {key}")
@@ -173,7 +173,7 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
 
     cam2.stop()
     cam1.stop()
-
+    eye_tracking_completed = True
 
 def eye_tracking_test():
     time.sleep(1) #TODO: Do something here
@@ -195,12 +195,12 @@ def balance_test():
 
 response = None
 user_data_received = False
-cognitive_test_complete = False
+cognitive_test_completed = False
 cognitive_test_started = False
-balance_test_complete = False
+balance_test_completed = False
 balance_test_started = False
-eye_track_started = False
-eye_track_completed = False
+eye_tracking_started = False
+eye_tracking_completed = False
 
 # This cannot be in a function!!
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

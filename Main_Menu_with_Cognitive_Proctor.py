@@ -28,12 +28,12 @@ def show_image(image_path):
     opened_image.show()
 
 def cognitive_test(response):
-    global cog_started, cog_completed, waiting_for_keyboard
+    global cognitive_started, cognitive_completed, waiting_for_keyboard
 
-    if cog_started == True:
+    if cognitive_started == True:
         if (response == 'end'):
                 print("Cognitive Test Complete")
-                cog_completed = True
+                cognitive_completed = True
                 return 0 #TODO: Do something here
         else:
             print(f"Received image number: {response}")
@@ -47,7 +47,7 @@ def cognitive_test(response):
                 time.sleep(1)
             listener.stop()
 
-    elif cog_started == False:
+    elif cognitive_started == False:
         print("Press 's' to start the randomized image sequence.")
         print("Press 'y' or 'n' to open the next image after starting.")
         print("Press 'e' to exit the program.")
@@ -67,25 +67,25 @@ def cognitive_test(response):
     return passthrough
 
 def on_press(key):
-    global passthrough, cog_started, cog_completed, waiting_for_keyboard #TODO: Figure out how to do this without this
+    global passthrough, cognitive_started, cognitive_completed, waiting_for_keyboard #TODO: Figure out how to do this without this
 
     waiting_for_keyboard = False
 
     try:
-        if key.char == 's' and not cog_started:
-            cog_started = True
+        if key.char == 's' and not cognitive_started:
+            cognitive_started = True
             print("Test started.")
             #return key.char
             passthrough = key.char
 
-        elif (key.char == 'y' or key.char == 'n') and cog_started:
+        elif (key.char == 'y' or key.char == 'n') and cognitive_started:
             # Send the 'y' or 'n' response to the server
             print("sent key:", key)
             #return(key.char)
             passthrough = key.char
 
         elif key.char == 'e':
-            cog_completed = True
+            cognitive_completed = True
             print("Exiting program...")
             #return("Exit")
             passthrough = "Exit"
@@ -118,23 +118,23 @@ def collect_user_info():
     message = sequence + ' ' + age + ' ' + sex + ' ' + height + ' ' + drunk
     return message
 
-def eye_track_main(response):
+def eye_tracking_test(response):
     time.sleep(1) #TODO: Do something here
 
-def balance_main(response):
+def balance_test(response):
     time.sleep(1) #TODO: Do something here
 
 def next_task(response):
     if user_data_sent == False:
         message = collect_user_info()
-    elif user_data_sent == True and cog_started == False:
+    elif user_data_sent == True and cognitive_started == False:
         message = cognitive_test(None)
-    elif cog_started == True and cog_completed == False:
+    elif cognitive_started == True and cognitive_completed == False:
         message = cognitive_test(response)
-    elif cog_completed == True and balance_started == False:
-        message = balance_main() #TODO: Figure out if we need to pass responses
-    elif cog_completed == True and balance_completed == True and eye_track_started == False:
-        message = eye_track_main() #TODO: Figure out if we need to pass responses
+    elif cognitive_completed == True and balance_started == False:
+        message = balance_test() #TODO: Figure out if we need to pass responses
+    elif cognitive_completed == True and balance_completed == True and eye_tracking_started == False:
+        message = eye_tracking_test() #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
         return("finished") #TODO: Actually handle this and check cases
@@ -142,12 +142,12 @@ def next_task(response):
     return message
 
 user_data_sent = False
-cog_started = False
-cog_completed = False
+cognitive_started = False
+cognitive_completed = False
 balance_started = False
 balance_completed = False
-eye_track_started = False
-eye_track_completed = False
+eye_tracking_started = False
+eye_tracking_completed = False
 response = None
 
 try:
