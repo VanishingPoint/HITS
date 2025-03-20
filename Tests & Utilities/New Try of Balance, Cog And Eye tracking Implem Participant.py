@@ -8,14 +8,19 @@ import socket
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
 csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
+flie_path = None
 
-def get_data(conn):
-    data = conn.recv(1024)
-    return data.decode('utf-8')
-
+def handle_data(data):
+    if user_data_recieved == False:
+        response = record_user_data()
+    elif user_data_recieved == True and cognitive_test_complete == False:
+        response = cognitive_test(data)
+    else:
+        print("All Tests Complete or Error")
+    return response
 
 # Function to append cognitive data starting at column G TODO: Does this work???
-def append_cognitive_data(file_path, cognitive_data):
+def append_cognitive_data(cognitive_data):
     """Append cognitive data to the existing user CSV file, starting at column G."""
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
@@ -32,17 +37,14 @@ def show_image(image_path):
     opened_image.show()
 
 # Function to handle client connections for the main menu
-def record_user_data(conn):
-    sequence = get_data(conn)
-    age = get_data(conn)
-    sex = get_data(conn)
-    height = get_data(conn)
-    drunk = get_data(conn)
+def record_user_data(data):
+    global file_path, user_data_recieved
+    sequence, age, sex, height, drunk = data.split()
 
     # Generate the CSV filename based on the sequence number and save it in the csv_directory
     file_name = f"{sequence}.csv"
     file_name = file_name[:255].replace(":", "_").replace(" ", "_")
-    file_path = os.path.join(csv_directory, file_name)  # Full path to the CSV file
+    file_path = os.path.join(csv_directory, file_name)  # Full path to the CSV file, as this is global it defines it everywhere
 
     # Ensure the directory exists
     os.makedirs(csv_directory, exist_ok=True)
@@ -55,13 +57,22 @@ def record_user_data(conn):
         log_data = [sequence, age, sex, height, drunk, time.time()]
         writer.writerow(log_data)
 
-    return file_path  # Return the file path for use in the cognitive test
+    user_data_recieved = True
+    return("Data Saved")
 
 
 # Function to handle client connections for the cognitive test
-def cognitive_test(conn, file_path):
-    image_numbers = list(range(1, 17))  # Assuming 16 images
-    random.shuffle(image_numbers)
+def cognitive_test(key):
+    global cognitive_test_complete, cognitive_test_started, image_numbers, current_index, start_time
+
+    if cognitive_test_started == False:
+        image_numbers = list(range(1, 17))  # Assuming 16 images
+        random.shuffle(image_numbers)
+
+        #TODO: Show instructions to the participant here
+
+        current_index = 0  # Tracks the current image index
+        start_time = time.time()  # Start timing
 
     # Defining attributes for each image
     image_colour = {
@@ -77,56 +88,52 @@ def cognitive_test(conn, file_path):
         for num in image_numbers
     ]
 
-    #TODO: Show instructions to the participant here
 
-    current_index = 0  # Tracks the current image index
-    start_time = time.time()  # Start timing
-    session_ended = False  # Flag to indicate if the session has ended
+    end_time = time.time()
+    time_taken = end_time - start_time
 
-    while session_ended == False:
-
-        key = get_data(conn)
-        end_time = time.time()
-        time_taken = end_time - start_time
-
-        if key == "s": 
-            # Show the current image
+    if key == "s" and cognitive_test_started == False: 
+        # Show the current image
+        response = str(image_numbers[current_index])
+        show_image(image_paths[current_index])
+        start_time = time.time()  # Reset start time for the next image
+        current_index += 1
+    elif key in ["y", "n"]:
+        if current_index < len(image_numbers):
             response = str(image_numbers[current_index])
+            # Show next image
             show_image(image_paths[current_index])
             start_time = time.time()  # Reset start time for the next image
             current_index += 1
-        elif key in ["y", "n"]:
-            if current_index < len(image_numbers):
-                response = str(image_numbers[current_index])
-                # Show next image
-                show_image(image_paths[current_index])
-                start_time = time.time()  # Reset start time for the next image
-                current_index += 1
-            else:
-                # End the test when all images are shown
-                session_ended = True
-                print("Test completed.")
-                response = "end"
-        elif key == "Exit":
-            conn.sendall("Terminating".encode('utf-8'))
-            break
         else:
-            print(f"Invalid key pressed: {key}")
-        
-        print("logging data")
-        # Log the data after each keystroke and image
-        image_num = image_numbers[current_index - 1]
-        colour = image_colour[image_num]
-        word = image_word[image_num]
-        # Additional data logging here (cognitive data)
-        cognitive_data = [image_num, colour, word, key, time_taken]
-        append_cognitive_data(file_path, cognitive_data)
+            # End the test when all images are shown
+            cognitive_test_complete = True
+            print("Test completed.")
+            response = "end"
+    elif key == "Exit":
+        cognitive_test_complete = True
+        return("Exited")
+    else:
+        print(f"Invalid key pressed: {key}")
+        return "Invalid"
+    
+    print("logging data")
+    # Log the data after each keystroke and image
+    image_num = image_numbers[current_index - 1]
+    colour = image_colour[image_num]
+    word = image_word[image_num]
+    # Additional data logging here (cognitive data)
+    cognitive_data = [image_num, colour, word, key, time_taken]
+    append_cognitive_data(cognitive_data)
 
-        print("finished logging")
+    print("finished logging")
 
-        conn.sendall(response.encode('utf-8'))
-        print("sent response")
+    return(response)
 
+response = None
+user_data_recieved = False
+cognitive_test_complete = False
+cognitive_test_started = False
 
 #This cannot be in a function!!
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -135,8 +142,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print(f"Server listening on {HOST}:{PORT}")
     conn, addr = s.accept()
     with conn:
-        print(f"Connected by {addr}")
-        file_path = record_user_data(conn)
-        cognitive_test(conn, file_path)
-    print("Testing Completed")
+        while True:
+            data = conn.recv(1024)
+
+            response = handle_data(data.decode('utf-8'))
+
+            if not data:
+                print("Disconnected from Pi")
+
+            conn.sendall(response)
 

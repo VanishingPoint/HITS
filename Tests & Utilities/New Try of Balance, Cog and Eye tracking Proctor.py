@@ -19,28 +19,7 @@ image_paths = [
 ]
 
 opened_image = None
-
-def initialize_socket(): #Function to set up initial socket connection
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST, PORT))
-            return s
-    except ConnectionRefusedError:
-        print("Connection refused. Retrying...")
-        time.sleep(1)
-        return initialize_socket
     
-
-def send_message(message):
-    with s:
-        s.sendall(message.encode('utf-8'))
-
-def get_data():
-    with s:
-        data = s.recv(1024)
-        return data.decode('utf-8')
-
-
 def show_image(image_path):
     global opened_image
     if opened_image:
@@ -48,59 +27,69 @@ def show_image(image_path):
     opened_image = Image.open(image_path)
     opened_image.show()
 
-def on_press(key):
+def cognitive_test(response):
     global cog_started, cog_completed
+
+    if cog_started == True:
+        if (response == 'end'):
+                print("Test Complete")
+                cog_completed = True
+                return 0 #TODO: Do something here
+        else:
+            print(f"Received image number: {response}")
+            show_image(image_paths[int(response)])  # Show the next randomized image
+
+            with keyboard.Listener(on_press=on_press) as listener:
+                listener.join()
+
+    elif cog_started == False:
+        print("Press 's' to start the randomized image sequence.")
+        print("Press 'y' or 'n' to open the next image after starting.")
+        print("Press 'e' to exit the program.")
+
+        # Show the explanation image first (cognitive_page_0)
+        show_image(image_paths[0])
+
+        with keyboard.Listener(on_press=on_press) as listener:
+            listener.join()
+    
+    return passthrough
+
+def on_press(key):
+    global passthrough #figure out how to do this without this
+    keyboard.Listener.stop
+
     try:
         if key.char == 's' and not cog_started:
             cog_started = True
             print("Test started.")
-            # Show the first image
-            send_message(key.char)
-            response = get_data
-            print(f"Received image number: {response}")
-            show_image(image_paths[int(response)])
+            #return key.char
+            passthrough = key.char
+
         elif (key.char == 'y' or key.char == 'n') and cog_started:
             # Send the 'y' or 'n' response to the server
             print("sent key:", key)
-            send_message(key.char)
-            response = get_data
-            if (response == 'end'):
-                print("Test Complete")
-                cog_completed = True
-            else:
-                print(f"Received image number: {response}")
-                show_image(image_paths[int(response)])  # Show the next randomized image
+            #return(key.char)
+            passthrough = key.char
+
         elif key.char == 'e':
             print("Exiting program...")
-            send_message("Exit")
-            response = get_data
-            print(response)
+            #return("Exit")
+            passthrough = "Exit"
+
             # Allows the user to exit the test if 'e' is pressed
             #TODO: make this return in a way that indicates the test did not complete
         else:
             print("Invalid Input")
+            #TODO: Handle this in some way
                 
     except AttributeError:
         pass
 
-# Run cognitive test once user info is submitted
-def run_cognitive_test():
-    global cog_started, image_numbers, cog_completed
-    print("Press 's' to start the randomized image sequence.")
-    print("Press 'y' or 'n' to open the next image after starting.")
-    print("Press 'e' to exit the program.")
-
-    # Show the explanation image first (cognitive_page_0)
-    show_image(image_paths[0])
-
-    while not cog_completed:
-        with keyboard.Listener(on_press=on_press) as listener:
-            listener.join()
-
 
 def collect_user_info():
-    data_ready = False
-    while not data_ready:
+    global user_data_sent
+    while not user_data_sent:
         print("Please enter user data. Note that validity of data is not checked. Please verify all data before confirming.")
         sequence = input("Please enter a sequence number for the participant:")
         age = input("Pleae enter the participant's age in years:")
@@ -110,24 +99,42 @@ def collect_user_info():
         drunk = input("Please indicate if the participant is drunk or sober (d or s):")
         print("You entered the following data: \n Sequence:", sequence, "\n Age:", age, " years, \n Sex:", sex, "\n Height:", height, " cm \n Drunk/Sober:", drunk,)
         if input("\n Is this correct? Enter y if yes, or any other key if no.") == 'y':
-            data_ready = True
+            user_data_sent = True
     
     #TODO: In the final version we need more checks to ensure input is valid
-    send_message(sequence)
-    send_message(age)
-    send_message(sex)
-    send_message(height)
-    send_message(drunk)
-        
+    message = sequence + ' ' + age + ' ' + sex + ' ' + height + ' ' + drunk
+    return message
+
+def next_task(response):
+    if user_data_sent == False:
+        message = collect_user_info()
+    elif user_data_sent == True and cog_started == False:
+        message = cognitive_test(None)
+    elif cog_started == True and cog_completed == False:
+        message = cognitive_test(response)
+    else:
+        print("All tests complete or error")
+        return("finished") #TODO: Actually handle this and check cases
+
+    return message
+
 cog_started = False
 cog_completed = False
-    
-s = initialize_socket()
+user_data_sent = False
+response = None
 
-collect_user_info()
+try:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
 
-run_cognitive_test()
+        while True:
+            message = next_task(response)
+            s.sendall(message)
+            data = s.recv(1024)
+            response = data.decode('utf-8')
 
-print("Testing Complete")
+except ConnectionRefusedError:
+    print("Connection refused. Make Sure Pi script is running.") #TODO: Retry connection automatically
+    time.sleep(1)
 
 
