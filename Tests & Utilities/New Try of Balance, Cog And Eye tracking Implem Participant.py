@@ -58,6 +58,7 @@ def record_user_data(data):
         writer.writerow(log_data)
 
     user_data_recieved = True
+    print("User Data Recorded")
     return("Data Saved")
 
 
@@ -72,7 +73,7 @@ def cognitive_test(key):
         #TODO: Show instructions to the participant here
 
         current_index = 0  # Tracks the current image index
-        start_time = time.time()  # Start timing
+        start_time = 0
 
     # Defining attributes for each image
     image_colour = {
@@ -98,6 +99,7 @@ def cognitive_test(key):
         show_image(image_paths[current_index])
         start_time = time.time()  # Reset start time for the next image
         current_index += 1
+        cognitive_test_started = True
     elif key in ["y", "n"]:
         if current_index < len(image_numbers):
             response = str(image_numbers[current_index])
@@ -117,16 +119,17 @@ def cognitive_test(key):
         print(f"Invalid key pressed: {key}")
         return "Invalid"
     
-    print("logging data")
-    # Log the data after each keystroke and image
-    image_num = image_numbers[current_index - 1]
-    colour = image_colour[image_num]
-    word = image_word[image_num]
-    # Additional data logging here (cognitive data)
-    cognitive_data = [image_num, colour, word, key, time_taken]
-    append_cognitive_data(cognitive_data)
+    if current_index != 1:
+        print("logging data")
+        # Log the data after each keystroke and image
+        image_num = image_numbers[current_index - 1]
+        colour = image_colour[image_num]
+        word = image_word[image_num]
+        # Additional data logging here (cognitive data)
+        cognitive_data = [image_num, colour, word, key, time_taken]
+        append_cognitive_data(cognitive_data)
 
-    print("finished logging")
+        print("finished logging")
 
     return(response)
 
