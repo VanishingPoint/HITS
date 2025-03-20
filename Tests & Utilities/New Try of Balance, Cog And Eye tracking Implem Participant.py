@@ -150,5 +150,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if not data:
                 print("Disconnected from Pi")
 
-            conn.sendall(response)
+            conn.sendall(response.encode('utf-8'))
 

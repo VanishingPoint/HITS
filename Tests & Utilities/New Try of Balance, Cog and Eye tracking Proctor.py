@@ -129,7 +129,7 @@ try:
 
         while True:
             message = next_task(response)
-            s.sendall(message)
+            s.sendall(message.encode('utf-8'))
             data = s.recv(1024)
             response = data.decode('utf-8')
 
