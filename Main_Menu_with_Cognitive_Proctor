@@ -121,6 +121,9 @@ def collect_user_info():
 def eye_track_main(response):
     time.sleep(1) #TODO: Do something here
 
+def balance_main(response):
+    time.sleep(1) #TODO: Do something here
+
 def next_task(response):
     if user_data_sent == False:
         message = collect_user_info()
@@ -128,7 +131,9 @@ def next_task(response):
         message = cognitive_test(None)
     elif cog_started == True and cog_completed == False:
         message = cognitive_test(response)
-    elif cog_completed == True and eye_track_started == False:
+    elif cog_completed == True and balance_started == False:
+        message = balance_main() #TODO: Figure out if we need to pass responses
+    elif cog_completed == True and balance_completed == True and eye_track_started == False:
         message = eye_track_main() #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
@@ -136,9 +141,11 @@ def next_task(response):
 
     return message
 
+user_data_sent = False
 cog_started = False
 cog_completed = False
-user_data_sent = False
+balance_started = False
+balance_completed = False
 eye_track_started = False
 eye_track_completed = False
 response = None

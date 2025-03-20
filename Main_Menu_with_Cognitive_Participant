@@ -15,8 +15,10 @@ def handle_data(data):
         response = record_user_data(data)
     elif user_data_received == True and cognitive_test_complete == False:
         response = cognitive_test(data)
-    elif cognitive_test_complete == True and eye_track_completed == False:
-        time.sleep(1) #TODO: Call the eye track function
+    elif cognitive_test_complete == True and balance_completed == False:
+        response = balance_test() #TODO: Call the balance test function
+    elif cognitive_test_complete == True and balance_test_complete == True and eye_track_completed == False:
+        response = eye_tracking_test() #TODO: Call the eye track function
     else:
         print("All Tests Complete or Error")
     return response
@@ -138,10 +140,15 @@ def cognitive_test(key):
 def eye_tracking_test():
     time.sleep(1) #TODO: Do something here
 
+def balance_test():
+    time.sleep(1) #TODO: Do something here
+
 response = None
 user_data_received = False
 cognitive_test_complete = False
 cognitive_test_started = False
+balance_test_complete = False
+balance_test_started = False
 eye_track_started = False
 eye_track_completed = False
 
