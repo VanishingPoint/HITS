@@ -8,7 +8,7 @@ import socket
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
 csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
-flie_path = None
+file_path = None
 
 def handle_data(data):
     if user_data_recieved == False:
@@ -31,6 +31,7 @@ def append_cognitive_data(cognitive_data):
 opened_image = None  # Initialize the variable at the global level
 
 def show_image(image_path):
+    global opened_image
     if opened_image:
         opened_image.close()  # Close the previous image if it exists
     opened_image = Image.open(image_path)

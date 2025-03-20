@@ -1,7 +1,7 @@
 from PIL import Image
 import socket
 import time
-from pynput import keyboard
+from pynput.keyboard import Listener
 
 #Socket connection information
 HOST = "100.120.18.53"  # The server's hostname or IP address
@@ -28,7 +28,7 @@ def show_image(image_path):
     opened_image.show()
 
 def cognitive_test(response):
-    global cog_started, cog_completed
+    global cog_started, cog_completed, waiting_for_keyboard
 
     if cog_started == True:
         if (response == 'end'):
@@ -39,8 +39,13 @@ def cognitive_test(response):
             print(f"Received image number: {response}")
             show_image(image_paths[int(response)])  # Show the next randomized image
 
-            with keyboard.Listener(on_press=on_press) as listener:
-                listener.join()
+            waiting_for_keyboard = True
+            listener = Listener(on_press=lambda event: on_press(event))
+            listener.start()
+
+            while waiting_for_keyboard:
+                time.sleep(1)
+            listener.stop()
 
     elif cog_started == False:
         print("Press 's' to start the randomized image sequence.")
@@ -49,15 +54,22 @@ def cognitive_test(response):
 
         # Show the explanation image first (cognitive_page_0)
         show_image(image_paths[0])
+        
+        waiting_for_keyboard = True
+        listener = Listener(on_press=lambda event: on_press(event))
+        listener.start()
 
-        with keyboard.Listener(on_press=on_press) as listener:
-            listener.join()
-    
+        while waiting_for_keyboard:
+                time.sleep(1)
+        listener.stop()
+        
+    print("RETURNING PASSTHROUGH")
     return passthrough
 
 def on_press(key):
-    global passthrough, cog_started, cog_completed #figure out how to do this without this
-    keyboard.Listener.stop
+    global passthrough, cog_started, cog_completed, waiting_for_keyboard #figure out how to do this without this
+
+    waiting_for_keyboard = False
 
     try:
         if key.char == 's' and not cog_started:
