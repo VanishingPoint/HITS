@@ -4,7 +4,7 @@ import random
 import time
 import csv
 import socket
-import pandas
+#import pandas
 from picamera2 import Picamera2, Preview
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FfmpegOutput
