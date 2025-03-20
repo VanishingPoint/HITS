@@ -4,6 +4,7 @@ import random
 import time
 import csv
 import socket
+import pandas
 
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
@@ -15,7 +16,7 @@ def handle_data(data):
         response = record_user_data(data)
     elif user_data_received == True and cognitive_test_complete == False:
         response = cognitive_test(data)
-    elif cognitive_test_complete == True and balance_completed == False:
+    elif cognitive_test_complete == True and balance_test_complete == False:
         response = balance_test() #TODO: Call the balance test function
     elif cognitive_test_complete == True and balance_test_complete == True and eye_track_completed == False:
         response = eye_tracking_test() #TODO: Call the eye track function
