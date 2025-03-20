@@ -118,6 +118,9 @@ def collect_user_info():
     message = sequence + ' ' + age + ' ' + sex + ' ' + height + ' ' + drunk
     return message
 
+def eye_track_main(response):
+    time.sleep(1) #TODO: Do something here
+
 def next_task(response):
     if user_data_sent == False:
         message = collect_user_info()
@@ -125,6 +128,8 @@ def next_task(response):
         message = cognitive_test(None)
     elif cog_started == True and cog_completed == False:
         message = cognitive_test(response)
+    elif cog_completed == True and eye_track_started == False:
+        message = eye_track_main() #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
         return("finished") #TODO: Actually handle this and check cases
@@ -134,6 +139,8 @@ def next_task(response):
 cog_started = False
 cog_completed = False
 user_data_sent = False
+eye_track_started = False
+eye_track_completed = False
 response = None
 
 try:
