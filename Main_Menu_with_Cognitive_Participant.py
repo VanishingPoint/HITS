@@ -4,7 +4,10 @@ import random
 import time
 import csv
 import socket
-import pandas
+#import pandas
+from picamera2 import Picamera2, Preview
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import FfmpegOutput
 
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
@@ -138,8 +141,54 @@ def cognitive_test(key):
 
     return(response)
 
+def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to increase frame rate
+    cam1 = Picamera2(0)
+    cam1.start_preview(Preview.QTGL, x=100,y=300,width=400,height=300)
+
+    video_config1= cam1.create_video_configuration()
+    cam1.configure(video_config1)
+
+    encoder1 = H264Encoder(10000000)
+    output1 = FfmpegOutput('testcam1.mp4') #TODO: Rename
+
+    cam2 = Picamera2(1)
+    cam2.start_preview(Preview.QTGL, x=500,y=300,width=400,height=300)
+
+    video_config2 = cam2.create_video_configuration()
+    cam2.configure(video_config2)
+
+    encoder2= H264Encoder(10000000)
+    output2 = FfmpegOutput('testcam2.mp4') #TODO: Rename
+
+    cam1.start_recording(encoder1, output1)
+    cam2.start_recording(encoder2, output2)
+
+    time.sleep(10) #Set recording duration here, 10 seconds set for now
+
+    cam2.stop_recording()
+    cam1.stop_recording()
+
+    cam1.stop_preview()
+    cam2.stop_preview()
+
+    cam2.stop()
+    cam1.stop()
+
+
 def eye_tracking_test():
     time.sleep(1) #TODO: Do something here
+    eye_track_started = True
+    #1st show instructions, wait for key to proceed (have to go to main loop to detect)
+    #Then show 1st image here
+    eye_tracking_recording() #Record the first test (Figure out if we need to pass anything...)
+    #Move & Rename files??? Or include logic that knows if it is first run or second run on the recording to name them differently
+    #Show instructions and wait for key to proceed (again, need main loop to detect)
+    eye_tracking_recording() #record second test here
+    #Then we do analysis here (or maybe we should do it during balance)
+    #Need to let people restart test
+    eye_track_completed = True
+    #return(response)
+
 
 def balance_test():
     time.sleep(1) #TODO: Do something here

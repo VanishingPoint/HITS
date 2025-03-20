@@ -340,8 +340,8 @@ def process_frames(thresholded_image_strict, thresholded_image_medium, threshold
             final_contours = reduced_contours
             final_image = dilated_image
     
-    if debug_mode_on:
-        cv2.imshow("Reduced contours of best thresholded image", ellipse_reduced_contours)
+    #if debug_mode_on:
+        #cv2.imshow("Reduced contours of best thresholded image", ellipse_reduced_contours)
 
     test_frame = frame.copy()
     
@@ -364,8 +364,8 @@ def process_frames(thresholded_image_strict, thresholded_image_medium, threshold
         cv2.putText(test_frame, "Q      = quit", (10,430), cv2.FONT_HERSHEY_SIMPLEX, .55, (255,90,30), 2) #quit
         cv2.putText(test_frame, "D      = show debug", (10,450), cv2.FONT_HERSHEY_SIMPLEX, .55, (255,90,30), 2) #debug
 
-    if render_cv_window:
-        cv2.imshow('best_thresholded_image_contours_on_frame', test_frame)
+    #if render_cv_window:
+        #cv2.imshow('best_thresholded_image_contours_on_frame', test_frame)
     
     # Create an empty image to draw contours
     contour_img3 = np.zeros_like(image_array[i-1])
@@ -434,6 +434,62 @@ def process_video(video_path, input_method, csv_dir):
     # Ensure the directory exists
     os.makedirs(csv_dir, exist_ok=True)
     
+    # Finds the pupil in an individual frame and returns the center point
+def process_frame(frame, timestamp, csv_writer):
+
+    # Crop and resize frame
+    frame = crop_to_aspect_ratio(frame)
+
+    #find the darkest point
+    darkest_point = get_darkest_area(frame)
+
+    # Convert to grayscale to handle pixel value operations
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    darkest_pixel_value = gray_frame[darkest_point[1], darkest_point[0]]
+    
+    # apply thresholding operations at different levels
+    # at least one should give us a good ellipse segment
+    thresholded_image_strict = apply_binary_threshold(gray_frame, darkest_pixel_value, 5)#lite
+    thresholded_image_strict = mask_outside_square(thresholded_image_strict, darkest_point, 250)
+
+    thresholded_image_medium = apply_binary_threshold(gray_frame, darkest_pixel_value, 15)#medium
+    thresholded_image_medium = mask_outside_square(thresholded_image_medium, darkest_point, 250)
+    
+    thresholded_image_relaxed = apply_binary_threshold(gray_frame, darkest_pixel_value, 25)#heavy
+    thresholded_image_relaxed = mask_outside_square(thresholded_image_relaxed, darkest_point, 250)
+    
+    #take the three images thresholded at different levels and process them
+    final_rotated_rect = process_frames(thresholded_image_strict, thresholded_image_medium, thresholded_image_relaxed, frame, gray_frame, darkest_point, False, False)
+
+    if final_rotated_rect is not None and final_rotated_rect[1] != (0, 0):
+        center_x, center_y = final_rotated_rect[0][0], final_rotated_rect[0][1]  # Keep as is without rounding
+        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding
+    
+    return final_rotated_rect
+
+# Loads a video and finds the pupil in each frame
+def process_video(video_path, input_method, csv_dir):
+    print("Starting video processing...")  # Indicate start
+
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 format
+    out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 60.0, (640, 480))  # Output video filename, codec, frame rate, and frame size
+
+    if input_method == 1:
+        cap = cv2.VideoCapture(video_path)
+    elif input_method == 2:
+        cap = cv2.VideoCapture(00, cv2.CAP_DSHOW)  # Camera input
+        cap.set(cv2.CAP_PROP_EXPOSURE, -5)
+    else:
+        print("Invalid video source.")
+        return
+
+    if not cap.isOpened():
+        print("Error: Could not open video.")
+        return
+
+    # Ensure the directory exists
+    os.makedirs(csv_dir, exist_ok=True)
+    
     # Define CSV filename in the specified directory
     csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv")
     with open(csv_filename, mode='w', newline='') as csv_file:
@@ -457,10 +513,10 @@ def process_video(video_path, input_method, csv_dir):
             #find the darkest point
             darkest_point = get_darkest_area(frame)
 
-            if debug_mode_on:
-                darkest_image = frame.copy()
-                cv2.circle(darkest_image, darkest_point, 10, (0, 0, 255), -1)
-                cv2.imshow('Darkest image patch', darkest_image)
+            #if debug_mode_on:
+            #    darkest_image = frame.copy()
+            #    cv2.circle(darkest_image, darkest_point, 10, (0, 0, 255), -1)
+            #    cv2.imshow('Darkest image patch', darkest_image)
 
             # Convert to grayscale to handle pixel value operations
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -480,27 +536,29 @@ def process_video(video_path, input_method, csv_dir):
             #take the three images thresholded at different levels and process them
             pupil_rotated_rect = process_frames(thresholded_image_strict, thresholded_image_medium, thresholded_image_relaxed, frame, gray_frame, darkest_point, debug_mode_on, True)
         
-            key = cv2.waitKey(1) & 0xFF
+            #key = cv2.waitKey(1) & 0xFF
         
-            if key == ord('d') and debug_mode_on == False:  # Press 'q' to start debug mode
-                debug_mode_on = True
-            elif key == ord('d') and debug_mode_on == True:
-                debug_mode_on = False
-                cv2.destroyAllWindows()
-            if key == ord('q'):  # Press 'q' to quit
-                out.release()
-                break   
-            elif key == ord(' '):  # Press spacebar to start/stop
-                while True:
-                    key = cv2.waitKey(1) & 0xFF
-                    if key == ord(' '):  # Press spacebar again to resume
-                        break
-                    elif key == ord('q'):  # Press 'q' to quit
-                        break
+            #if key == ord('d') and debug_mode_on == False:  # Press 'q' to start debug mode
+                #debug_mode_on = True
+            #elif key == ord('d') and debug_mode_on == True:
+                #debug_mode_on = False
+                #cv2.destroyAllWindows()
+            #if key == ord('q'):  # Press 'q' to quit
+                #out.release()
+                #break   
+            #elif key == ord(' '):  # Press spacebar to start/stop
+                #while True:
+                    #key = cv2.waitKey(1) & 0xFF
+                    #if key == ord(' '):  # Press spacebar again to resume
+                        #break
+                    #elif key == ord('q'):  # Press 'q' to quit
+                        #break
 
     cap.release()
     out.release()
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
+
+    print("Video processing complete!")  # Indicate end
 
 if __name__ == "__main__":
     video_path = r'C:\Users\richy\Documents\Git\HITS\Eye Tracking\EyeTracker-main\testcam1.mp4'
