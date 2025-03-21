@@ -153,9 +153,9 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
     encoder1 = H264Encoder(10000000)
 
     if eye_tracking_horizontal_completed == True:
-        output1 = FfmpegOutput(f'{sequence}verticalcam1.mp4')
+        output1 = FfmpegOutput(video_path + f'{sequence}verticalcam1.mp4')
     else:
-        output1 = FfmpegOutput(f'{sequence}horizontalcam1.mp4')
+        output1 = FfmpegOutput(video_path + f'{sequence}horizontalcam1.mp4')
 
     cam2 = Picamera2(1)
     cam2.start_preview(Preview.QTGL, x=500,y=300,width=400,height=300)
@@ -166,9 +166,9 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
     encoder2= H264Encoder(10000000)
 
     if eye_tracking_horizontal_completed == True:
-        output2 = FfmpegOutput(f'{sequence}verticalcam2.mp4')
+        output2 = FfmpegOutput(video_path + f'{sequence}verticalcam2.mp4')
     else:
-        output2 = FfmpegOutput(f'{sequence}horizontalcam2.mp4')
+        output2 = FfmpegOutput(video_path + f'{sequence}horizontalcam2.mp4')
 
     cam1.start_recording(encoder1, output1)
     cam2.start_recording(encoder2, output2)
@@ -806,7 +806,7 @@ eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
-video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos'
+video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos/'
 csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant CSV'
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
