@@ -594,7 +594,7 @@ def process_frame(frame, timestamp, csv_writer):
     return final_rotated_rect
 
 # Loads a video and finds the pupil in each frame
-def process_video(video_path, input_method, csv_dir):
+def process_video(video_path, input_method, csv_dir): # Chanel can't we just send csv_dir corresponding to file name we want? 
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 format
     out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 30.0, (640, 480))  # Output video filename, codec, frame rate, and frame size
@@ -672,7 +672,7 @@ def process_video(video_path, input_method, csv_dir):
     os.makedirs(csv_dir, exist_ok=True)
     
     # Define CSV filename in the specified directory
-    csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
+    csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file # Chanel
     with open(csv_filename, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(["Timestamp", "Pupil_X", "Pupil_Y"])
@@ -797,8 +797,8 @@ eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
-video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Paticipant Videos'
-csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main'
+video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos'
+csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant CSV'
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
 # This cannot be in a function!!
