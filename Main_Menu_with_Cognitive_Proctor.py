@@ -160,7 +160,7 @@ def next_task(response):
         message = cognitive_test(response)
     elif cognitive_completed == True and balance_started == False:
         message = balance_test() #TODO: Figure out if we need to pass responses
-    elif cognitive_completed == True and balance_completed == Trueys:
+    elif cognitive_completed == True and balance_completed == True:
         message = eye_tracking_test() #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
