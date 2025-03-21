@@ -136,6 +136,7 @@ def on_press_eye_tracking(key):
     global passthrough
     if key.char == 's':
         passthrough = 's'
+        print("sending start")
     else:
         print("Invalid Key")
         return eye_tracking_test()

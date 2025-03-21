@@ -784,7 +784,10 @@ def eye_tracking_test(response):
 
 
 def balance_test():
+    global balance_test_started, balance_test_completed
+    balance_test_started = True
     time.sleep(1) #TODO: Do something here
+    balance_test_completed = True
     return "Skip Balance"
 
 response = None
