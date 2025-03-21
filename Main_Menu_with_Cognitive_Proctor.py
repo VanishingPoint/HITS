@@ -99,7 +99,6 @@ def on_press_cognitive(key):
     except AttributeError:
         pass
 
-
 def collect_user_info():
     global user_data_sent
     while not user_data_sent:
