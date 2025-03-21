@@ -781,10 +781,10 @@ def eye_tracking_test(key):
     elif eye_tracking_ready_to_process == True:
         #Process the videos
         #second parameter is 1 for video 2 for webcam
-        process_video((video_path + (f"{sequence}verticalcam1.mp4")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
-        process_video((video_path + (f"{sequence}verticalcam2.mp4")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
-        process_video((video_path + (f"{sequence}horizontalcam1.mp4")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
-        process_video((video_path + (f"{sequence}horizontalcam2.mp4")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}verticalcam1.mp4")), 1, (csv_directory + f"/{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}verticalcam2.mp4")), 1, (csv_directory + f"/{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}horizontalcam1.mp4")), 1, (csv_directory + f"/{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}horizontalcam2.mp4")), 1, (csv_directory + f"/{sequence}.csv")) #Right now the video path and output dir are defined globally
         eye_tracking_completed = True
         return "Eye Tracking Complete"
     
