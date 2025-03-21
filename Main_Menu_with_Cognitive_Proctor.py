@@ -145,11 +145,35 @@ def on_press_eye_tracking(key):
         
 
 def balance_test():
-    global balance_completed, balance_started
+    global balance_completed, balance_started, waiting_for_keyboard
+    #Show instructions
+    show_image('C:/Users/chane/Desktop/HITS/HITS/Balance/Balance Proctor Images/balance_page_0') # Chanel
+
+    waiting_for_keyboard = True
+    listener = Listener(on_press=lambda event: on_press_balance(event))
+    listener.start()
+
     balance_started = True
-    time.sleep(1) #TODO: Do something here
     balance_completed = True
-    return "Balance Skipped"
+
+    while waiting_for_keyboard:
+            time.sleep(1)
+    listener.stop()
+
+    print("Passthrough Current Val:", passthrough)
+    return passthrough
+    
+    # return "Balance Skipped"
+
+def on_press_balance(key):
+    global passthrough, waiting_for_keyboard
+    if key.char == 's':
+        passthrough = 's'
+        waiting_for_keyboard = False
+        print("sending start")
+    else:
+        print("Invalid Key")
+        return balance_test()
 
 def next_task(response):
     if user_data_sent == False:
@@ -174,8 +198,8 @@ cognitive_started = False
 cognitive_completed = False
 balance_started = False
 balance_completed = False
-eye_tracking_started = False
-eye_tracking_completed = False
+eye_tracking_started = False # we never use this
+eye_tracking_completed = False # we never use this
 response = None
 
 try:
