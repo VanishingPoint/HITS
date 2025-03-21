@@ -120,8 +120,8 @@ def collect_user_info():
 def eye_tracking_test():
     global waiting_for_keyboard
     #Show instructions
-    #show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Triss
-    show_image('C:/Users/chane/Desktop/HITS/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Chanel
+    show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Triss
+    #show_image('C:/Users/chane/Desktop/HITS/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Chanel
     waiting_for_keyboard = True
     listener = Listener(on_press=lambda event: on_press_eye_tracking(event))
     listener.start()
@@ -164,6 +164,9 @@ def balance_test():
     print("Passthrough Current Val:", passthrough)
     return passthrough
     '''
+
+    balance_started = True
+    balance_completed = True
     return "Balance Skipped"
 
 def on_press_balance(key):

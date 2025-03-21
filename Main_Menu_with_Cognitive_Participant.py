@@ -141,7 +141,6 @@ def cognitive_test(key):
     return(response)
 
 def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to increase frame rate
-    global eye_tracking_completed
 
     cam1 = Picamera2(0)
     cam1.start_preview(Preview.QTGL, x=100,y=300,width=400,height=300)
@@ -182,7 +181,6 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
 
     cam2.stop()
     cam1.stop()
-    eye_tracking_completed = True
 
 '''
 EYE TRACKING VIDEO PROCESSING FUNCTIONS BELOW
@@ -772,7 +770,7 @@ def eye_tracking_test(key):
         #Show "You are done image"
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_6.png')
         eye_tracking_ready_to_process = True
-        return "Finished Vertical Test Videos"
+        return "Finished Vertical Test Videos, ready to process"
     
     elif eye_tracking_ready_to_process == True:
         #Process the videos
@@ -848,7 +846,7 @@ eye_tracking_horizontal_completed = False
 eye_tracking_ready_to_process = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
-video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos'
+video_path='/home/hits/Documents/GitHub/HITS/Eye_Tracking_Participant_Videos'
 csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant CSV'
 
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
