@@ -20,7 +20,7 @@ def handle_data(data):
     elif user_data_received == True and cognitive_test_completed == False:
         response = cognitive_test(data)
     elif cognitive_test_completed == True and balance_test_completed == False:
-        response = balance_test(response) 
+        response = balance_test() 
     elif cognitive_test_completed == True and balance_test_completed == True and eye_tracking_completed == False:
         response = eye_tracking_test(response) 
     else:
@@ -783,7 +783,7 @@ def eye_tracking_test(response):
 
 
 
-def balance_test(response):
+def balance_test():
     global balance_test_started, balance_test_completed
     balance_test_started = True
     time.sleep(1) #TODO: Do something here
