@@ -80,11 +80,11 @@ float getDistance() {
         X_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
         Y_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
         Z_ADX = (Wire.read() | Wire.read() << 8) / 256.0;
-
-        Filt_ADX_X = X_ADX-(-0.91);
+        
+        Filt_ADX_X = X_ADX-(0.10);
         Filt_ADX_Y = Y_ADX-(-0.02);
-        Filt_ADX_Z = Z_ADX-(-0.09);
-
+        Filt_ADX_Z = Z_ADX-(-0.04);
+        
         // Read MPU6050 Data
         Wire.beginTransmission(MPU6050);
         Wire.write(0x3B);
@@ -95,12 +95,12 @@ float getDistance() {
         Y_MPU = (Wire.read() << 8 | Wire.read()) / 16384.0;
         Z_MPU = (Wire.read() << 8 | Wire.read())/ 16384.0;
 
-        Filt_MPU_X = X_MPU-(0.93);
-        Filt_MPU_Y = Y_MPU-(-0.03);
-        Filt_MPU_Z = Z_MPU-(0.03);
+        Filt_MPU_X = X_MPU-(-0.08);
+        Filt_MPU_Y = Y_MPU-(0.03);
+        Filt_MPU_Z = Z_MPU-(0.05);
 
         Adj_MPU_X = Filt_MPU_X*-1;
-        Adj_MPU_Y = Filt_MPU_Y*-1;
+        Adj_MPU_Y = Filt_MPU_Y;
         Adj_MPU_Z = Filt_MPU_Z*-1;
 
         // Compute Averaged Values
@@ -109,11 +109,11 @@ float getDistance() {
         Z_avg = (Filt_ADX_Z + Adj_MPU_Z) / 2.0;
 
         // Compute Acceleration Magnitude
-        Acceleration = sqrt((Y_avg * Y_avg) + (Z_avg * Z_avg));
+        Acceleration = sqrt((X_avg * X_avg) + (Y_avg * Y_avg) + (Z_avg * Z_avg));
 
         // Time Calculation
         timestep_sec = timestep / 1000.0;
-        NormalizedAcc = abs(Acceleration); // in g
+        NormalizedAcc = abs(Acceleration-1); // in g
         if (NormalizedAcc > threshold) {
           fixGravAccel = NormalizedAcc*9.81;
           Distance += OldVelocity * timestep_sec + 0.5 * fixGravAccel * timestep_sec * timestep_sec;
