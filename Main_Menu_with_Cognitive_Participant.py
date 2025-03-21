@@ -793,10 +793,10 @@ def eye_tracking_test(key):
 def balance_test(data):
     global balance_test_started, balance_test_completed
     balance_test_started = True
-    
+    """"
     ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Adjust as necessary
     ser.reset_input_buffer()
-    """"
+    
     #TODO: This should be controlled by a keypress
     ser.write(b's\n')
     print("Sent 'start' to Arduino")
