@@ -748,6 +748,8 @@ def eye_tracking_test(key):
         #1st show instructions, wait for key to proceed (have to go to main loop to detect)
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_0.png')
         eye_tracking_started = True
+        print("Eye Tracking Started, Waiting For S")
+        print(eye_tracking_started, eye_tracking_horizontal_completed, eye_tracking_completed)
         return "Waiting to Start Eye Tracking"
     
     elif eye_tracking_started == True and key == 's' and eye_tracking_horizontal_completed == False:
@@ -817,8 +819,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         while True:
             data = conn.recv(1024)
+            print("received:", data.decode('utf-8'))
             response = handle_data(data.decode('utf-8'))
-
+            print("sending", response)
             if not data:
                 print("Disconnected from Pi")
 
