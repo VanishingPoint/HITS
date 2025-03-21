@@ -20,9 +20,9 @@ def handle_data(data):
     elif user_data_received == True and cognitive_test_completed == False:
         response = cognitive_test(data)
     elif cognitive_test_completed == True and balance_test_completed == False:
-        response = balance_test() 
+        response = balance_test(data)
     elif cognitive_test_completed == True and balance_test_completed == True and eye_tracking_completed == False:
-        response = eye_tracking_test() 
+        response = eye_tracking_test(data) 
     else:
         print("All Tests Complete or Error")
     return response
@@ -741,16 +741,18 @@ def process_video(video_path, input_method, csv_dir):
 
     print("Video processing complete!")  # Indicate end
 
-def eye_tracking_test(response):
+def eye_tracking_test(key):
     global eye_tracking_started, eye_tracking_completed, eye_tracking_horizontal_completed
 
     if eye_tracking_started == False:
         #1st show instructions, wait for key to proceed (have to go to main loop to detect)
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_0.png')
         eye_tracking_started = True
+        print("Eye Tracking Started, Waiting For S")
+        print(eye_tracking_started, eye_tracking_horizontal_completed, eye_tracking_completed)
         return "Waiting to Start Eye Tracking"
     
-    if eye_tracking_started == True and response == 's':
+    elif eye_tracking_started == True and key == 's' and eye_tracking_horizontal_completed == False:
         #Show Horizontal Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_4.png')
         #Then show 1st image here
@@ -762,7 +764,7 @@ def eye_tracking_test(response):
         eye_tracking_horizontal_completed = True
         return "Waiting to start vertical test"
     
-    if eye_tracking_horizontal_completed == True and response == 's':
+    elif eye_tracking_horizontal_completed == True and key == 's':
         #Show Vertical Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_5.png')
         #Then show 1st image here
@@ -772,7 +774,7 @@ def eye_tracking_test(response):
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_6.png')
         eye_tracking_completed = True
     
-    if eye_tracking_completed == True:
+    elif eye_tracking_completed == True:
         #Process the videos
         #second parameter is 1 for video 2 for webcam
         process_video((video_path + (f"{sequence}verticalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
@@ -780,11 +782,17 @@ def eye_tracking_test(response):
         process_video((video_path + (f"{sequence}horizontalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         process_video((video_path + (f"{sequence}horizontalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         return "Eye Tracking Complete"
+    
+    else:
+        print("Error in Eye Tracking")
 
 
 
-def balance_test():
+def balance_test(data):
+    global balance_test_started, balance_test_completed
+    balance_test_started = True
     time.sleep(1) #TODO: Do something here
+    balance_test_completed = True
     return "Skip Balance"
 
 response = None
@@ -811,8 +819,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         while True:
             data = conn.recv(1024)
+            print("received:", data.decode('utf-8'))
             response = handle_data(data.decode('utf-8'))
-
+            print("sending", response)
             if not data:
                 print("Disconnected from Pi")
 
