@@ -742,7 +742,7 @@ def process_video(video_path, input_method, csv_dir):
     print("Video processing complete!")  # Indicate end
 
 def eye_tracking_test(key):
-    global eye_tracking_started, eye_tracking_completed, eye_tracking_horizontal_completed
+    global eye_tracking_started, eye_tracking_completed, eye_tracking_horizontal_completed, eye_tracking_ready_to_process
 
     if eye_tracking_started == False:
         #1st show instructions, wait for key to proceed (have to go to main loop to detect)
@@ -772,15 +772,16 @@ def eye_tracking_test(key):
         #TODO: Show the proctor something during this
         #Show "You are done image"
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_6.png')
-        eye_tracking_completed = True
+        eye_tracking_ready_to_process = True
     
-    elif eye_tracking_completed == True:
+    elif eye_tracking_ready_to_process == True:
         #Process the videos
         #second parameter is 1 for video 2 for webcam
         process_video((video_path + (f"{sequence}verticalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         process_video((video_path + (f"{sequence}verticalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         process_video((video_path + (f"{sequence}horizontalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         process_video((video_path + (f"{sequence}horizontalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        eye_tracking_completed = True
         return "Eye Tracking Complete"
     
     else:
@@ -804,6 +805,7 @@ balance_test_started = False
 eye_tracking_started = False
 eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
+eye_tracking_ready_to_process = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
 video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos/'
