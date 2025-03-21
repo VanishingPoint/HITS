@@ -168,6 +168,7 @@ def next_task(response):
 
     return message
 
+waiting_for_keyboard = False
 user_data_sent = False
 cognitive_started = False
 cognitive_completed = False
