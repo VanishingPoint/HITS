@@ -141,7 +141,7 @@ def on_press_eye_tracking(key):
         return eye_tracking_test()
         
 
-def balance_test(response):
+def balance_test():
     global balance_completed, balance_started
     balance_started = True
     time.sleep(1) #TODO: Do something here
