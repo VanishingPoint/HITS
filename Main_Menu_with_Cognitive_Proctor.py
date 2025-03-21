@@ -11,7 +11,7 @@ PORT = 65432  # The port used by the server
 #TODO: Once cognitive test works, make this explicitly for cog images only, generalize image open function
 image_numbers = list(range(0, 17)) # image 0 is explanation, others are answers corresponding to the participant images
 
-image_paths = [
+image_paths_cognitive = [
     # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
     # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
      fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
@@ -37,7 +37,7 @@ def cognitive_test(response):
                 return 0 #TODO: Do something here
         else:
             print(f"Received image number: {response}")
-            show_image(image_paths[int(response)])  # Show the next randomized image
+            show_image(image_paths_cognitive[int(response)])  # Show the next randomized image
 
             waiting_for_keyboard = True
             listener = Listener(on_press=lambda event: on_press_cognitive(event))
@@ -53,7 +53,7 @@ def cognitive_test(response):
         print("Press 'e' to exit the program.")
 
         # Show the explanation image first (cognitive_page_0)
-        show_image(image_paths[0])
+        show_image(image_paths_cognitive[0])
         
         waiting_for_keyboard = True
         listener = Listener(on_press=lambda event: on_press_cognitive(event))
