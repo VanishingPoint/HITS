@@ -651,7 +651,7 @@ def process_video(video_path, input_method, csv_path):
         return
 
     # Ensure the directory exists
-    os.makedirs(csv_path, exist_ok=True)
+    #os.makedirs(csv_path, exist_ok=True)
     
     # Define CSV filename in the specified directory
     #csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
