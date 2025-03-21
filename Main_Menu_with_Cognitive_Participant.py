@@ -9,6 +9,8 @@ from picamera2 import Picamera2, Preview
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FfmpegOutput
 import serial
+import cv2
+import numpy as np
 
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
