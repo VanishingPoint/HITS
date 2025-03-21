@@ -47,7 +47,7 @@ def show_image(image_path):
     opened_image.show()
 
 def record_user_data(data):
-    global file_path, user_data_received
+    global file_path, user_data_received, sequence
     sequence, age, sex, height, drunk = data.split()
 
     # Generate the CSV filename based on the sequence number and save it in the csv_directory
@@ -151,7 +151,11 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
     cam1.configure(video_config1)
 
     encoder1 = H264Encoder(10000000)
-    output1 = FfmpegOutput('testcam1.mp4') #TODO: Rename
+
+    if eye_tracking_horizontal_completed == True:
+        output1 = FfmpegOutput(f'{sequence}verticalcam1.mp4')
+    else:
+        output1 = FfmpegOutput(f'{sequence}horizontalcam1.mp4')
 
     cam2 = Picamera2(1)
     cam2.start_preview(Preview.QTGL, x=500,y=300,width=400,height=300)
@@ -160,7 +164,11 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
     cam2.configure(video_config2)
 
     encoder2= H264Encoder(10000000)
-    output2 = FfmpegOutput('testcam2.mp4') #TODO: Rename
+
+    if eye_tracking_horizontal_completed == True:
+        output2 = FfmpegOutput(f'{sequence}verticalcam2.mp4')
+    else:
+        output2 = FfmpegOutput(f'{sequence}horizontalcam2.mp4')
 
     cam1.start_recording(encoder1, output1)
     cam2.start_recording(encoder2, output2)
@@ -767,11 +775,10 @@ def eye_tracking_test(response):
     if eye_tracking_completed == True:
         #Process the videos
         #second parameter is 1 for video 2 for webcam
-        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        #TODO: Make Sure We input the right video path
+        process_video((video_path + (f"{sequence}verticalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}verticalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}horizontalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}horizontalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         return "Eye Tracking Complete"
 
 
@@ -790,7 +797,7 @@ eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
-video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main/testcam1.mp4'
+video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Paticipant Videos'
 csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main'
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
