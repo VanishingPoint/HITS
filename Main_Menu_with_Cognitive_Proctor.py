@@ -119,7 +119,7 @@ def collect_user_info():
     return message
 
 def eye_tracking_test():
-
+    global waiting_for_keyboard
     #Show instructions
     show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png')
     waiting_for_keyboard = True
@@ -134,9 +134,10 @@ def eye_tracking_test():
     return passthrough
 
 def on_press_eye_tracking(key):
-    global passthrough
+    global passthrough, waiting_for_keyboard
     if key.char == 's':
         passthrough = 's'
+        waiting_for_keyboard = False
         print("sending start")
     else:
         print("Invalid Key")
@@ -159,7 +160,7 @@ def next_task(response):
         message = cognitive_test(response)
     elif cognitive_completed == True and balance_started == False:
         message = balance_test() #TODO: Figure out if we need to pass responses
-    elif cognitive_completed == True and balance_completed == True:
+    elif cognitive_completed == True and balance_completed == Trueys:
         message = eye_tracking_test() #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
