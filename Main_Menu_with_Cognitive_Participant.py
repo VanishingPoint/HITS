@@ -596,28 +596,7 @@ def process_frame(frame, timestamp, csv_writer):
     
     return final_rotated_rect
 
-# Loads a video and finds the pupil in each frame
-def process_video(video_path, input_method, csv_dir): # Chanel can't we just send csv_dir corresponding to file name we want? 
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 format
-    out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 30.0, (640, 480))  # Output video filename, codec, frame rate, and frame size
-
-    if input_method == 1:
-        cap = cv2.VideoCapture(video_path)
-    elif input_method == 2:
-        cap = cv2.VideoCapture(00, cv2.CAP_DSHOW)  # Camera input
-        cap.set(cv2.CAP_PROP_EXPOSURE, -5)
-    else:
-        print("Invalid video source.")
-        return
-
-    if not cap.isOpened():
-        print("Error: Could not open video.")
-        return
-
-    # Ensure the directory exists
-    os.makedirs(csv_dir, exist_ok=True)
-    
     # Finds the pupil in an individual frame and returns the center point
 def process_frame(frame, timestamp, csv_writer):
 
