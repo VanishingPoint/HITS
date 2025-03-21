@@ -796,7 +796,7 @@ def balance_test(data):
     
     ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Adjust as necessary
     ser.reset_input_buffer()
-
+    """"
     #TODO: This should be controlled by a keypress
     ser.write(b's\n')
     print("Sent 'start' to Arduino")
@@ -818,7 +818,7 @@ def balance_test(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
-
+    """
     balance_test_completed = True
     return "Skip Balance"
 
