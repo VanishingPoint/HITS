@@ -182,6 +182,10 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
     cam2.stop()
     cam1.stop()
 
+    #added this because it said the resource was busy the second time...
+    cam2.close()
+    cam1.close()
+
 '''
 EYE TRACKING VIDEO PROCESSING FUNCTIONS BELOW
 '''
