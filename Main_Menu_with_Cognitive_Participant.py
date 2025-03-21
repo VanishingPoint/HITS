@@ -750,7 +750,7 @@ def eye_tracking_test(key):
         eye_tracking_started = True
         return "Waiting to Start Eye Tracking"
     
-    if eye_tracking_started == True and key == 's':
+    elif eye_tracking_started == True and key == 's' and eye_tracking_horizontal_completed == False:
         #Show Horizontal Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_4.png')
         #Then show 1st image here
@@ -762,7 +762,7 @@ def eye_tracking_test(key):
         eye_tracking_horizontal_completed = True
         return "Waiting to start vertical test"
     
-    if eye_tracking_horizontal_completed == True and key == 's':
+    elif eye_tracking_horizontal_completed == True and key == 's':
         #Show Vertical Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_5.png')
         #Then show 1st image here
@@ -772,7 +772,7 @@ def eye_tracking_test(key):
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_6.png')
         eye_tracking_completed = True
     
-    if eye_tracking_completed == True:
+    elif eye_tracking_completed == True:
         #Process the videos
         #second parameter is 1 for video 2 for webcam
         process_video((video_path + (f"{sequence}verticalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
@@ -780,6 +780,9 @@ def eye_tracking_test(key):
         process_video((video_path + (f"{sequence}horizontalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         process_video((video_path + (f"{sequence}horizontalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
         return "Eye Tracking Complete"
+    
+    else:
+        print("Error in Eye Tracking")
 
 
 
