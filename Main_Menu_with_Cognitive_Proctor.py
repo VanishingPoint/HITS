@@ -117,21 +117,30 @@ def collect_user_info():
     message = sequence + ' ' + age + ' ' + sex + ' ' + height + ' ' + drunk
     return message
 
-def eye_tracking_test():
+def eye_tracking_test(response):
     global waiting_for_keyboard
-    #Show instructions
-    show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Triss
-    #show_image('C:/Users/chane/Desktop/HITS/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Chanel
-    waiting_for_keyboard = True
-    listener = Listener(on_press=lambda event: on_press_eye_tracking(event))
-    listener.start()
+    if response == "Waiting to Start Eye Tracking" or response == "Waiting to start vertical test":
+        #Show instructions
+        show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Triss
+        #show_image('C:/Users/chane/Desktop/HITS/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png') # Chanel
+        waiting_for_keyboard = True
+        listener = Listener(on_press=lambda event: on_press_eye_tracking(event))
+        listener.start()
 
-    while waiting_for_keyboard:
-            time.sleep(1)
-    listener.stop()
+        while waiting_for_keyboard:
+                time.sleep(1)
+        listener.stop()
 
-    print("Passthrough Current Val:", passthrough)
-    return passthrough
+        print("Passthrough Current Val:", passthrough)
+        return passthrough
+    
+    elif response == "Finished Vertical Test Videos, ready to process":
+        print(response)
+        print("Instruct participant to remove headset. Processing will now begin.") #This could be an image??
+        return ("Start Processing")
+    
+    else:
+        print("Error in Eye Tracking Cases")
 
 def on_press_eye_tracking(key):
     global passthrough, waiting_for_keyboard
@@ -189,7 +198,7 @@ def next_task(response):
     elif cognitive_completed == True and balance_started == False:
         message = balance_test() #TODO: Figure out if we need to pass responses
     elif cognitive_completed == True and balance_completed == True:
-        message = eye_tracking_test() #TODO: Figure out if we need to pass responses
+        message = eye_tracking_test(response) #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
         return("finished") #TODO: Actually handle this and check cases

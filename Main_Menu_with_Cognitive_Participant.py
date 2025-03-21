@@ -590,7 +590,7 @@ def process_frame(frame, timestamp, csv_writer):
 
     if final_rotated_rect is not None and final_rotated_rect[1] != (0, 0):
         center_x, center_y = final_rotated_rect[0][0], final_rotated_rect[0][1]  # Keep as is without rounding
-        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding
+        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding #TODO: Pad with zeros
     
     return final_rotated_rect
 
@@ -650,7 +650,7 @@ def process_frame(frame, timestamp, csv_writer):
     return final_rotated_rect
 
 # Loads a video and finds the pupil in each frame
-def process_video(video_path, input_method, csv_dir):
+def process_video(video_path, input_method, csv_path):
     print("Starting video processing...")  # Indicate start
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 format
@@ -670,13 +670,13 @@ def process_video(video_path, input_method, csv_dir):
         return
 
     # Ensure the directory exists
-    os.makedirs(csv_dir, exist_ok=True)
+    os.makedirs(csv_path, exist_ok=True)
     
     # Define CSV filename in the specified directory
-    csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file # Chanel
-    with open(csv_filename, mode='w', newline='') as csv_file:
+    #csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
+    with open(csv_path, mode='a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(["Timestamp", "Pupil_X", "Pupil_Y"])
+        csv_writer.writerow(["Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
     
         debug_mode_on = False
     
@@ -765,7 +765,7 @@ def eye_tracking_test(key):
         eye_tracking_horizontal_completed = True
         return "Waiting to start vertical test"
     
-    elif eye_tracking_horizontal_completed == True and key == 's':
+    elif eye_tracking_horizontal_completed == True and key == 's' and eye_tracking_ready_to_process == False:
         #Show Vertical Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_5.png')
         #Then show 1st image here
@@ -779,10 +779,10 @@ def eye_tracking_test(key):
     elif eye_tracking_ready_to_process == True:
         #Process the videos
         #second parameter is 1 for video 2 for webcam
-        process_video((video_path + (f"{sequence}verticalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        process_video((video_path + (f"{sequence}verticalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        process_video((video_path + (f"{sequence}horizontalcam1")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
-        process_video((video_path + (f"{sequence}horizontalcam2")), 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}verticalcam1")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}verticalcam2")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}horizontalcam1")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
+        process_video((video_path + (f"{sequence}horizontalcam2")), 1, (csv_directory + f"{sequence}.csv")) #Right now the video path and output dir are defined globally
         eye_tracking_completed = True
         return "Eye Tracking Complete"
     
@@ -851,7 +851,6 @@ eye_tracking_ready_to_process = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
 video_path='/home/hits/Documents/GitHub/HITS/Eye_Tracking_Participant_Videos/'
-csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant CSV'
 
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
