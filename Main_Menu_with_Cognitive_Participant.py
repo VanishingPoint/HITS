@@ -834,8 +834,9 @@ eye_tracking_horizontal_completed = False
 eye_tracking_ready_to_process = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
-video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos/'
+video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant Videos'
 csv_output_dir='/home/hits/Documents/GitHub/HITS/Eye Tracking Participant CSV'
+
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
 # This cannot be in a function!!
