@@ -8,6 +8,7 @@ import socket
 from picamera2 import Picamera2, Preview
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FfmpegOutput
+import serial
 
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
@@ -792,7 +793,32 @@ def eye_tracking_test(key):
 def balance_test(data):
     global balance_test_started, balance_test_completed
     balance_test_started = True
-    time.sleep(1) #TODO: Do something here
+    
+    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Adjust as necessary
+    ser.reset_input_buffer()
+
+    #TODO: This should be controlled by a keypress
+    ser.write(b's\n')
+    print("Sent 'start' to Arduino")
+
+    while True:
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').rstrip()
+            print(f"Received from Arduino: {line}")
+            try:
+                # Try to convert the line to a float
+                value = float(line)
+                break
+            except ValueError:
+                # If conversion fails, continue waiting for a valid float
+                continue
+    
+    balance_data = [0,0,0,0,0,0,0,0,0,0,0, value]
+    #Value is the path length
+    with open(file_path, "a", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(balance_data)
+
     balance_test_completed = True
     return "Skip Balance"
 
