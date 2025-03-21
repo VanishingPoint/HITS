@@ -140,7 +140,7 @@ def eye_tracking_test(response):
         return ("Start Processing")
     
     else:
-        print("Error in Eye Tracking Cases")
+        print("Error in Eye Tracking Cases or test complete")
 
 def on_press_eye_tracking(key):
     global passthrough, waiting_for_keyboard
