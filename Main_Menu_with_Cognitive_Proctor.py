@@ -130,6 +130,7 @@ def eye_tracking_test():
             time.sleep(1)
     listener.stop()
 
+    print("Passthrough Current Val:", passthrough)
     return passthrough
 
 def on_press_eye_tracking(key):
@@ -158,7 +159,7 @@ def next_task(response):
         message = cognitive_test(response)
     elif cognitive_completed == True and balance_started == False:
         message = balance_test() #TODO: Figure out if we need to pass responses
-    elif cognitive_completed == True and balance_completed == True and eye_tracking_started == False:
+    elif cognitive_completed == True and balance_completed == True:
         message = eye_tracking_test() #TODO: Figure out if we need to pass responses
     else:
         print("All tests complete or error")
