@@ -12,9 +12,9 @@ PORT = 65432  # The port used by the server
 image_numbers = list(range(0, 4)) # image 0 is explanation, others are answers corresponding to the participant images
 
 image_paths_cognitive = [
-    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
+     fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
     # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
-     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
+    # fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
     for num in image_numbers
 ]
 
@@ -146,6 +146,7 @@ def on_press_eye_tracking(key):
 
 def balance_test():
     global balance_completed, balance_started, waiting_for_keyboard
+    '''
     #Show instructions
     show_image('C:/Users/chane/Desktop/HITS/HITS/Balance/Balance Proctor Images/balance_page_0') # Chanel
 
@@ -162,8 +163,8 @@ def balance_test():
 
     print("Passthrough Current Val:", passthrough)
     return passthrough
-    
-    # return "Balance Skipped"
+    '''
+    return "Balance Skipped"
 
 def on_press_balance(key):
     global passthrough, waiting_for_keyboard

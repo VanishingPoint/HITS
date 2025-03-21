@@ -791,7 +791,7 @@ def eye_tracking_test(key):
 
 def balance_test(data):
     global balance_test_started, balance_test_completed
-    
+    '''
     if balance_test_started == False: 
         # Intial set up to establish connection with Arduino? 
         balance_test_started = True
@@ -830,7 +830,8 @@ def balance_test(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
-
+    '''
+    balance_test_started = True
     balance_test_completed = True
     return "Balance Test Completed"
 
