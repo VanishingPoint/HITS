@@ -785,6 +785,7 @@ def eye_tracking_test(response):
 
 def balance_test():
     time.sleep(1) #TODO: Do something here
+    return "Skip Balance"
 
 response = None
 user_data_received = False

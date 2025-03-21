@@ -12,9 +12,9 @@ PORT = 65432  # The port used by the server
 image_numbers = list(range(0, 17)) # image 0 is explanation, others are answers corresponding to the participant images
 
 image_paths_cognitive = [
-    # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
+     fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
     # fr"C:\Users\richy\Downloads\cognitive\images\cognitive_page_{num}.png" # Richard
-     fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
+    # fr"C:/Users/chane/Desktop/HITS/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Chanel
     for num in image_numbers
 ]
 
@@ -34,7 +34,7 @@ def cognitive_test(response):
         if (response == 'end'):
                 print("Cognitive Test Complete")
                 cognitive_completed = True
-                return 0 #TODO: Do something here
+                return "Start Balance"
         else:
             print(f"Received image number: {response}")
             show_image(image_paths_cognitive[int(response)])  # Show the next randomized image
@@ -146,6 +146,7 @@ def balance_test(response):
     balance_started = True
     time.sleep(1) #TODO: Do something here
     balance_completed = True
+    return "Balance Skipped"
 
 def next_task(response):
     if user_data_sent == False:
