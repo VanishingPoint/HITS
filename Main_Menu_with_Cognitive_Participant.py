@@ -20,9 +20,9 @@ def handle_data(data):
     elif user_data_received == True and cognitive_test_completed == False:
         response = cognitive_test(data)
     elif cognitive_test_completed == True and balance_test_completed == False:
-        response = balance_test()
+        response = balance_test(data)
     elif cognitive_test_completed == True and balance_test_completed == True and eye_tracking_completed == False:
-        response = eye_tracking_test(response) 
+        response = eye_tracking_test(data) 
     else:
         print("All Tests Complete or Error")
     return response
@@ -741,7 +741,7 @@ def process_video(video_path, input_method, csv_dir):
 
     print("Video processing complete!")  # Indicate end
 
-def eye_tracking_test(response):
+def eye_tracking_test(key):
     global eye_tracking_started, eye_tracking_completed, eye_tracking_horizontal_completed
 
     if eye_tracking_started == False:
@@ -750,7 +750,7 @@ def eye_tracking_test(response):
         eye_tracking_started = True
         return "Waiting to Start Eye Tracking"
     
-    if eye_tracking_started == True and response == 's':
+    if eye_tracking_started == True and key == 's':
         #Show Horizontal Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_4.png')
         #Then show 1st image here
@@ -762,7 +762,7 @@ def eye_tracking_test(response):
         eye_tracking_horizontal_completed = True
         return "Waiting to start vertical test"
     
-    if eye_tracking_horizontal_completed == True and response == 's':
+    if eye_tracking_horizontal_completed == True and key == 's':
         #Show Vertical Image
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_5.png')
         #Then show 1st image here
@@ -783,7 +783,7 @@ def eye_tracking_test(response):
 
 
 
-def balance_test():
+def balance_test(data):
     global balance_test_started, balance_test_completed
     balance_test_started = True
     time.sleep(1) #TODO: Do something here
