@@ -118,11 +118,34 @@ def collect_user_info():
     message = sequence + ' ' + age + ' ' + sex + ' ' + height + ' ' + drunk
     return message
 
-def eye_tracking_test(response):
-    time.sleep(1) #TODO: Do something here
+def eye_tracking_test():
+
+    #Show instructions
+    show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetrackingproctor_0.png')
+    waiting_for_keyboard = True
+    listener = Listener(on_press=lambda event: on_press_eye_tracking(event))
+    listener.start()
+
+    while waiting_for_keyboard:
+            time.sleep(1)
+    listener.stop()
+
+    return passthrough
+
+def on_press_eye_tracking(key):
+    global passthrough
+    if key.char == 's':
+        passthrough = 's'
+    else:
+        print("Invalid Key")
+        return eye_tracking_test()
+        
 
 def balance_test(response):
+    global balance_completed, balance_started
+    balance_started = True
     time.sleep(1) #TODO: Do something here
+    balance_completed = True
 
 def next_task(response):
     if user_data_sent == False:

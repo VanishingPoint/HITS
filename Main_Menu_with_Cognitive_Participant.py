@@ -733,23 +733,47 @@ def process_video(video_path, input_method, csv_dir):
 
     print("Video processing complete!")  # Indicate end
 
-def eye_tracking_test():
-    global eye_track_started
-    eye_track_started = True
-    #1st show instructions, wait for key to proceed (have to go to main loop to detect)
-    #Then show 1st image here
-    eye_tracking_recording() #Record the first test (Figure out if we need to pass anything...)
-    #Move & Rename files??? Or include logic that knows if it is first run or second run on the recording to name them differently
-    #Show instructions and wait for key to proceed (again, need main loop to detect)
-    eye_tracking_recording() #record second test here
-    #Then we do analysis here (or maybe we should do it during balance)
+def eye_tracking_test(response):
+    global eye_tracking_started, eye_tracking_completed, eye_tracking_horizontal_completed
 
-    #second parameter is 1 for video 2 for webcam
-    process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
+    if eye_tracking_started == False:
+        #1st show instructions, wait for key to proceed (have to go to main loop to detect)
+        show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_0.png')
+        eye_tracking_started = True
+        return "Waiting to Start Eye Tracking"
+    
+    if eye_tracking_started == True and response == 's':
+        #Show Horizontal Image
+        show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_4.png')
+        #Then show 1st image here
+        eye_tracking_recording() #Record the first test (Figure out if we need to pass anything...)
+        #TODO: Show the proctor something during this
+        #Go back to instruction image
+        show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_0.png')
+        #Now we should wait for the second test
+        eye_tracking_horizontal_completed = True
+        return "Waiting to start vertical test"
+    
+    if eye_tracking_horizontal_completed == True and response == 's':
+        #Show Vertical Image
+        show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_5.png')
+        #Then show 1st image here
+        eye_tracking_recording() #Record the second test (Figure out if we need to pass anything...)
+        #TODO: Show the proctor something during this
+        #Show "You are done image"
+        show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_6.png')
+        eye_tracking_completed = True
+    
+    if eye_tracking_completed == True:
+        #Process the videos
+        #second parameter is 1 for video 2 for webcam
+        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        process_video(video_path, 1, csv_output_dir) #Right now the video path and output dir are defined globally
+        #TODO: Make Sure We input the right video path
+        return "Eye Tracking Complete"
 
-    #Need to let people restart test
-    eye_track_completed = True
-    #return(response)
 
 
 def balance_test():
@@ -763,6 +787,7 @@ balance_test_completed = False
 balance_test_started = False
 eye_tracking_started = False
 eye_tracking_completed = False
+eye_tracking_horizontal_completed = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
 video_path='/home/hits/Documents/GitHub/HITS/Eye Tracking/EyeTracker-main/testcam1.mp4'
