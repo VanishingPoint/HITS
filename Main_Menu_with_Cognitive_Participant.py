@@ -26,7 +26,8 @@ def handle_data(data):
         response = eye_tracking_test(data) 
     else:
         print("All Tests Complete or Error")
-    return response
+    # return response # Chanel not sure about this but it is raising an error saying it cannot find it because it is empty, trying with data
+    return data
 
 # Function to append cognitive data starting at column G TODO: Does this work??? No: Use pandas: empty_row = df['G'].isna().idxmax()  # Finds the first NaN (empty) row
 # Add data to the first empty row in column G: df.at[empty_row, 'G'] = "New Data"
@@ -774,6 +775,7 @@ def eye_tracking_test(key):
         #Show "You are done image"
         show_image('/home/hits/Documents/GitHub/HITS/Eye Tracking/Eye Tracking Participant Images/eyetracking_6.png')
         eye_tracking_ready_to_process = True
+        return "Finished Vertical Test Videos"
     
     elif eye_tracking_ready_to_process == True:
         #Process the videos
