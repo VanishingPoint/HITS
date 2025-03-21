@@ -40,7 +40,7 @@ def cognitive_test(response):
             show_image(image_paths[int(response)])  # Show the next randomized image
 
             waiting_for_keyboard = True
-            listener = Listener(on_press=lambda event: on_press(event))
+            listener = Listener(on_press=lambda event: on_press_cognitive(event))
             listener.start()
 
             while waiting_for_keyboard:
@@ -56,7 +56,7 @@ def cognitive_test(response):
         show_image(image_paths[0])
         
         waiting_for_keyboard = True
-        listener = Listener(on_press=lambda event: on_press(event))
+        listener = Listener(on_press=lambda event: on_press_cognitive(event))
         listener.start()
 
         while waiting_for_keyboard:
@@ -66,7 +66,7 @@ def cognitive_test(response):
     print("Returning Passthrough")
     return passthrough
 
-def on_press(key):
+def on_press_cognitive(key):
     global passthrough, cognitive_started, cognitive_completed, waiting_for_keyboard #TODO: Figure out how to do this without this
 
     waiting_for_keyboard = False
