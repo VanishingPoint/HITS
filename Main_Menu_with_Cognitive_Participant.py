@@ -26,11 +26,8 @@ def handle_data(data):
         response = eye_tracking_test(data) 
     else:
         print("All Tests Complete or Error")
-    return response
+    return response 
     
-
-# Function to append cognitive data starting at column G TODO: Does this work??? No: Use pandas: empty_row = df['G'].isna().idxmax()  # Finds the first NaN (empty) row
-# Add data to the first empty row in column G: df.at[empty_row, 'G'] = "New Data"
 def append_cognitive_data(cognitive_data):
     """Append cognitive data to the existing user CSV file, starting at column G."""
     with open(file_path, "a", newline="") as csvfile:
@@ -794,16 +791,29 @@ def eye_tracking_test(key):
 
 def balance_test(data):
     global balance_test_started, balance_test_completed
-    balance_test_started = True
-    """"
-    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Adjust as necessary
-    ser.reset_input_buffer()
     
-    #TODO: This should be controlled by a keypress
-    ser.write(b's\n')
-    print("Sent 'start' to Arduino")
+    if balance_test_started == False: 
+        # Intial set up to establish connection with Arduino? 
+        balance_test_started = True
+        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Adjust as necessary
+        ser.reset_input_buffer()
+        return "Waiting to start balance test"
+    
+    elif balance_test_started == True and data == 's' and balance_trial == 1:
+        ser.write(b's\n')
+        print("Sent 'start' to Arduino for Trial 1")
+        # waits 2 minutes
+        balance_trial = 2
+        return "Completed Balance Trial 1"
 
-    while True:
+    elif balance_test_started == True and data == 's' and balance_trial == 2:
+        ser.write(b's\n')
+        print("Sent 'start' to Arduino for Trial 2")
+        # waits 2 minutes
+        balance_trial == 3
+        return "Completed Balance Trial 2"
+
+    while True: # Should this be in each elif statement? 
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
             print(f"Received from Arduino: {line}")
@@ -820,9 +830,9 @@ def balance_test(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
-    """
+
     balance_test_completed = True
-    return "Skip Balance"
+    return "Balance Test Completed"
 
 response = None
 user_data_received = False
@@ -830,6 +840,7 @@ cognitive_test_completed = False
 cognitive_test_started = False
 balance_test_completed = False
 balance_test_started = False
+balance_trial = 1
 eye_tracking_started = False
 eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
