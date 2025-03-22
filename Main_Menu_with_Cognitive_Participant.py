@@ -812,8 +812,6 @@ def balance_test(data):
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
     
-    balance_test_started = True
-    balance_test_completed = True
     return "Balance Trial Completed"
 
 response = None
