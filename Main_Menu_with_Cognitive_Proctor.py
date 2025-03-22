@@ -154,26 +154,41 @@ def on_press_eye_tracking(key):
         
 
 def balance_test():
-    global balance_completed, balance_started, waiting_for_keyboard
-    '''
-    #Show instructions
-    show_image('C:/Users/chane/Desktop/HITS/HITS/Balance/Balance Proctor Images/balance_page_0') # Chanel
-
-    waiting_for_keyboard = True
-    listener = Listener(on_press=lambda event: on_press_balance(event))
-    listener.start()
-
+    global balance_completed, balance_started, waiting_for_keyboard, balance_first_test_complete
+    
     balance_started = True
-    balance_completed = True
+    if balance_completed == False and balance_first_test_complete == False:
+        #Show instructions
+        #show_image('C:/Users/chane/Desktop/HITS/HITS/Balance/Balance Proctor Images/balance_page_0') # Chanel
+        show_image("/Users/test/Documents/HITS/Balance/Balance Proctor Images/balance_page_0.png") #Triss
 
-    while waiting_for_keyboard:
+        waiting_for_keyboard = True
+        listener = Listener(on_press=lambda event: on_press_balance(event))
+        listener.start()
+
+        while waiting_for_keyboard:
             time.sleep(1)
-    listener.stop()
+        listener.stop()
 
+    elif balance_completed == False and balance_first_test_complete == True:
+
+        waiting_for_keyboard = True
+        listener = Listener(on_press=lambda event: on_press_balance(event))
+        listener.start()
+
+        while waiting_for_keyboard:
+            time.sleep(1)
+        listener.stop()
+
+        balance_completed = True
+
+    else:
+        print("Error in Balance Cases")
+ 
     print("Passthrough Current Val:", passthrough)
     return passthrough
-    '''
-
+    
+    #Comment the above and uncomment the below to skip balance
     balance_started = True
     balance_completed = True
     return "Balance Skipped"
@@ -214,6 +229,7 @@ balance_completed = False
 eye_tracking_started = False # we never use this
 eye_tracking_completed = False # we never use this
 response = None
+balance_first_test_complete = False
 
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

@@ -773,8 +773,8 @@ def eye_tracking_test(key):
 
 
 def balance_test(data):
-    global balance_test_started, balance_test_completed
-    '''
+    global balance_test_started, balance_test_completed, balance_first_test_complete
+    
     if balance_test_started == False: 
         # Intial set up to establish connection with Arduino? 
         balance_test_started = True
@@ -782,19 +782,17 @@ def balance_test(data):
         ser.reset_input_buffer()
         return "Waiting to start balance test"
     
-    elif balance_test_started == True and data == 's' and balance_trial == 1:
+    elif balance_test_started == True and data == 's' and balance_first_test_complete == False:
         ser.write(b's\n')
         print("Sent 'start' to Arduino for Trial 1")
+        balance_first_test_complete = True
         # waits 2 minutes
-        balance_trial = 2
-        return "Completed Balance Trial 1"
 
-    elif balance_test_started == True and data == 's' and balance_trial == 2:
+    elif balance_test_started == True and data == 's' and balance_first_test_complete == True:
         ser.write(b's\n')
         print("Sent 'start' to Arduino for Trial 2")
         # waits 2 minutes
-        balance_trial == 3
-        return "Completed Balance Trial 2"
+        balance_test_completed = True
 
     while True: # Should this be in each elif statement? 
         if ser.in_waiting > 0:
@@ -813,10 +811,10 @@ def balance_test(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
-    '''
+    
     balance_test_started = True
     balance_test_completed = True
-    return "Balance Test Completed"
+    return "Balance Trial Completed"
 
 response = None
 user_data_received = False
@@ -829,6 +827,7 @@ eye_tracking_started = False
 eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
 eye_tracking_ready_to_process = False
+balance_first_test_complete = False
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
 video_path='/home/hits/Documents/GitHub/HITS/Eye_Tracking_Participant_Videos/'
