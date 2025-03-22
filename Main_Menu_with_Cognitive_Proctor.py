@@ -169,6 +169,7 @@ def balance_test():
         while waiting_for_keyboard:
             time.sleep(1)
         listener.stop()
+        balance_first_test_complete = True
 
     elif balance_completed == False and balance_first_test_complete == True:
 
@@ -210,7 +211,7 @@ def next_task(response):
         message = cognitive_test(None)
     elif cognitive_started == True and cognitive_completed == False:
         message = cognitive_test(response)
-    elif cognitive_completed == True and balance_started == False:
+    elif cognitive_completed == True and balance_completed == False:
         message = balance_test() #TODO: Figure out if we need to pass responses
     elif cognitive_completed == True and balance_completed == True:
         message = eye_tracking_test(response) #TODO: Figure out if we need to pass responses
