@@ -69,6 +69,7 @@ float getDistance() {
         if (now - startMillis >= duration) {
             Distance = Distance * 10;
             return Distance;
+            break;
         }
 
         // Read ADXL345 Data
