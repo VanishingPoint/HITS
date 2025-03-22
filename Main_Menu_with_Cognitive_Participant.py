@@ -812,7 +812,10 @@ def balance_test(data):
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
     
-    return "Balance Trial Completed"
+    if balance_first_test_complete:
+        return "Balance Trial 1 Completed"
+    elif balance_test_completed:
+        return eye_tracking_test('x') #Starts eye tracking which will then return "waiting to start eye tracking" which will end up being the response
 
 response = None
 user_data_received = False
