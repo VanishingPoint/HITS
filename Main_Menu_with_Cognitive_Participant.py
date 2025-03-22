@@ -773,7 +773,7 @@ def eye_tracking_test(key):
 
 
 def balance_test(data):
-    global balance_test_started, balance_test_completed, balance_first_test_complete
+    global balance_test_started, balance_test_completed, balance_first_test_complete, ser
     
     if balance_test_started == False: 
         # Intial set up to establish connection with Arduino? 
@@ -828,6 +828,7 @@ eye_tracking_completed = False
 eye_tracking_horizontal_completed = False
 eye_tracking_ready_to_process = False
 balance_first_test_complete = False
+ser = None
 
 #Defines where the eye tracking videos to be processed are, and where the results file should be made
 video_path='/home/hits/Documents/GitHub/HITS/Eye_Tracking_Participant_Videos/'
