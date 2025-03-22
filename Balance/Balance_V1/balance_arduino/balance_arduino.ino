@@ -47,7 +47,7 @@ float getDistance() {
     float X_MPU, Y_MPU, Z_MPU;
     // Averaged values
     float X_avg, Y_avg, Z_avg;
-    float Acceleration, OldVelocity = 0, Distance = 0;
+    float Acceleration =0, OldVelocity = 0, Distance = 0;
     float Filt_ADX_X = 0, Filt_ADX_Y = 0, Filt_ADX_Z = 0;
     float Filt_MPU_X = 0, Filt_MPU_Y = 0, Filt_MPU_Z = 0;
     float Adj_MPU_X = 0, Adj_MPU_Y = 0, Adj_MPU_Z = 0;
