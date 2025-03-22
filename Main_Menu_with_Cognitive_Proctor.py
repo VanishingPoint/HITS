@@ -173,6 +173,7 @@ def balance_test():
 
     elif balance_completed == False and balance_first_test_complete == True:
 
+        print("First balance test competed, waiting for s to start second test") #TODO: Replace this with an image in the final version
         waiting_for_keyboard = True
         listener = Listener(on_press=lambda event: on_press_balance(event))
         listener.start()
