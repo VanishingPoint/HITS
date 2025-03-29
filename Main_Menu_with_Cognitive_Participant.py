@@ -77,7 +77,7 @@ def cognitive_test(key):
     global cognitive_test_completed, cognitive_test_started, image_numbers, current_index, start_time
 
     if cognitive_test_started == False:
-        image_numbers = list(range(1, 4))  # Assuming 16 images
+        image_numbers = list(range(1, 17))  # Assuming 16 images
         random.shuffle(image_numbers)
 
         #TODO: Show instructions to the participant here
@@ -142,10 +142,10 @@ def cognitive_test(key):
 
     return(response)
 
-def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to increase frame rate
+def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to increase frame rate #NOTE: Commented out preview and stop preview for each camera. Uncomment for troubleshooting
 
     cam1 = Picamera2(0)
-    cam1.start_preview(Preview.QTGL, x=100,y=300,width=400,height=300)
+    #cam1.start_preview(Preview.QTGL, x=100,y=300,width=400,height=300)
 
     video_config1= cam1.create_video_configuration()
     cam1.configure(video_config1)
@@ -158,7 +158,7 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
         output1 = FfmpegOutput(video_path + f'{sequence}horizontalcam1.mp4')
 
     cam2 = Picamera2(1)
-    cam2.start_preview(Preview.QTGL, x=500,y=300,width=400,height=300)
+    #cam2.start_preview(Preview.QTGL, x=500,y=300,width=400,height=300)
 
     video_config2 = cam2.create_video_configuration()
     cam2.configure(video_config2)
@@ -178,8 +178,8 @@ def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to inc
     cam2.stop_recording()
     cam1.stop_recording()
 
-    cam1.stop_preview()
-    cam2.stop_preview()
+    #cam1.stop_preview()
+    #cam2.stop_preview()
 
     cam2.stop()
     cam1.stop()
@@ -812,10 +812,12 @@ def balance_test(data):
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
     
-    if balance_first_test_complete:
+    if balance_first_test_complete == True and balance_test_completed == False:
         return "Balance Trial 1 Completed"
-    elif balance_test_completed:
+    elif balance_test_completed == True:
         return eye_tracking_test('x') #Starts eye tracking which will then return "waiting to start eye tracking" which will end up being the response
+    else:
+        print("Error in cases for balance")
 
 response = None
 user_data_received = False

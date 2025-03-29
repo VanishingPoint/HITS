@@ -9,7 +9,7 @@ PORT = 65432  # The port used by the server
 
 # Setting up the array of image numbers for the cognitive test
 #TODO: Once cognitive test works, make this explicitly for cog images only, generalize image open function
-image_numbers = list(range(0, 4)) # image 0 is explanation, others are answers corresponding to the participant images
+image_numbers = list(range(0, 17)) # image 0 is explanation, others are answers corresponding to the participant images
 
 image_paths_cognitive = [
      fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_page_{num}.png" # Triss
@@ -173,6 +173,7 @@ def balance_test():
 
     elif balance_completed == False and balance_first_test_complete == True:
 
+        print("First balance test competed, waiting for s to start second test") #TODO: Replace this with an image in the final version
         waiting_for_keyboard = True
         listener = Listener(on_press=lambda event: on_press_balance(event))
         listener.start()
