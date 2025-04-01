@@ -11,28 +11,28 @@ import json
 from kivy.core.window import Window 
 
 IMAGES = {
-    "connecting": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/connecting.png",
-    "connected": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/connected.png",
-    "mainmenu1": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/mainmenu1.png",
-    "cognitive1": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/cognitive1.png",
-    "cognitive2": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/cognitive2.png",
-    "cognitive3": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/cognitive3.png",
-    "cognitive4": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/cognitive4.png",
-    "mainmenu2": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/mainmenu2.png",
-    "balance1": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/balance1.png",
-    "balance2": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/balance2.png",
-    "balance3": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/balance3.png",
-    "balance4": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/balance4.png",
-    "balance5": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/balance5.png",
-    "mainmenu3": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/mainmenu3.png",
-    "eyetracking1": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/eyetracking1.png",
-    "eyetracking2": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/eyetracking2.png",
-    "eyetracking3": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/eyetracking3.png",
-    "eyetracking4": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/eyetracking4.png",
-    "eyetracking5": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/eyetracking5.png",
-    "mainmenu4": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/mainmenu4.png",
-    "calculating": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/calculating.png",
-    "results": "/Users/nguyen/Downloads/Participant_Test/HITS_Proctor_images/results.png"
+    "connecting": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/connecting.png",
+    "connected": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/connected.png",
+    "mainmenu1": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/mainmenu1.png",
+    "cognitive1": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/cognitive1.png",
+    "cognitive2": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/cognitive2.png",
+    "cognitive3": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/cognitive3.png",
+    "cognitive4": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/cognitive4.png",
+    "mainmenu2": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/mainmenu2.png",
+    "balance1": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/balance1.png",
+    "balance2": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/balance2.png",
+    "balance3": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/balance3.png",
+    "balance4": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/balance4.png",
+    "balance5": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/balance5.png",
+    "mainmenu3": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/mainmenu3.png",
+    "eyetracking1": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/eyetracking1.png",
+    "eyetracking2": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/eyetracking2.png",
+    "eyetracking3": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/eyetracking3.png",
+    "eyetracking4": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/eyetracking4.png",
+    "eyetracking5": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/eyetracking5.png",
+    "mainmenu4": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/mainmenu4.png",
+    "calculating": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/calculating.png",
+    "results": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/results.png"
 }
 
 class ClientApp(App):
@@ -41,7 +41,7 @@ class ClientApp(App):
         Window.fullscreen = False
 
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect(("10.0.0.76", 65432))
+        self.client_socket.connect(("10.0.0.74", 65432))
 
         self.layout = FloatLayout()  # Use FloatLayout for absolute positioning
         self.image = Image(source=IMAGES["connecting"], size_hint=(1, 1), allow_stretch=True)
@@ -199,7 +199,7 @@ class ClientApp(App):
         self.image.source = IMAGES["balance3"]
         self.layout.clear_widgets()
         self.layout.add_widget(self.image)
-        start_button = Button(text="start", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.8, "top": 0.15})
+        start_button = Button(text="Start", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.8, "top": 0.15})
         start_button.bind(on_press=self.balance4)
         self.layout.add_widget(start_button)
         redo_button = Button(text="Redo Balance Test", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.2, "top": 0.15})
@@ -263,7 +263,7 @@ class ClientApp(App):
         self.image.source = IMAGES["eyetracking3"]
         self.layout.clear_widgets()
         self.layout.add_widget(self.image)
-        start_button = Button(text="start", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.8, "top": 0.15})
+        start_button = Button(text="Start", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.8, "top": 0.15})
         start_button.bind(on_press=self.eyetracking4)
         self.layout.add_widget(start_button)
         redo_button = Button(text="Redo Eye Movement Test", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.2, "top": 0.15})
@@ -315,7 +315,7 @@ class ClientApp(App):
         self.image.source = IMAGES["results"]
         self.layout.clear_widgets()
         self.layout.add_widget(self.image)
-        save_button = Button(text="Save", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.8, "top": 0.15})
+        save_button = Button(text="Save & Exist", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.8, "top": 0.15})
         restart_button = Button(text="Restart", size_hint=(None, None), size=(200, 50), pos_hint={"center_x": 0.2, "top": 0.15})
         restart_button.bind(on_press=self.restart)
         save_button.bind(on_press=self.save_and_exit)
