@@ -11,24 +11,24 @@ import os
 from kivy.core.window import Window
 
 IMAGES = {
-    "hosting": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\hosting.png",
-    "connected": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\connected.png",
-    "cognitive1": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\cognitive1.png",
-    "cognitive2": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\cognitive2.png",
-    "cognitive3": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\cognitive3.png",
-    "cognitive4": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\cognitive4.png",
-    "waiting": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\waiting.png",
-    "balance1": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\balance1.png",
-    "balance2": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\balance2.png",
-    "balance3": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\balance3.png",
-    "balance4": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\balance4.png",
-    "balance5": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\balance5.png",
-    "eyetracking1": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\eyetracking1.png",
-    "eyetracking2": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\eyetracking2.png",
-    "eyetracking3": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\eyetracking3.png",
-    "eyetracking4": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\eyetracking4.png",
-    "eyetracking5": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\eyetracking5.png",
-    "finish": r"C:\Users\richy\Documents\Participant\HITS_Participant_images\finish.png"
+    "hosting": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/hosting.png",
+    "connected": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/connected.png",
+    "cognitive1": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/cognitive1.png",
+    "cognitive2": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/cognitive2.png",
+    "cognitive3": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/cognitive3.png",
+    "cognitive4": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/cognitive4.png",
+    "waiting": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/waiting.png",
+    "balance1": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/balance1.png",
+    "balance2": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/balance2.png",
+    "balance3": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/balance3.png",
+    "balance4": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/balance4.png",
+    "balance5": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/balance5.png",
+    "eyetracking1": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/eyetracking1.png",
+    "eyetracking2": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/eyetracking2.png",
+    "eyetracking3": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/eyetracking3.png",
+    "eyetracking4": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/eyetracking4.png",
+    "eyetracking5": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/eyetracking5.png",
+    "finish": r"/home/hits/Documents/GitHub/HITS/Richard_UI_Kivy/Participant/HITS_Participant_images/finish.png"
 }
 
 class ServerApp(App):
