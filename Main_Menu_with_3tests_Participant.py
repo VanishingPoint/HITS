@@ -47,7 +47,7 @@ def show_image(image_path):
 
 def record_user_data(data):
     global file_path, user_data_received, sequence
-    sequence, age, sex, height, drunk = data.split()
+    sequence, age, sex = data.split()
 
     # Generate the CSV filename based on the sequence number and save it in the csv_directory
     file_name = f"{sequence}.csv"
