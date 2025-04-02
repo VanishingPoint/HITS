@@ -57,7 +57,7 @@ float getDistance() {
     const float dt = 0.1;
 
     //Duration can be modified here, it is in milliseconds
-    unsigned long duration = 120000, startMillis, previousMillis = 0, timestep = 0;
+    unsigned long duration = 20000, startMillis, previousMillis = 0, timestep = 0;
 
     Serial.println("Starting Distance Measurement");
 
