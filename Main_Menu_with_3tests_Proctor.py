@@ -9,7 +9,7 @@ PORT = 65432  # The port used by the server
 
 # Setting up the array of image numbers for the cognitive test
 #TODO: Once cognitive test works, make this explicitly for cog images only, generalize image open function
-image_numbers = list(range(0, 17)) # image 0 is explanation, others are answers corresponding to the participant images
+image_numbers = list(range(0, 4)) # image 0 is explanation, others are answers corresponding to the participant images
 
 image_paths_cognitive = [
     # fr"/Users/test/Documents/HITS/Cognitive/Cognitive Proctor Images/cognitive_proctor_page_{num}.png" # Triss
@@ -118,8 +118,8 @@ def eye_tracking_test(response):
     global waiting_for_keyboard
     if response == "Waiting to Start Eye Tracking" or response == "Waiting to start vertical test":
         #Show instructions
-        #show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetracking_proctor_0.png') # Triss
-        show_image('C:/Users/chane/Desktop/HITS/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetracking_proctor_0.png') # Chanel
+        #show_image('/Users/test/Documents/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetracking_proctor_page_0.png') # Triss
+        show_image('C:/Users/chane/Desktop/HITS/HITS/Eye Tracking/Eye Tracking Proctor Images/eyetracking_proctor_page_0.png') # Chanel
         waiting_for_keyboard = True
         listener = Listener(on_press=lambda event: on_press_eye_tracking(event))
         listener.start()

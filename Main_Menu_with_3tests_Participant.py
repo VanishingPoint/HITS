@@ -77,7 +77,7 @@ def cognitive_test(key):
     global cognitive_test_completed, cognitive_test_started, image_numbers, current_index, start_time
 
     if cognitive_test_started == False:
-        image_numbers = list(range(1, 17))  # Assuming 16 images
+        image_numbers = list(range(1, 4))  # Assuming 16 images
         random.shuffle(image_numbers)
 
         #TODO: Show instructions to the participant here
