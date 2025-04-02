@@ -813,16 +813,7 @@ def balance_test(data):
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
     '''
-    # Remove the lines until elephant if you want to run balance
-    balance_test_started = True
-    balance_first_test_complete = True
-    balance_test_completed = True
-    balance_data = [0,0,0,0,0,0,0,0,0,0,0, 165, 200]
-    #Value is the path length
-    with open(file_path, "a", newline="") as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(balance_data)
-    # elephant
+
     if balance_first_test_complete == True and balance_test_completed == False:
         return "Balance Trial 1 Completed"
     elif balance_test_completed == True:

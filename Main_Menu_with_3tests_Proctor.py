@@ -145,7 +145,7 @@ def on_press_eye_tracking(key):
 
 def balance_test():
     global balance_completed, balance_started, waiting_for_keyboard, balance_first_test_complete
-    '''
+
     balance_started = True
     if balance_completed == False and balance_first_test_complete == False:
         #Show instructions
@@ -179,7 +179,7 @@ def balance_test():
  
     print("Passthrough Current Value:", passthrough)
     return passthrough
-   '''
+
     # Comment the above and uncomment the below to skip balance
     balance_started = True
     balance_completed = True
