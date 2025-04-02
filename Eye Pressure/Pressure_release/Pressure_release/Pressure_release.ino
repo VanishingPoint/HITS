@@ -8,7 +8,7 @@
 Adafruit_MPRLS mpr = Adafruit_MPRLS(RESET_PIN, EOC_PIN);
 int pumpControl =  5; 
 #define SS  10   // Slave Select pin. Connect this to SS on the module.
-
+int timepassed = 0;
 PMW3360 sensor;
 
 
@@ -38,17 +38,20 @@ void loop() {
   float pressure_hPa = mpr.readPressure();
   float pressure_PSI = pressure_hPa / 68.947572932;
 
- // Serial.print("Pressure (hPa): ");
+  //Serial.print("Pressure (hPa): ");
+  //Serial.print(pressure_hPa);
  // Serial.println(pressure_hPa);
  // Serial.print("Pressure (PSI): ");
  // Serial.println(pressure_PSI);
+ // Serial.println(pressure_PSI);
 
   // Check pressure and control pump
-  if (pressure_PSI > 16.9 && !pumpRunning) {
+  if (pressure_PSI > 16.9 && !pumpRunning && timepassed >= 100) {
     Serial.println("Pump ON");
     analogWrite(pumpControl, 255);  // Turn on pump
     pumpStartTime = millis();       // Record the time when pump was turned on
     pumpRunning = true;             // Mark pump as running
+    timepassed = 0;
   }
 
   // Turn off pump after 30ms
@@ -61,9 +64,10 @@ void loop() {
   // Read PMW3360 sensor continuously
   PMW3360_DATA data = sensor.readBurst();
   Serial.print("Max Raw Data: ");
-  Serial.print(data.maxRawData);
+  Serial.println(data.maxRawData);
   // Serial.print("\tMin Raw Data: ");
   // Serial.println(data.minRawData);
 
   delay(10); // Small delay to allow continuous readings
+  timepassed++;
 }
