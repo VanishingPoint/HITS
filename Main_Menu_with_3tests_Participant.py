@@ -4,6 +4,7 @@ import random
 import time
 import csv
 import socket
+#import pandas
 from picamera2 import Picamera2, Preview
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FfmpegOutput
@@ -30,9 +31,10 @@ def handle_data(data):
     return response 
     
 def append_cognitive_data(cognitive_data):
-    # Append cognitive data to the existing user CSV file, starting at column G.
+    """Append cognitive data to the existing user CSV file, starting at column G."""
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
+        # Add the cognitive data starting from column G
         writer.writerow(cognitive_data)
 
 # Function to open and display an image
@@ -47,12 +49,12 @@ def show_image(image_path):
 
 def record_user_data(data):
     global file_path, user_data_received, sequence
-    sequence, age, sex = data.split()
+    sequence, age, sex, height, drunk = data.split()
 
     # Generate the CSV filename based on the sequence number and save it in the csv_directory
     file_name = f"{sequence}.csv"
     file_name = file_name[:255].replace(":", "_").replace(" ", "_")
-    file_path = os.path.join(csv_directory, file_name)  # Full path to the CSV file
+    file_path = os.path.join(csv_directory, file_name)  # Full path to the CSV file, since this is global it defines it everywhere
 
     # Ensure the directory exists
     os.makedirs(csv_directory, exist_ok=True)
@@ -61,8 +63,8 @@ def record_user_data(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         if os.path.getsize(file_path) == 0:
-            writer.writerow(["Sequence", "Age", "Sex", "Cognitive Response", "Time Taken for Cognitive", "Path length Eyes Closed", "Path Length Eyes Open", "Timestamp", "Pupil_X", "Pupil_Y"])
-        log_data = [sequence, age, sex, time.time()]
+            writer.writerow(["Sequence", "Age", "Sex", "Height", "Drunk", "Timestamp", "Image Number", "Color", "Word", "Response", "Time Taken"])
+        log_data = [sequence, age, sex, height, drunk, time.time()]
         writer.writerow(log_data)
 
     user_data_received = True
@@ -133,17 +135,14 @@ def cognitive_test(key):
         colour = image_colour[image_num]
         word = image_word[image_num]
         # Additional data logging here (cognitive data)
-        cognitive_data = [0, 0, 0, key, time_taken]
+        cognitive_data = [0, 0, 0, 0, 0, 0, image_num, colour, word, key, time_taken]
         append_cognitive_data(cognitive_data)
 
         print("Finished logging")
 
     return(response)
 
-def eye_tracking_recording(): 
-#TODO: Set proper cropping, change encoding to increase frame rate 
-#NOTE: Commented out preview and stop preview for each camera. 
-#Uncomment for troubleshooting
+def eye_tracking_recording(): #TODO: Set proper cropping, change encoding to increase frame rate #NOTE: Commented out preview and stop preview for each camera. Uncomment for troubleshooting
 
     cam1 = Picamera2(0)
     #cam1.start_preview(Preview.QTGL, x=100,y=300,width=400,height=300)
@@ -174,18 +173,18 @@ def eye_tracking_recording():
     cam1.start_recording(encoder1, output1)
     cam2.start_recording(encoder2, output2)
 
-    time.sleep(10) # Set recording duration here, 10 seconds set for now
+    time.sleep(10) #Set recording duration here, 10 seconds set for now
 
     cam2.stop_recording()
     cam1.stop_recording()
 
-    # cam1.stop_preview()
-    # cam2.stop_preview()
+    #cam1.stop_preview()
+    #cam2.stop_preview()
 
     cam2.stop()
     cam1.stop()
 
-    # Added this because it said the resource was busy the second time...
+    #added this because it said the resource was busy the second time...
     cam2.close()
     cam1.close()
 
@@ -428,7 +427,7 @@ def check_ellipse_goodness(binary_image, contour, debug_mode_on):
     ellipse_goodness = [0,0,0] #covered pixels, edge straightness stdev, skewedness   
     # Check if the contour can be used to fit an ellipse (requires at least 5 points)
     if len(contour) < 5:
-        print("Length of contour was 0")
+        print("length of contour was 0")
         return 0  # Not enough points to fit an ellipse
     
     # Fit an ellipse to the contour
@@ -658,7 +657,7 @@ def process_video(video_path, input_method, csv_path):
     #csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
     with open(csv_path, mode='a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow([0, 0, 0, 0, 0, 0, 0, "Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
+        csv_writer.writerow(["Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
     
         debug_mode_on = False
     
@@ -775,7 +774,7 @@ def eye_tracking_test(key):
 
 def balance_test(data):
     global balance_test_started, balance_test_completed, balance_first_test_complete, ser
-    '''
+    
     if balance_test_started == False: 
         # Intial set up to establish connection with Arduino? 
         balance_test_started = True
@@ -812,8 +811,7 @@ def balance_test(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(balance_data)
-    '''
-
+    
     if balance_first_test_complete == True and balance_test_completed == False:
         return "Balance Trial 1 Completed"
     elif balance_test_completed == True:
@@ -835,12 +833,12 @@ eye_tracking_ready_to_process = False
 balance_first_test_complete = False
 ser = None
 
-# Defines where the eye tracking videos to be processed are, and where the results file should be made
+#Defines where the eye tracking videos to be processed are, and where the results file should be made
 video_path='/home/hits/Documents/GitHub/HITS/Eye_Tracking_Participant_Videos/'
 
-#TODO: Choose a location for these, delete the videos once they have been processed
-#TODO: instead of making a new CSV, append the data to the existing
+#TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
+# This cannot be in a function!!
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
@@ -856,4 +854,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 print("Disconnected from Pi")
 
             conn.sendall(response.encode('utf-8'))
-
