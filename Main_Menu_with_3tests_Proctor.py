@@ -177,7 +177,7 @@ def balance_test():
     else:
         print("Error in Balance Cases")
  
-    print("Passthrough Current Val:", passthrough)
+    print("Passthrough Current Value:", passthrough)
     return passthrough
     
     # Comment the above and uncomment the below to skip balance
@@ -232,6 +232,6 @@ try:
             response = data.decode('utf-8')
 
 except ConnectionRefusedError:
-    print("Connection refused. Make Sure Pi script is running.") #TODO: Retry connection automatically
+    print("Connection refused. Make Sure Pi script is running.") 
     time.sleep(1)
 
