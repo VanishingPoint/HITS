@@ -58,6 +58,9 @@ def show_image(image_path):
     image_label.config(image=photo)
     image_label.image = photo  # Keep a reference to avoid garbage collection
 
+# Display the first image on startup
+show_image(fr"C:\Users\richy\Documents\Git\HITS\Cognitive\Cognitive Participant Images\cognitive_participant_page_0.png")
+
 # Function to handle socket communication
 def handle_client(conn, addr):  # Add addr as a parameter
     global current_index, start_time, session_ended
