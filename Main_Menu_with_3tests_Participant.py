@@ -49,7 +49,7 @@ def show_image(image_path):
 
 def record_user_data(data):
     global file_path, user_data_received, sequence
-    sequence, age, sex, height, drunk = data.split()
+    sequence, age, sex  = data.split()
 
     # Generate the CSV filename based on the sequence number and save it in the csv_directory
     file_name = f"{sequence}.csv"
@@ -63,8 +63,8 @@ def record_user_data(data):
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         if os.path.getsize(file_path) == 0:
-            writer.writerow(["Sequence", "Age", "Sex", "Height", "Drunk", "Timestamp", "Image Number", "Color", "Word", "Response", "Time Taken"])
-        log_data = [sequence, age, sex, height, drunk, time.time()]
+            writer.writerow(["Sequence", "Age", "Sex", "Cognitive Response", "Cognitive Time Taken", "Balance Path Length EC above EO", "Eye Tracking Timestamp", "Pupil_X", "Pupil_Y"])
+        log_data = [sequence, age, sex]
         writer.writerow(log_data)
 
     user_data_received = True
@@ -135,7 +135,7 @@ def cognitive_test(key):
         colour = image_colour[image_num]
         word = image_word[image_num]
         # Additional data logging here (cognitive data)
-        cognitive_data = [0, 0, 0, 0, 0, 0, image_num, colour, word, key, time_taken]
+        cognitive_data = [0, 0, 0, key, time_taken]
         append_cognitive_data(cognitive_data)
 
         print("Finished logging")
@@ -657,7 +657,7 @@ def process_video(video_path, input_method, csv_path):
     #csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
     with open(csv_path, mode='a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(["Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
+        csv_writer.writerow([0, 0, 0, 0, 0, 0, "Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
     
         debug_mode_on = False
     
@@ -806,7 +806,7 @@ def balance_test(data):
                 # If conversion fails, continue waiting for a valid float
                 continue
     
-    balance_data = [0,0,0,0,0,0,0,0,0,0,0, value]
+    balance_data = [0,0,0,0,0,value]
     #Value is the path length
     with open(file_path, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)

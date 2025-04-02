@@ -106,15 +106,12 @@ def collect_user_info():
         sequence = input("Please enter a sequence number for the participant:")
         age = input("Pleae enter the participant's age in years:")
         sex = input("Please enter the participant's sex (m or f):")
-        height = input("Please enter the participant's height in cm (3 digits):") #I will assume this is always 3 digits, stuff will probably break if it isn't
-        # The line below is for data collection, to be changed in final version
-        drunk = input("Please indicate if the participant is drunk or sober (d or s):")
-        print("You entered the following data: \n Sequence:", sequence, "\n Age:", age, " years, \n Sex:", sex, "\n Height:", height, " cm \n Drunk/Sober:", drunk,)
+        print("You entered the following data: \n Sequence:", sequence, "\n Age:", age, " years, \n Sex:", sex)
         if input("\n Is this correct? Enter y if yes, or any other key if no.") == 'y': #Chanel: If incorrect does the while loop keep executing? 
             user_data_sent = True
     
     #TODO: In the final version we need more checks to ensure input is valid
-    message = sequence + ' ' + age + ' ' + sex + ' ' + height + ' ' + drunk
+    message = sequence + ' ' + age + ' ' + sex + ' '
     return message
 
 def eye_tracking_test(response):
