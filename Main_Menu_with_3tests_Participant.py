@@ -592,7 +592,7 @@ def process_frame(frame, timestamp, csv_writer):
 
     if final_rotated_rect is not None and final_rotated_rect[1] != (0, 0):
         center_x, center_y = final_rotated_rect[0][0], final_rotated_rect[0][1]  # Keep as is without rounding
-        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding #TODO: Pad with zeros
+        csv_writer.writerow([0, 0, 0, 0, 0, 0, timestamp, center_x, center_y])  # Writing the float values without rounding #TODO: Pad with zeros
     
     return final_rotated_rect
 
@@ -626,7 +626,7 @@ def process_frame(frame, timestamp, csv_writer):
 
     if final_rotated_rect is not None and final_rotated_rect[1] != (0, 0):
         center_x, center_y = final_rotated_rect[0][0], final_rotated_rect[0][1]  # Keep as is without rounding
-        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding
+        csv_writer.writerow([0, 0, 0, 0, 0, 0, timestamp, center_x, center_y])  # Writing the float values without rounding
     
     return final_rotated_rect
 
