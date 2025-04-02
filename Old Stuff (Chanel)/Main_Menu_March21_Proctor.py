@@ -247,4 +247,3 @@ except ConnectionRefusedError:
     print("Connection refused. Make Sure Pi script is running.") #TODO: Retry connection automatically
     time.sleep(1)
 
-
