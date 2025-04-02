@@ -10,7 +10,7 @@ from pdf2image import convert_from_path
 
 # Specify the path to your PDF and Poppler's bin folder
 
-pdf_path = r"C:\Users\chane\Downloads\Cognitive Participant Images-1.pdf"
+pdf_path = r"C:\Users\chane\Downloads\Eye Tracking Proctor Images-1.pdf"
 
 poppler_path = r"C:\Users\chane\Downloads\Release-24.08.0-0\poppler-24.08.0\Library\bin"
 
@@ -19,9 +19,9 @@ images = convert_from_path(pdf_path, dpi=500, poppler_path=poppler_path)
 
 # Save each page as a separate PNG file
 
-output_folder = r'C:\Users\chane\Desktop\HITS\HITS\Cognitive\Cognitive Participant Images'
+output_folder = r'C:\Users\chane\Desktop\HITS\HITS\Eye Tracking\Eye Tracking Proctor Images'
 
 for i, image in enumerate(images, start=0):
-    image.save(f'{output_folder}/cognitive_participant_page_{i}.png', 'PNG')
+    image.save(f'{output_folder}/eyetracking_proctor_page_{i}.png', 'PNG')
 
 print("Conversion complete!")
