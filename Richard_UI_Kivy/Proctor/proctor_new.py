@@ -10,6 +10,7 @@ from kivy.uix.spinner import Spinner
 import json
 from kivy.core.window import Window 
 
+"""
 IMAGES = {
     "connecting": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/connecting.png",
     "connected": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/connected.png",
@@ -34,14 +35,40 @@ IMAGES = {
     "calculating": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/calculating.png",
     "results": "/Users/nguyen/Downloads/Proctor/HITS_Proctor_images/results.png"
 }
+"""
+
+IMAGES = {
+    "connecting": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\connecting.png",
+    "connected": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\connected.png",
+    "mainmenu1": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\mainmenu1.png",
+    "cognitive1": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\cognitive1.png",
+    "cognitive2": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\cognitive2.png",
+    "cognitive3": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\cognitive3.png",
+    "cognitive4": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\cognitive4.png",
+    "mainmenu2": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\mainmenu2.png",
+    "balance1": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\balance1.png",
+    "balance2": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\balance2.png",
+    "balance3": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\balance3.png",
+    "balance4": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\balance4.png",
+    "balance5": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\balance5.png",
+    "mainmenu3": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\mainmenu3.png",
+    "eyetracking1": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\eyetracking1.png",
+    "eyetracking2": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\eyetracking2.png",
+    "eyetracking3": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\eyetracking3.png",
+    "eyetracking4": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\eyetracking4.png",
+    "eyetracking5": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\eyetracking5.png",
+    "mainmenu4": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\mainmenu4.png",
+    "calculating": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\calculating.png",
+    "results": r"C:\Users\richy\Documents\Git\HITS\Richard_UI_Kivy\Proctor\HITS_Proctor_images\results.png"
+}
 
 class ClientApp(App):
     def build(self):
         # Set the window to full screen
-        Window.fullscreen = False
+        Window.fullscreen = True
 
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect(("10.0.0.74", 65432))
+        self.client_socket.connect(("100.120.18.53", 65432))
 
         self.layout = FloatLayout()  # Use FloatLayout for absolute positioning
         self.image = Image(source=IMAGES["connecting"], size_hint=(1, 1), allow_stretch=True)
