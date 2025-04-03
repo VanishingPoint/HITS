@@ -39,6 +39,7 @@ image_paths = [
 #NOTE: This is the path to the images on my computer, you will need to change this to the path on your computer
 #TODO should always display cognitive_page_0 first as it displays the instructions
 
+# (delete)
 def show_image(image_path):
     global opened_image
     if opened_image:
@@ -78,6 +79,6 @@ def on_press(key):
     except AttributeError:
         pass
 
-# Collect events until released
+# Collect events until released (delete)
 with keyboard.Listener(on_press=on_press) as listener:
     listener.join()
