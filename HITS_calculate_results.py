@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sb
 
 # Load CSV files
-dataset = pd.read_csv(r'/home/hits/Documents/GitHub/HITS/csv_files/1.csv')
+dataset = pd.read_csv(r'C:\Users\richy\Documents\Git\HITS\csv files\22.csv')
 
 ## Metric Calculation functions ##
 
