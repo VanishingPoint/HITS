@@ -55,7 +55,7 @@ def show_image(image_path):
     Open an image from the given path, resize it, and display it in the tkinter label.
     """
     image = Image.open(image_path)
-    max_width, max_height = 470, 800  # Adjust as needed
+    max_width, max_height = 1362.5, 800  # Adjust as needed
     image.thumbnail((max_width, max_height))
     photo = ImageTk.PhotoImage(image)
     image_label.config(image=photo)
