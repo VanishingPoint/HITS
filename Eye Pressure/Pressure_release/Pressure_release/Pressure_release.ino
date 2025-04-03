@@ -45,6 +45,7 @@ void loop() {
       if (digitalRead(2) == LOW) {
         teststarted = true;
         startindex = 0;
+        while (digitalRead(2) == LOW){}
         break;
       }
     }
@@ -63,17 +64,19 @@ void loop() {
  // Serial.println(pressure_PSI);
 
 
-  if (startindex >= 10){
+  if (pressure_PSI < 16.9){
     analogWrite(powerPump, 255);
+  }
+  else{
+    analogWrite(powerPump, 0);
   }
 
 
   // Check pressure and control pump
-  if ((pressure_PSI > 16.9 || isnan(pressure_PSI)) && !pufffired && timepassed >= 10) {
+  if ((pressure_PSI > 16.9 || isnan(pressure_PSI)) && !pufffired) {
     Serial.println("Puff Started");
     analogWrite(puffControl, 255);  // Turn on puff
-    pumpStartTime = millis();       // Record the time when pump was turned on
-    timepassed = 0;
+    Serial.println("Puff Started check");
     pufffired = true;
   }
 
@@ -83,7 +86,6 @@ void loop() {
     puffended = true;
     analogWrite(puffControl, 0);    // Turn off puff
     analogWrite(powerPump, 0);
-    startindex = 0;
   }
 
   // Read PMW3360 sensor continuously
@@ -94,14 +96,12 @@ void loop() {
   // Serial.println(data.minRawData);
 
   delay(10); // Small delay to allow continuous readings
-  timepassed++;
-  startindex++;
+
   if (pufffired == true) {
     puffindex++;
   }
-  if (puffindex >= 5) {
+  if (puffended == true) {
     teststarted = false;
-    startindex = 0;
     puffindex = 0;
     pufffired = false;
     puffended = false;
