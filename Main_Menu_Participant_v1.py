@@ -59,12 +59,9 @@ def handle_data(data):
         model = pickle.load(open(model_filename, 'rb'))
 
         # Get prediction
-        prediction, percentages = predict_concussion_probability(model, scaler, csv_path, metrics_data)
+        prediction = predict_concussion_probability(model, scaler, csv_path, metrics_data)
 
         print(prediction)
-        print(percentages)
-
-        plot_hits_result(percentages, save_path="/home/hits/Documents/GitHub/HITS/Results images/hits_result_chart.png")
         
         image_a_path = "/home/hits/Documents/GitHub/HITS/Results images/concussed_result.png"  # Replace with your path to PNG A
         image_b_path = "/home/hits/Documents/GitHub/HITS/Results images/nonconcussed_result.png"  # Replace with your path to PNG B
@@ -72,9 +69,7 @@ def handle_data(data):
 
         probability_hits_result(prediction, image_a_path, image_b_path, output_path)
 
-        hits_combined_result("/home/hits/Documents/GitHub/HITS/Results images/hits_result_chart.png", "/home/hits/Documents/GitHub/HITS/Results images/hits_result_probability.png", "/home/hits/Documents/GitHub/HITS/Results images/hits_result_combined.png")
-
-        show_image("/home/hits/Documents/GitHub/HITS/Results images/hits_result_combined.png")
+        show_image("/home/hits/Documents/GitHub/HITS/Results images/hits_result_probability.png")
 
         print("All Tests Complete or Error")
     return response 
@@ -649,7 +644,6 @@ def compute_distance_to_vertical_line(x_resampled, y_resampled, target_x=250):
 ## Model Functions ##
 
 import pickle
-import shap
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -662,31 +656,7 @@ def predict_concussion_probability(model, scaler, csv_path, input_data):
     probabilities = model.predict_proba(input_scaled)[0]
     prediction_value = round(probabilities[1] * 100)
     
-    # Load dataset
-    dataset = pd.read_csv(csv_path)
-    X = dataset.iloc[:, :-1].values
-    y = dataset.iloc[:, -1].values
-    
-    # Split dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=0)
-    
-    # Scale dataset
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
-    
-    # SHAP Analysis
-    explainer = shap.Explainer(model, X_train)
-    shap_values_input = explainer(input_scaled)
-    shap_values = shap_values_input[0].values
-    
-    # Convert SHAP values to percentages
-    def shap_to_percentage(shap_values, baseline=50, max_shap_value=5):
-        percentages = [(baseline + (shap_value / max_shap_value) * 50) for shap_value in shap_values]
-        return [max(0, min(100, round(percentage))) for percentage in percentages]
-    
-    percentages = shap_to_percentage(shap_values)
-    
-    return prediction_value, percentages
+    return prediction_value
 
 ## ------- Functions for calculate results end --------- ##
 
