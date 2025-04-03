@@ -36,7 +36,34 @@ def handle_data(data):
         response = balance_test(data)
     elif cognitive_test_completed == True and balance_test_completed == True and eye_tracking_completed == False:
         response = eye_tracking_test(data) 
-    else:
+    else:     
+        # Load CSV files
+        dataset = pd.read_csv(f'/home/hits/Documents/GitHub/HITS/csv_files/{sequence}.csv')
+
+        metrics_data = metrics_data(dataset)  # Assuming metrics_data is a list at this point
+    
+        # Convert the combined_metrics list into a 2D numpy array
+        metrics_data = np.array([metrics_data])  # This will make it a 2D array with 1 row
+
+        print(metrics_data)
+
+        # Load the trained logistic regression model and scaler
+        model_filename = '/home/hits/Documents/GitHub/HITS/pkl files/logistic_regression_model.pkl'  # Ensure you saved it during training
+        scaler_filename = '/home/hits/Documents/GitHub/HITS/pkl files/scaler.pkl'  # Ensure you saved it during training
+        csv_path = '/home/hits/Documents/GitHub/HITS/csv files/metric_data.csv'
+
+        # Load the scaler
+        scaler = pickle.load(open(scaler_filename, 'rb'))
+
+        # Load the logistic regression model
+        model = pickle.load(open(model_filename, 'rb'))
+
+        # Get prediction
+        prediction, percentages = predict_concussion_probability(model, scaler, csv_path, metrics_data)
+
+        print(prediction)
+        print(percentages)
+        
         print("All Tests Complete or Error")
     return response 
     
