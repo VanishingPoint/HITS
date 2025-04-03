@@ -63,7 +63,19 @@ def handle_data(data):
 
         print(prediction)
         print(percentages)
+
+        plot_hits_result(percentages, save_path="/home/hits/Documents/GitHub/HITS/Results images/hits_result_chart.png")
         
+        image_a_path = "/home/hits/Documents/GitHub/HITS/Results images/concussed_result.png"  # Replace with your path to PNG A
+        image_b_path = "/home/hits/Documents/GitHub/HITS/Results images/nonconcussed_result.png"  # Replace with your path to PNG B
+        output_path = "/home/hits/Documents/GitHub/HITS/Results images/hits_result_probability.png"  # Path where you want to save the new image
+
+        probability_hits_result(prediction, image_a_path, image_b_path, output_path)
+
+        hits_combined_result("/home/hits/Documents/GitHub/HITS/Results images/hits_result_chart.png", "/home/hits/Documents/GitHub/HITS/Results images/hits_result_probability.png", "/home/hits/Documents/GitHub/HITS/Results images/hits_result_combined.png")
+
+        show_image("/home/hits/Documents/GitHub/HITS/Results images/hits_result_combined.png")
+
         print("All Tests Complete or Error")
     return response 
     
