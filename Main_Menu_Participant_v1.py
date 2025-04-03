@@ -98,7 +98,7 @@ def record_user_data(data):
 ## ------- Functions for calculate results start --------- ##
 
 # Load CSV files
-dataset = pd.read_csv(r'/home/hits/Documents/GitHub/HITS/csv_files/1.csv')
+dataset = pd.read_csv(f'/home/hits/Documents/GitHub/HITS/csv_files/{sequence}.csv')
 
 ## Metric Calculation functions ##
 
@@ -146,11 +146,12 @@ def metrics_data(dataset):
 
     calibration()
 
-    average_gaze_points(r'C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data1.csv', r'C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data2.csv', r'C:\Users\richy\Documents\Git\HITS\csv files\averaged_gaze1.csv')
-    average_gaze_points(r'C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data3.csv', r'C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data4.csv', r'C:\Users\richy\Documents\Git\HITS\csv files\averaged_gaze2.csv')
+
+    average_gaze_points(f'/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}1.csv', f'/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}2.csv', f'/home/hits/Documents/Git/HITS/csv_files/averaged_gaze{sequence}1.csv')
+    average_gaze_points(f'/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}3.csv', f'/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}4.csv', rf'/home/hits/Documents/Git/HITS/csv_files/averaged_gaze{sequence}2.csv')
     
-    average_gaze1 = pd.read_csv(r'C:\Users\richy\Documents\Git\HITS\csv files\averaged_gaze1.csv')
-    average_gaze2 = pd.read_csv(r'C:\Users\richy\Documents\Git\HITS\csv files\averaged_gaze2.csv') 
+    average_gaze1 = pd.read_csv(f'/home/hits/Documents/Git/HITS/csv_files/averaged_gaze{sequence}1.csv')
+    average_gaze2 = pd.read_csv(f'/home/hits/Documents/Git/HITS/csv_files/averaged_gaze{sequence}2.csv') 
     new_time1, x_resampled1, y_resampled1 = resample_data(average_gaze1['Timestamp'], average_gaze1['Predicted_Screen_X'], average_gaze1['Predicted_Screen_Y'])
     new_time2, x_resampled2, y_resampled2 = resample_data(average_gaze2['Timestamp'], average_gaze2['Predicted_Screen_X'], average_gaze2['Predicted_Screen_Y'])
 
@@ -211,9 +212,9 @@ def save_predictions(df, predictions, output_csv):
     print(f"Predictions saved to {output_csv}")
 
 def calibration():
-    model_path = r"C:\Users\richy\Documents\Git\HITS\pkl files\gaze_model.pkl"
-    test_data_paths = [r"C:\Users\richy\Documents\Git\HITS\csv files\healthy_data1.csv", r"C:\Users\richy\Documents\Git\HITS\csv files\healthy_data2.csv", r"C:\Users\richy\Documents\Git\HITS\csv files\healthy_data3.csv", r"C:\Users\richy\Documents\Git\HITS\csv files\healthy_data4.csv"]
-    output_csvs = [r"C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data1.csv", r"C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data2.csv", r"C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data3.csv", r"C:\Users\richy\Documents\Git\HITS\csv files\final_gazepoint_data4.csv"]
+    model_path = "/home/hits/Documents/Git/HITS/csv_files/pkl files/gaze_model.pkl"
+    test_data_paths = [f"/home/hits/Documents/Git/HITS/csv_files/{sequence}ha.csv", f"/home/hits/Documents/Git/HITS/csv_files/{sequence}hb.csv", f"/home/hits/Documents/Git/HITS/csv_files/{sequence}va.csv", f"/home/hits/Documents/Git/HITS/csv_files/{sequence}vb.csv"]
+    output_csvs = [f"/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}1.csv", f"/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}2.csv", f"/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}3.csv", f"/home/hits/Documents/Git/HITS/csv_files/final_gazepoint_data{sequence}4.csv"]
 
     # Load trained model
     model_x, model_y = load_model(model_path)
