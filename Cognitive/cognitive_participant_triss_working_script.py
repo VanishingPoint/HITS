@@ -34,11 +34,11 @@ image_paths = [
 ]
 
 current_index = 0  # Tracks the current image index
-opened_image = None  # Keeps reference to the currently open PIL Image object
+opened_image = None  # Keeps reference to the currently open PIL Image object (delete)
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
-# Function to open and display an image
+# Function to open and display an image (delete)
 def show_image(image_path):
     global opened_image
     if opened_image:
@@ -92,6 +92,7 @@ def handle_client(conn):
                 writer.writerow(log_data)
             conn.sendall(response.encode('utf-8'))
 
+# (delete)
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
