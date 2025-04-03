@@ -676,7 +676,7 @@ def process_video(video_path, input_method, csv_path):
     #csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
     with open(csv_path, mode='a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow([0, 0, 0, 0, 0, 0, "Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
+        csv_writer.writerow([0, 0, 0, 0, 0, 0, "Eye Tracking Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
     
         debug_mode_on = False
     
