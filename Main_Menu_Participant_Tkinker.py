@@ -12,6 +12,11 @@ import serial
 import cv2
 import numpy as np
 
+import tkinter as tk
+from tkinter import Label
+from PIL import Image, ImageTk
+import threading
+
 HOST = "100.120.18.53"  # Server's hostname or IP address
 PORT = 65432  # Port used by the cognitive test server
 csv_directory = "/home/hits/Documents/GitHub/HITS/csv_files"  # Folder to save CSV files
@@ -37,15 +42,29 @@ def append_cognitive_data(cognitive_data):
         # Add the cognitive data starting from column G
         writer.writerow(cognitive_data)
 
-# Function to open and display an image
-opened_image = None  # Initialize the variable at the global level
+# ------------------------- Tkinter Setup -------------------------
+root = tk.Tk()
+root.title("Cognitive Test")
+root.attributes('-fullscreen', True)  # Start full-screen
+
+image_label = Label(root)
+image_label.pack()
 
 def show_image(image_path):
-    global opened_image
-    if opened_image:
-        opened_image.close()  # Close the previous image if it exists
-    opened_image = Image.open(image_path)
-    opened_image.show()
+    """
+    Open an image from the given path, resize it, and display it in the tkinter label.
+    """
+    image = Image.open(image_path)
+    max_width, max_height = 1300, 1000  # Adjust as needed
+    image.thumbnail((max_width, max_height))
+    photo = ImageTk.PhotoImage(image)
+    image_label.config(image=photo)
+    image_label.image = photo  # Keep a reference to prevent garbage collection
+
+# Bind Escape key to exit full-screen mode.
+root.bind('<Escape>', lambda e: root.attributes('-fullscreen', False))
+
+# ------------------------- Tkinter Setup -------------------------
 
 def record_user_data(data):
     global file_path, user_data_received, sequence
@@ -77,7 +96,7 @@ def cognitive_test(key):
     global cognitive_test_completed, cognitive_test_started, image_numbers, current_index, start_time
 
     if cognitive_test_started == False:
-        image_numbers = list(range(1, 17))  # Assuming 16 images
+        image_numbers = list(range(1, 4))  # Assuming 16 images
         random.shuffle(image_numbers)
 
         #TODO: Show instructions to the participant here
@@ -838,19 +857,32 @@ video_path='/home/hits/Documents/GitHub/HITS/Eye_Tracking_Participant_Videos/'
 
 #TODO: Choose a location for these, delete the videos once they have been processed, and instead of making a new CSV, append the data to the existing
 
-# This cannot be in a function!!
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    print(f"Server listening on {HOST}:{PORT}")
-    conn, addr = s.accept()
+# ------------------------- Socket Server Setup -------------------------
+def client_thread(conn, addr):
     with conn:
+        print(f"Connected by {addr}")
         while True:
             data = conn.recv(1024)
-            print("received:", data.decode('utf-8'))
-            response = handle_data(data.decode('utf-8'))
-            print("sending", response)
             if not data:
-                print("Disconnected from Pi")
-
+                break
+            data_str = data.decode('utf-8')
+            print("Received:", data_str)
+            response = handle_data(data_str)
+            print("Sending:", response)
             conn.sendall(response.encode('utf-8'))
+
+def start_server():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        print(f"Server listening on {HOST}:{PORT}")
+        while True:
+            conn, addr = s.accept()
+            threading.Thread(target=client_thread, args=(conn, addr), daemon=True).start()
+
+# Start the socket server in a separate thread.
+server_thread = threading.Thread(target=start_server, daemon=True)
+server_thread.start()
+
+# ------------------------- Mainloop -------------------------
+root.mainloop()

@@ -34,11 +34,11 @@ current_index = 0  # Tracks the current image index
 start_time = time.time()  # Start timing
 session_ended = False  # Flag to indicate if the session has ended
 
-# Setting up tkinter window
+# Setting up tkinter window (new)
 root = tk.Tk()
 root.title("Cognitive Test")
 
-# Create a label to display images
+# Create a label to display images (new)
 image_label = Label(root)
 image_label.pack()
 
@@ -100,7 +100,7 @@ def handle_client(conn, addr):  # Add addr as a parameter
                 writer.writerow(log_data)
             conn.sendall(response.encode('utf-8'))
 
-# Function to start the server and listen for connections
+# Function to start the server and listen for connections (new)
 def start_server():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
@@ -110,28 +110,28 @@ def start_server():
             conn, addr = s.accept()  # addr is now returned here
             handle_client(conn, addr)  # Pass addr to handle_client
 
-# Function to toggle full-screen mode
+# Function to toggle full-screen mode (new)
 def toggle_fullscreen(event=None):
     # Toggle the fullscreen state
     current_state = root.attributes('-fullscreen')
     root.attributes('-fullscreen', not current_state)
 
-# Function to handle the escape key to exit fullscreen
+# Function to handle the escape key to exit fullscreen (new)
 def exit_fullscreen(event=None):
     root.attributes('-fullscreen', False)
 
-# Bind the Escape key to exit full-screen mode
+# Bind the Escape key to exit full-screen mode (new)
 root.bind('<Escape>', exit_fullscreen)
 
-# Set the window to full-screen by default when the application starts
+# Set the window to full-screen by default when the application starts (new)
 root.attributes('-fullscreen', True)
 
-# Running the server in a separate thread so the tkinter GUI stays responsive
+# Running the server in a separate thread so the tkinter GUI stays responsive (new)
 import threading
 server_thread = threading.Thread(target=start_server)
 server_thread.daemon = True
 server_thread.start()
 
-# Start tkinter main loop
+# Start tkinter main loop (new)
 root.mainloop()
 
