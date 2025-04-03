@@ -651,6 +651,205 @@ def predict_concussion_probability(model, scaler, csv_path, input_data):
 
 ## ------- Functions for calculate results end --------- ##
 
+## -------- Display Plot ----- ##
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
+from math import pi
+import os
+
+def plot_hits_result(values, save_path=None):
+    """
+    Generates a radar chart of the results for HITS.
+    
+    Args:
+        values (list): A list of exactly 10 numerical values.
+    
+    Raises:
+        ValueError: If the length of values is not 10.
+    """
+    if len(values) != 10:
+        raise ValueError("Values list must contain exactly 10 elements.")
+        
+    categories = [
+            'EC Path Length', 'EO Path Length', 'H. Fixation', 
+            'H. Targeting', 'H. S/A Ratio', 'V. Targeting', 
+            'V. S/A Ratio', 'V. Efficiency', 'Time', 'Accuracy'
+    ]
+    num_vars = len(categories)
+    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+    angles += angles[:1]  # Completing the loop for a circular plot.
+    values += values[:1]
+    
+    # Create the radar chart.
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+
+    # Set transparent background
+    fig.patch.set_alpha(0)  # Figure background.
+    ax.set_facecolor('none')  # Axis background.
+        
+    # Define circular regions with different background colors.
+    radii = [0, 50, 100]
+    colors = ["red", "blue"]
+
+    # Fill each circular layer.
+    for i in range(len(radii) - 1):
+        theta = np.linspace(0, 2 * np.pi, 100)
+        ax.fill_between(theta, radii[i], radii[i+1], color=colors[i], alpha=0.25)
+        
+    # Plot radar chart values.
+    ax.plot(angles, values, color='green', linewidth=2, label="Patient", zorder=3)
+    ax.fill(angles, values, color='green', alpha=0.25, zorder=3)
+        
+    # Configure axis and labels.
+    ax.set_theta_offset(np.pi / 2)
+    ax.set_theta_direction(-1)
+
+    # Change category label font size.
+    ax.set_thetagrids(np.degrees(angles[:-1]), categories, fontsize=20)
+
+    # Set all category label colors to white.
+    for label in ax.get_xticklabels():
+        label.set_color("white")  # Change text color to white.
+
+    # Go through labels and adjust alignment based on where it is in the circle.
+    for label, angle in zip(ax.get_xticklabels(), angles):
+        if angle in (0, np.pi):
+            label.set_horizontalalignment('center')
+        elif 0 < angle < np.pi:
+            label.set_horizontalalignment('left')
+        else:
+            label.set_horizontalalignment('right')
+
+    # Set the radial limit (0-100).
+    ax.set_ylim(0, 100)
+    # Set position of y-labels to be in the middle.
+    ax.set_rlabel_position(0 / num_vars)
+    # Change the color of the tick labels.
+    ax.tick_params(colors='black', axis='y', labelsize=8)
+    # Change the color of the circular gridlines.
+    ax.grid(color='grey')
+    # Change the color of the outermost gridline (the spine).
+    ax.spines['polar'].set_color('black')
+    # Change the width of the outermost gridline (the spine).
+    ax.spines['polar'].set_linewidth(2)
+    # Change the background color inside the circle itself.
+    ax.set_facecolor('white')
+        
+    # Add overlay pie chart to indicate different test types.
+    sizes = [20, 60, 20]
+    labels = ['Cognitive Function', 'Eye Tracking', 'Balance Test']
+    ax2 = fig.add_subplot(111, label="pie axes", zorder=-1)
+    ax2.pie(sizes, radius=1.305, autopct='%1.1f%%', startangle=108.5, labeldistance=1.05,
+            wedgeprops={'edgecolor': 'black', 'linewidth': 2}, colors=['blue', 'red', 'yellow'])
+    ax2.set(aspect="equal")
+        
+    # Draw section dividers.
+    for angle in [np.pi / 4 + 0.15, np.pi * 3 / 2 - 0.01, -0.32]:
+        ax.plot([angle, angle], [0, 100], color='black', linewidth=2)
+        
+    # Create and display legend.
+    radar_line = mlines.Line2D([0], [0], color='green', label='Patient', linewidth=2)
+    red_patch = mpatches.Patch(color='red', label='Concussed Zone', alpha=0.25)
+    blue_patch = mpatches.Patch(color='blue', label='Non-Concussed Zone', alpha=0.25)
+    handles = [radar_line, red_patch, blue_patch]
+    # Add legend for radar plot.
+    ax.legend(handles=handles, loc='upper left', bbox_to_anchor=(1.38, 0.83), fontsize=16)
+    # Add legend for pie plot.
+    plt.legend(labels=labels, loc='upper right', bbox_to_anchor=(2.05, 1.10), fontsize=16)
+
+    if save_path:
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"Plot saved to {save_path}")
+
+    # Show the plot.
+    plt.show()
+
+## -------- Display Plot ----- ##
+
+## ----- Display Result Value ----- ##
+
+import os
+from PIL import Image, ImageDraw, ImageFont
+
+def probability_hits_result(input_number, image_a_path, image_b_path, output_path):
+    # Choose the image based on the input number
+    if input_number >= 50:
+        chosen_image_path = image_a_path
+    else:
+        chosen_image_path = image_b_path
+
+    # Open the chosen image
+    img = Image.open(chosen_image_path)
+    
+    # Create a drawing context
+    draw = ImageDraw.Draw(img)
+    
+    # Define the text to display
+    text = f"{input_number}%"
+    
+    # Try to load a scalable font
+    try:
+        # Using the system font available on macOS (Helvetica)
+        font = ImageFont.truetype("/Library/Fonts/Helvetica.ttc", 90)
+    except IOError:
+        print("Font file not found, using default font.")
+        font = ImageFont.load_default(90)  # Fallback to default if the font is not found
+
+    # Get text size using textbbox() (for calculating the size of the text)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    
+    # Set a custom position (x, y) in pixels
+    text_position = (270, 250)
+    
+    # Add text to image (white color)
+    draw.text(text_position, text, fill="white", font=font)
+
+    # Save the image to the specified output path
+    img.save(output_path)
+    print(f"Image saved to {output_path}")
+
+## ----- Display Result Value ----- ##
+
+## ----- Combine Results ---- ##
+
+from PIL import Image
+
+def hits_combined_result(base_image_path, overlay_image_path, output_path, position=(2550, 770)):
+    # Open the base and overlay images
+    base_image = Image.open(base_image_path).convert("RGBA")
+    overlay_image = Image.open(overlay_image_path).convert("RGBA")
+    
+    # Create a new image for the result
+    combined = Image.new("RGBA", base_image.size)
+    
+    scale_factor = 1.2
+
+    # Resize overlay while maintaining aspect ratio
+    overlay_width = int(overlay_image.width * scale_factor)
+    overlay_height = int(overlay_image.height * scale_factor)
+    overlay_image = overlay_image.resize((overlay_width, overlay_height), Image.LANCZOS)
+
+    # Create a new image for the result
+    combined = Image.new("RGBA", base_image.size)
+
+    # Paste the base image first
+    combined.paste(base_image, (0, 0))
+    
+    # Paste the overlay image on top, preserving transparency
+    combined.paste(overlay_image, position, overlay_image)
+    
+    # Save the final image
+    combined.save(output_path, format="PNG")
+    print(f"Overlayed image saved as {output_path}")
+
+## ----- Combine Results ---- ##
+
 # Function to handle client connections for the cognitive test
 def cognitive_test(key):
     global cognitive_test_completed, cognitive_test_started, image_numbers, current_index, start_time
