@@ -611,8 +611,10 @@ def process_frame(frame, timestamp, csv_writer):
 
     if final_rotated_rect is not None and final_rotated_rect[1] != (0, 0):
         center_x, center_y = final_rotated_rect[0][0], final_rotated_rect[0][1]  # Keep as is without rounding
-        csv_writer.writerow([0, 0, 0, 0, 0, 0, timestamp, center_x, center_y])  # Writing the float values without rounding #TODO: Pad with zeros
-    
+        #csv_writer.writerow([0, 0, 0, 0, 0, 0, timestamp, center_x, center_y])  # Writing the float values without rounding #TODO: Pad with zeros
+        #NOTE: For single CSV operation uncomment above and remove below
+        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding #TODO: Pad with zeros
+
     return final_rotated_rect
 
 
@@ -645,7 +647,9 @@ def process_frame(frame, timestamp, csv_writer):
 
     if final_rotated_rect is not None and final_rotated_rect[1] != (0, 0):
         center_x, center_y = final_rotated_rect[0][0], final_rotated_rect[0][1]  # Keep as is without rounding
-        csv_writer.writerow([0, 0, 0, 0, 0, 0, timestamp, center_x, center_y])  # Writing the float values without rounding
+        #csv_writer.writerow([0, 0, 0, 0, 0, 0, timestamp, center_x, center_y])  # Writing the float values without rounding
+        #NOTE: For single CSV operation uncomment above and remove belo
+        csv_writer.writerow([timestamp, center_x, center_y])  # Writing the float values without rounding
     
     return final_rotated_rect
 
@@ -676,7 +680,9 @@ def process_video(video_path, input_method, csv_path):
     #csv_filename = os.path.join(csv_dir, "pupil_tracking_data.csv") #TODO: Change this to write to the partipant file
     with open(csv_path, mode='a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow([0, 0, 0, 0, 0, 0, "Eye Tracking Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
+        #csv_writer.writerow([0, 0, 0, 0, 0, 0, "Eye Tracking Timestamp", "Pupil_X", "Pupil_Y"]) #Will probably need to pad with zeros
+        #NOTE: For single CSV operation uncomment above and remove below
+        csv_writer.writerow(["Eye Tracking Timestamp", "Pupil_X", "Pupil_Y"])
     
         debug_mode_on = False
     
